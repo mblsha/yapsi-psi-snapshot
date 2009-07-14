@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<meta>
+		<name>Yandex Status Icons</name>
+		<version>1.0</version>
+		<description>Icons © Yandex</description>
+		<creation>2008-08-28</creation>
+		<home>http://yandex.ru</home>
+		<author www='http://www.yandex.ru'>Yandex</author>
+	</meta>
+
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>icon-online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>icon-offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>icon-away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>icon-away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>icon-busy.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>icon-invisible.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>yapsi/reconnecting</x>
+		<object mime='image/png'>icon-invisible.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>yapsi/blocked</x>
+		<object mime='image/png'>icon-lock.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>yapsi/not-authorized</x>
+		<object mime='image/png'>icon-warning.png</object>
+	</icon>
+</icondef>

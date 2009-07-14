@@ -1,0 +1,10 @@
+/Makefile
+/conf.pri
+/lib/libiris.a
+/lib/libiris.prl
+/lib/libirisnet.a
+/lib/libirisnet.prl
+/src/Makefile
+/src/irisnet/Makefile
+/src/irisnet/noncore/Makefile
+/src/xmpp/Makefile

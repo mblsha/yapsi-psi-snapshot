@@ -1,0 +1,73 @@
+<ui version="4.0" >
+ <class>YaLastMailInformer</class>
+ <widget class="QWidget" name="YaLastMailInformer" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>236</width>
+    <height>253</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>2</number>
+   </property>
+   <property name="topMargin" >
+    <number>2</number>
+   </property>
+   <property name="rightMargin" >
+    <number>2</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>2</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>2</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>2</number>
+   </property>
+   <item row="0" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" >
+    <widget class="YaLinkButton" name="readAllButton" >
+     <property name="text" >
+      <string>Read all</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="YaLastMailInformerView" name="treeView" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>YaLinkButton</class>
+   <extends>QPushButton</extends>
+   <header>yalinkbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>YaLastMailInformerView</class>
+   <extends>QTreeView</extends>
+   <header>yalastmailinformerview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

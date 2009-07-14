@@ -1,0 +1,21 @@
+Chat module of Ya.Online 2.9.0
+------------------------------
+Date: July 1, 2009
+
+Project Manager:
+  Dmitry Matveev
+  http://matv.ru/
+
+Lead Develoeper:
+  Michail Pishchagin
+  http://mblsha.psi-im.org/
+
+Chat module of Ya.Online is project aimed to deliver a
+Yandex-branded jabber client for the general public.
+
+Chat module of Ya.Online is based on Psi (http://psi-im.org).
+
+For installation or compiling instructions, see the INSTALL file.
+
+This program is licensed under the GNU General Public License. See
+the COPYING file for more information.

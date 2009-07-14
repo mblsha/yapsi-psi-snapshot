@@ -1,0 +1,30 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>../../images/chat/separator.png</file>
+		<file>../../images/chat/emoticon_overlay.png</file>
+		<file>../../images/chat/emoticon_background.png</file>
+
+		<file>../../iconsets/emoticons/yaemo/icondef.xml</file>
+		<file>../../iconsets/emoticons/yaemo/smile_01.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_02.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_03.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_04.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_05.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_06.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_07.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_08.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_09.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_10.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_11.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_12.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_13.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_14.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_15.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_16.png</file>
+		<file>../../iconsets/emoticons/yaemo/smile_17.png</file>
+
+		<file>../../images/closetab.png</file>
+		<file>../../images/closetab_hover.png</file>
+		<file>../../images/closetab_pressed.png</file>
+	</qresource>
+</RCC>

@@ -1,0 +1,87 @@
+<ui version="4.0" >
+ <class>Test</class>
+ <widget class="QWidget" name="Test" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>428</width>
+    <height>295</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QFrame" name="frame" >
+       <property name="minimumSize" >
+        <size>
+         <width>33</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>33</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="YaSelfMood" name="selfMood" >
+       <property name="frameShape" >
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="textEdit" >
+     <property name="html" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">[edit]d1d j00 kn0w?&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 j00 h4v3 7w0 (0w5? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 1'm n07 w34r1n6 4ny p4n75? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 d35p173 r3p3473d 4||364710n5, |355 7h4n 0.000000000167% 0f 7h3 w0r|d h45 4(7u4||y h4d 53xu4| 1n73r(0ur53 with y0ur m07h3r? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 4((0rd1n6 70 7h3 2000 (3n5u5, 7h3 p0pu|4710n 0f 7h3 w0r|d 15 4ppr0x1m473|y 35,000,000,000,000,000,000,000? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 7h3 w0r|d'5 p0pu|4710n h45 jump3d 73nf0|d 51n(3 2000? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 34% 0f |_|5 (171z3n5 4r3 p00r 5p33|3r5, 25% d0n'7 d0 6r4mm4r r16h7, 4nd 7h3 r3m41n1n6 43% (4n'7 4dd up? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 ()5(4r \/\/1|d3 d154ppr0v35 0f |_|n(y(|0p3d14'5 8|474n7 m15qu0735, 4nd 15 p|0771n6 r3v3n63? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">... 7h47 1f y0u 8u1|d 17, 7h3y w1|| (0m3? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 7h3y (0m3 4r0und 7h3 m0un741n wh3n 7h3y (0m3? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">...7h47 7h3y w1|| 83 dr1v1n6 51x wh173 h0r535 wh3n 7h3y (0m3? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"> ...7h47 1n S0v317 ru5514, 1337 wr1735 YOU!? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"> ...7h47 1 r0xx0rz 73h b0xx0rz...w00t? &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"> ...7h47 u 5m3ll lyk 5h17 r0ffl3m0b1l3!&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>YaSelfMood</class>
+   <extends>QFrame</extends>
+   <header>yaselfmood.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

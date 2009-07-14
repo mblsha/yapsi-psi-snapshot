@@ -1,0 +1,140 @@
+# Boring file regexps:
+\.hi$
+#\.o$
+\.o\.cmd$
+\.ko$
+\.ko\.cmd$
+\.mod\.c$
+(^|/)\.tmp_versions($|/)
+#(^|/)CVS($|/)
+(^|/)RCS($|/)
+~$
+#(^|/)\.[^/]
+(^|/)_darcs($|/)
+\.bak$
+\.BAK$
+\.orig$
+(^|/)vssver\.scc$
+\.swp$
+(^|/)MT($|/)
+(^|/)\{arch\}($|/)
+(^|/).arch-ids($|/)
+(^|/),
+\.class$
+\.prof$
+(^|/)\.DS_Store$
+(^|/)BitKeeper($|/)
+(^|/)ChangeSet($|/)
+(^|/)\.svn($|/)
+\.py[co]$
+\#
+#\.cvsignore$
+(^|/)Thumbs\.db$
+(^|/)\.gdb_history$
+
+# Mac OS X metadata
+\/\._(.*)
+^\._(.*)
+
+# Iris
+^iris/example/xmpptest/xmpptest.app$
+^iris/example/xmpptest/Makefile$
+
+# Irisnet
+^iris/irisnet/Makefile$
+^iris/irisnet/(.*)\.o$
+^iris/irisnet/(.*)\.moc$
+^iris/irisnet/moc_(.*)\.cpp$
+^iris/irisnet/irisnet$
+^iris/irisnet/jdns/(.*)\.o$
+^iris/irisnet/jdns/Makefile$
+^iris/irisnet/jdns/jdns$
+^iris/irisnet/jdns/(.*)\.o$
+
+# libjingle
+^third-party/libjingle/Makefile
+^third-party/libjingle/liblibjingle.a
+^third-party/qca/Makefile
+^third-party/qca/libqca.a
+
+# Binaries
+^src/psi$
+^src/psi.app$
+^src/yachat$
+^src/yachat.app$
+^third-party/qca/libqca_psi.a$
+
+# Mac binaries
+^mac/disk
+^mac/Psi-.*
+^mac/(template|wc)\.dmg($|\.bz2$)
+
+# Windows
+^psiwin/.*$
+
+# QMake makefiles
+^Makefile
+^src/Makefile
+^src/widgets/Makefile
+
+# QConf
+^conf.log
+^conf.pri
+^src/config.h
+
+# Qt dirs
+(^|/).ui($|/)
+(^|/).obj($|/)
+(^|/).moc($|/)
+(^|/).rcc($|/)
+
+# YaStuff
+^src/tools/yastuff/uitest/Makefile$
+^src/tools/yastuff/uitest/uitest$
+^src/tools/yastuff/yawidgets/Makefile$
+^src/tools/yastuff/yawidgets/libyawidgets.(so|dylib)$
+^src/tools/yastuff/yapsi_revision\.h$
+^src/tools/yastuff/yawidgets/chatviewtest/Makefile$
+^src/tools/yastuff/yawidgets/chatviewtest/chatviewtest$
+^src/tools/yastuff/yawidgets/customwindowtest/Makefile$
+^src/tools/yastuff/yawidgets/customwindowtest/customwindowtest$
+^src/tools/yastuff/yawidgets/expandingoverlaylineedittest/Makefile$
+^src/tools/yastuff/yawidgets/expandingoverlaylineedittest/expandingoverlaylineedittest$
+^src/tools/yastuff/yawidgets/newselfavatar/Makefile$
+^src/tools/yastuff/yawidgets/newselfavatar/newselfavatar$
+^src/tools/yastuff/yawidgets/rostertabstest/Makefile$
+^src/tools/yastuff/yawidgets/rostertabstest/rostertabtest$
+^src/tools/yastuff/yawidgets/rostertest/Makefile$
+^src/tools/yastuff/yawidgets/statusbartest/Makefile$
+^src/tools/yastuff/yawidgets/statusbartest/statusbartest$
+^src/tools/yastuff/yawidgets/chatviewbench/Makefile$
+^src/tools/yastuff/yawidgets/chatviewbench/chatviewbench$
+^src/tools/yastuff/yawidgets/tabbartest/Makefile$
+^src/tools/yastuff/yawidgets/tabbartest/tabbartest$
+^src/tools/yastuff/yawidgets/expandingoverlaylineedittest/expandingoverlaylineedittest.app$
+^src/tools/yastuff/yawidgets/rostertabstest/rostertabtest.app$
+^src/tools/yastuff/yawidgets/animatedstackedwidgettest/Makefile$
+^src/tools/yastuff/yawidgets/animatedstackedwidgettest/animatedstackedwidgettest.app$
+^src/tools/yastuff/yawidgets/trimmablemultilinelabeltest/test/test.app$
+^src/tools/yastuff/yawidgets/accountinformertest/Makefile$
+^src/tools/yastuff/yawidgets/accountinformertest/accountinformertest$
+^src/tools/yastuff/yawidgets/busywidgettest/(Makefile|busywidgettest(\.app)?)$
+^src/tools/yastuff/yawidgets/settingsbuttontest/(Makefile|settingsbuttontest(\.app)?)$
+
+# Stuff
+^tmtags$
+
+# Compiled translations
+^lang/(.*)\.qm$
+
+# Tools
+^src/tools/optionstree/(.*)\.o
+^src/tools/optionstree/(.*)\.app
+^src/tools/optionstree/moc_(.*)\.cpp
+^src/tools/optionstree/options(.*)\.xml
+^src/tools/optionstree/Makefile
+^src/tools/optionstree/optionstreeviewtest/Makefile
+^src/tools/optionstree/optionstreeviewtest/moc_(.*)\.cpp
+^src/tools/contactlist/example/(.*)\.o
+^src/tools/contactlist/example/(moc_)?(.*)\.(cpp|o|moc)
+^src/tools/contactlist/example/(Makefile|contactlist)

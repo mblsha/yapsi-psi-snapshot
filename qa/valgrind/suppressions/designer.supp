@@ -1,0 +1,5013 @@
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidget9setCursorERK7QCursor
+   fun:_ZN16QSizeGripPrivate4initEv
+   fun:_ZN9QSizeGripC1EP7QWidget
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QWidgetAnimatorC1EP7QObject
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QMessageBoxPrivate4initERK7QStringS2_
+   fun:_ZN11QMessageBoxC1ENS_4IconERK7QStringS3_6QFlagsINS_14StandardButtonEEP7QWidgetS4_IN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerFormWindow10closeEventEP11QCloseEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z41__static_initialization_and_destruction_0ii
+   obj:/home/mblsha/src/qt-x11-opensource-src-4.3.4/lib/libQtDesigner.so.4.3.4
+   obj:/home/mblsha/src/qt-x11-opensource-src-4.3.4/lib/libQtDesigner.so.4.3.4
+   obj:/lib/ld-2.7.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZNK7QRegion14clipRectanglesERi
+   fun:_Z15qt_getClipRectsRK7QRegionRi
+   fun:_ZN15QX11PaintEngine9updatePenERK4QPen
+   fun:_ZN15QX11PaintEngine11updateStateERK17QPaintEngineState
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal18ConnectionDelegateC1EP7QWidget
+   fun:_ZN18qdesigner_internal22SignalSlotEditorWindowC1EP28QDesignerFormEditorInterfaceP7QWidget
+   fun:_ZN19QDesignerComponents22createSignalSlotEditorEP28QDesignerFormEditorInterfaceP7QWidget
+   fun:_ZN25QDesignerSignalSlotEditorC1EP18QDesignerWorkbench
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal18ConnectionDelegateC1EP7QWidget
+   fun:_ZN18qdesigner_internal22SignalSlotEditorWindowC1EP28QDesignerFormEditorInterfaceP7QWidget
+   fun:_ZN19QDesignerComponents22createSignalSlotEditorEP28QDesignerFormEditorInterfaceP7QWidget
+   fun:_ZN25QDesignerSignalSlotEditorC1EP18QDesignerWorkbench
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+   fun:_ZNK13QMetaProperty4readEPK7QObject
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+   fun:_ZN18qdesigner_internal13WidgetFactory11loadPluginsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN9QDesignerC1ERiPPc
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QMenuBarPrivate16updateGeometriesEv
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN8QMenuBar5eventEP6QEvent
+   fun:_ZN19QApplicationPrivate13notify_helperEP7QObjectP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+   fun:_ZN16QDesignerActions11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QAbstractScrollArea11setViewportEP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+   fun:_ZN18qdesigner_internal31customWidgetClassNameScriptHashEPK28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN9QDesignerC1ERiPPc
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI19QDockAreaLayoutItemE6appendERKS0_
+   fun:_ZN15QDockAreaLayout13addDockWidgetEN9QInternal12DockPositionEP11QDockWidgetN2Qt11OrientationE
+   fun:_ZN17QMainWindowLayout13addDockWidgetEN2Qt14DockWidgetAreaEP11QDockWidgetNS0_11OrientationE
+   fun:_ZN11QMainWindow13addDockWidgetEN2Qt14DockWidgetAreaEP11QDockWidgetNS0_11OrientationE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+   fun:_ZN18qdesigner_internal13WidgetFactory11loadPluginsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QPixmap11paintEngineEv
+   fun:_ZN19QWidgetBackingStore11cleanRegionERK7QRegionP7QWidgetb
+   fun:_Z19qt_syncBackingStore7QRegionP7QWidgetb
+   fun:_Z19qt_syncBackingStore7QRegionP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate17setWindowIcon_sysEb
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+   fun:_ZN14QWidgetPrivate13setParent_sysEP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN16QDesignerActionsC1EP18QDesignerWorkbench
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+   fun:_ZN14QWidgetPrivate13setParent_sysEP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN7QWidget9setParentEPS_6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWindowSurfaceC2EP7QWidget
+   fun:_ZN17QX11WindowSurfaceC1EP7QWidget
+   fun:_Z25qt_default_window_surfaceP7QWidget
+   fun:_ZN19QWidgetBackingStoreC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:XCreateRegion
+   fun:_ZNK7QRegion15updateX11RegionEv
+   fun:_ZN7QWidget7setMaskERK7QRegion
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZN7QRegion9translateEii
+   fun:_ZNK7QRegion10translatedEii
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QRegionC1ERK5QRectNS_10RegionTypeE
+   fun:_ZNK7QWidget14childrenRegionEv
+   fun:_ZN7QWidget11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_ZN16QAbstractSpinBox11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QDockAreaLayout13addDockWidgetEN9QInternal12DockPositionEP11QDockWidgetN2Qt11OrientationE
+   fun:_ZN17QMainWindowLayout13addDockWidgetEN2Qt14DockWidgetAreaEP11QDockWidgetNS0_11OrientationE
+   fun:_ZN11QMainWindow13addDockWidgetEN2Qt14DockWidgetAreaEP11QDockWidgetNS0_11OrientationE
+   fun:_ZN11QMainWindow13addDockWidgetEN2Qt14DockWidgetAreaEP11QDockWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN22QX11PaintEnginePrivate4initEv
+   fun:_ZN15QX11PaintEngineC1Ev
+   fun:_ZNK7QPixmap11paintEngineEv
+   fun:_ZN19QWidgetBackingStore11cleanRegionERK7QRegionP7QWidgetb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z25qt_default_window_surfaceP7QWidget
+   fun:_ZN19QWidgetBackingStoreC1EP7QWidget
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN7QWidget10setVisibleEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate17setWindowIcon_sysEb
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN7QWidget10setVisibleEb
+   fun:_ZN5QMenu5popupERK6QPointP7QAction
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10KAboutDataC1ERKS_
+   obj:/usr/lib/kde4/lib/libkdecore.so.5.0.0
+   fun:_ZN14KComponentDataC1ERK10QByteArrayS2_NS_25MainComponentRegistrationE
+   obj:/usr/lib/kde4/lib/kde4/plugins/designer/ksysguardwidgets.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z6loadFcPK12QFontPrivateiRK8QFontDef
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK12QFontMetrics5widthE5QChar
+   fun:_ZNK16QComboBoxPrivate17recomputeSizeHintER5QSize
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QX11WindowSurfaceC1EP7QWidget
+   fun:_Z25qt_default_window_surfaceP7QWidget
+   fun:_ZN19QWidgetBackingStoreC1EP7QWidget
+   fun:_ZN7QWidget6createEmbb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon9addPixmapERK7QPixmapNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QPixmap
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QDockWidgetLayout9setWidgetENS_4RoleEP7QWidget
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z14tryPatternLoadP10_FcPatterniRK8QFontDefi
+   fun:_Z6loadFcPK12QFontPrivateiRK8QFontDef
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK12QFontMetrics5widthE5QChar
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QObject18installEventFilterEPS_
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN15QAbstractButton5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QRubberBandC1ENS_5ShapeEP7QWidget
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZN7QRegion9translateEii
+   fun:_ZNK7QRegion10translatedEii
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon9addPixmapERK7QPixmapNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QPixmap
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayoutC1ENS_9DirectionEP7QWidget
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN16QDesignerActionsC1EP18QDesignerWorkbench
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMapData10createDataEv
+   fun:_ZN4QMapIP7QAction5QRectE13detach_helperEv
+   fun:_ZNK15QMenuBarPrivate15calcActionRectsEiiR4QMapIP7QAction5QRectER5QListIS2_E
+   fun:_ZN15QMenuBarPrivate16updateGeometriesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN8QMapData11node_createEPPNS_4NodeEi
+   fun:_ZNK15QMenuBarPrivate15calcActionRectsEiiR4QMapIP7QAction5QRectER5QListIS2_E
+   fun:_ZN15QMenuBarPrivate16updateGeometriesEv
+   fun:_ZN7QWidget5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z24qMetaTypeConstructHelperIN18qdesigner_internal8FlagTypeEEPvPKT_
+   fun:_ZN9QMetaType9constructEiPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZNK7QRegion5uniteERKS_
+   fun:_ZN7QRegionpLERKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QScrollBarC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QObjectC2EPS_
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI8QVariantE6appendERKS0_
+   fun:_ZN18qdesigner_internal14WidgetDataBase21defaultPropertyValuesERK7QString
+   fun:_ZN18qdesigner_internal14WidgetDataBase25grabDefaultPropertyValuesEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN8QMapData11node_createEPPNS_4NodeEi
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+   fun:_ZNK22QDesignerPropertySheet8propertyEi
+   fun:_ZN18qdesigner_internal14WidgetDataBase21defaultPropertyValuesERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QRegionC1ERK5QRectNS_10RegionTypeE
+   fun:_ZNK7QWidget14childrenRegionEv
+   fun:_ZN7QWidget11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_ZN16QAbstractSpinBox11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libX11.so.6.2.0
+   obj:/usr/lib/libX11.so.6.2.0
+   fun:XUnionRegion
+   fun:XUnionRectWithRegion
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate11createExtraEv
+   fun:_ZN14QWidgetPrivate13createTLExtraEv
+   fun:_ZN7QWidget14setWindowTitleERK7QString
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:dbus_malloc
+   obj:/usr/lib/libdbus-1.so.3.4.0
+   obj:/usr/lib/libdbus-1.so.3.4.0
+   fun:_ZN15QDBusConnection12connectToBusENS_7BusTypeERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_ZN19QTessellatorPrivate8Vertices4initEi
+   fun:_ZN12QTessellator10tessellateEPK7QPointFi
+   fun:_ZN22QX11PaintEnginePrivate15fillPolygon_devEPK7QPointFiNS_6GCModeEN12QPaintEngine15PolygonDrawModeE
+   fun:_ZN22QX11PaintEnginePrivate8fillPathERK12QPainterPathNS_6GCModeEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QLayoutC2EP7QWidget
+   fun:_ZN17QDockWidgetLayoutC1EP7QWidget
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QKeySequenceC1Ev
+   fun:_ZN14QActionPrivateC1Ev
+   fun:_ZN7QActionC1EP7QObject
+   fun:_ZN15QToolBarPrivate4initEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBase22createCustomWidgetItemEPK30QDesignerCustomWidgetInterfaceRK7QString
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+   fun:_ZN19QDesignerComponents17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QObjectC2EPS_
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate13createTLExtraEv
+   fun:_ZN7QWidget11setGeometryERK5QRect
+   fun:_ZN5QMenu5popupERK6QPointP7QAction
+   fun:_ZN15QMenuBarPrivate11popupActionEP7QActionb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_ZN19QTessellatorPrivate8Vertices4initEi
+   fun:_ZN12QTessellator10tessellateEPK7QPointFi
+   fun:_ZN22QX11PaintEnginePrivate15fillPolygon_devEPK7QPointFiNS_6GCModeEN12QPaintEngine15PolygonDrawModeE
+   fun:_ZN22QX11PaintEnginePrivate8fillPathERK12QPainterPathNS_6GCModeEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QPixmap4initEiiNS_4TypeE
+   fun:_ZN7QPixmapC2ERK5QSizeNS_4TypeE
+   fun:_ZN7QBitmapC1Ev
+   fun:_ZN7QBitmap9fromImageERK6QImage6QFlagsIN2Qt19ImageConversionFlagEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QAbstractButtonC2EP7QWidget
+   fun:_ZN22QDockWidgetTitleButtonC1EP11QDockWidget
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QActionC1EP7QObject
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QToolButtonC1EP7QWidget
+   fun:_ZN14QToolBarLayout10createItemEP7QAction
+   fun:_ZN14QToolBarLayout12insertActionEiP7QAction
+   fun:_ZN8QToolBar11actionEventEP12QActionEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMapData10createDataEv
+   fun:_ZN4QMapI7QString8QVariantE13detach_helperEv
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+   fun:_ZNK22QDesignerPropertySheet8propertyEi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN8QMapData11node_createEPPNS_4NodeEi
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+   fun:_ZNK22QDesignerPropertySheet8propertyEi
+   fun:_ZN18qdesigner_internal14WidgetDataBase21defaultPropertyValuesERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QString7reallocEi
+   fun:_ZN7QString7replaceERKS_S1_N2Qt15CaseSensitivityE
+   fun:_Z30qt_setWindowTitle_helperHelperRK7QStringP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z24qMetaTypeConstructHelperIN18qdesigner_internal8EnumTypeEEPvPKT_
+   fun:_ZN9QMetaType9constructEiPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_Z8qReallocPvj
+   fun:_ZN9QListData7reallocEi
+   fun:_ZN9QListData6appendEv
+   fun:_ZN5QListI7QStringE6appendERKS0_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN9QDateTimeC1ERK5QDateRK5QTimeN2Qt8TimeSpecE
+   fun:_ZNK15QDateTimeParser5parseERK7QStringRK8QVariantb
+   fun:_ZNK20QDateTimeEditPrivate20validateAndInterpretER7QStringRiRN10QValidator5StateEb
+   fun:_ZNK13QDateTimeEdit8validateER7QStringRi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+   fun:_ZN18qdesigner_internal13WidgetFactory11loadPluginsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZNK7QRegion5uniteERKS_
+   fun:_ZNK7QRegionorERKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZNK7QRegion5uniteERKS_
+   fun:_ZNK7QRegionorERKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN22QDesignerPluginManager17ensureInitializedEv
+   fun:_ZNK22QDesignerPluginManager23registeredCustomWidgetsEv
+   fun:_ZN18qdesigner_internal31customWidgetClassNameScriptHashEPK28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4QPenC1ERK6QBrushdN2Qt8PenStyleENS3_11PenCapStyleENS3_12PenJoinStyleE
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+   obj:/usr/lib/kde4/lib/kde4/plugins/styles/oxygen.so
+   fun:_ZNK6KStyle13drawPrimitiveEN6QStyle16PrimitiveElementEPK12QStyleOptionP8QPainterPK7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QMenuC1EP7QWidget
+   fun:_ZN15QMenuBarPrivate16updateGeometriesEv
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN8QMenuBar5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QToolBarLayout10createItemEP7QAction
+   fun:_ZN14QToolBarLayout12insertActionEiP7QAction
+   fun:_ZN8QToolBar11actionEventEP12QActionEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidgetC2EPS_6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   obj:/usr/lib/kde4/lib/kde4/plugins/designer/ksysguardwidgets.so
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout8addStrutEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout13insertStretchEii
+   fun:_ZN10QBoxLayout10addStretchEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN22QMainWindowLayoutState16setCentralWidgetEP7QWidget
+   fun:_ZN17QMainWindowLayout16setCentralWidgetEP7QWidget
+   fun:_ZN11QMainWindow16setCentralWidgetEP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+   fun:_ZNK13QMetaProperty4readEPK7QObject
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI8QVariantE6appendERKS0_
+   fun:_ZN18qdesigner_internal14WidgetDataBase21defaultPropertyValuesERK7QString
+   fun:_ZN18qdesigner_internal14WidgetDataBase25grabDefaultPropertyValuesEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QMainWindowLayout12setStatusBarEP10QStatusBar
+   fun:_ZN11QMainWindow12setStatusBarEP10QStatusBar
+   fun:_ZNK11QMainWindow9statusBarEv
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17Qt3SupportWidgetsC1EP7QObject
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   obj:/usr/lib/kde4/lib/kde4/plugins/designer/ksysguardwidgets.so
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+   fun:_ZNK22QDesignerPluginManager8instanceERK7QString
+   fun:_ZNK22QDesignerPluginManager9instancesEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN9QHashData13detach_helperEPFvPNS_4NodeEPvEi
+   fun:_ZN5QHashIP7QObjectPN18qdesigner_internal16MetaDataBaseItemEE13detach_helperEv
+   fun:_ZN18qdesigner_internal12MetaDataBase3addEP7QObject
+   fun:_ZN18qdesigner_internal13promoteWidgetEP28QDesignerFormEditorInterfaceP7QWidgetRK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_Z21queuedConnectionTypesRK5QListI10QByteArrayE
+   fun:_ZN7QObject7connectEPKS_PKcS1_S3_N2Qt14ConnectionTypeE
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout12insertWidgetEiP7QWidgeti6QFlagsIN2Qt13AlignmentFlagEE
+   fun:_ZN10QBoxLayout9addWidgetEP7QWidgeti6QFlagsIN2Qt13AlignmentFlagEE
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout12insertWidgetEiP7QWidgeti6QFlagsIN2Qt13AlignmentFlagEE
+   fun:_ZN10QBoxLayout9addWidgetEP7QWidgeti6QFlagsIN2Qt13AlignmentFlagEE
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN37QAbstractScrollAreaScrollBarContainerC1EN2Qt11OrientationEP7QWidget
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+   fun:_ZN19QDesignerComponents17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN22QToolBarAreaLayoutInfo13insertToolBarEP8QToolBarS1_
+   fun:_ZN17QMainWindowLayout10addToolBarEN2Qt11ToolBarAreaEP8QToolBarb
+   fun:_ZN11QMainWindow10addToolBarEN2Qt11ToolBarAreaEP8QToolBar
+   fun:_ZN11QMainWindow10addToolBarEP8QToolBar
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI22QToolBarAreaLayoutItemE6appendERKS0_
+   fun:_ZN22QToolBarAreaLayoutInfo13insertToolBarEP8QToolBarS1_
+   fun:_ZN17QMainWindowLayout10addToolBarEN2Qt11ToolBarAreaEP8QToolBarb
+   fun:_ZN11QMainWindow10addToolBarEN2Qt11ToolBarAreaEP8QToolBar
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QMenuPrivate4initEv
+   fun:_ZN5QMenuC1EP7QWidget
+   fun:_ZN15QMenuBarPrivate16updateGeometriesEv
+   fun:_ZN7QWidget5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMenuBar7addMenuERK7QString
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+   fun:_ZN16QDesignerActions11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+   fun:_ZN19QDesignerComponents17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QPalette4initEv
+   fun:_ZN8QPaletteC1EN2Qt11GlobalColorE
+   fun:_ZN19QApplicationPrivate18x11_apply_settingsEv
+   fun:_Z20qt_set_x11_resourcesPKcS0_S0_S0_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13ArthurPlugins13customWidgetsEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase11loadPluginsEv
+   fun:_ZN18qdesigner_internal20QDesignerIntegration17initializePluginsEP28QDesignerFormEditorInterface
+   fun:_ZN19QDesignerComponents17initializePluginsEP28QDesignerFormEditorInterface
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QKeySequenceC1Ev
+   fun:_ZN22QAbstractButtonPrivateC2EN11QSizePolicy11ControlTypeE
+   fun:_ZN9QCheckBoxC1EP7QWidget
+   fun:_ZNK18qdesigner_internal13WidgetFactory12createWidgetERK7QStringP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_Z8qReallocPvj
+   fun:_ZN9QListData7reallocEi
+   fun:_ZN9QListData6appendEv
+   fun:_ZN5QListI7QStringE6appendERKS0_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK11QMainWindow9statusBarEv
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QMenuBarPrivate4initEv
+   fun:_ZN8QMenuBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+   fun:_ZN9QDesignerC1ERiPPc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN9QSizeGripC1EP7QWidget
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDockWidgetPrivate4initEv
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN16KLocalizedStringC1Ev
+   obj:/usr/lib/kde4/lib/libkdecore.so.5.0.0
+   fun:_ZN10KAboutDataC1ERKS_
+   obj:/usr/lib/kde4/lib/libkdecore.so.5.0.0
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QToolButtonC2EP7QWidget
+   fun:_ZN17QToolBarExtensionC1EP7QWidget
+   fun:_ZN14QToolBarLayoutC1EP7QWidget
+   fun:_ZN15QToolBarPrivate4initEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14KComponentDataC1ERK10QByteArrayS2_NS_25MainComponentRegistrationE
+   obj:/usr/lib/kde4/lib/kde4/plugins/designer/ksysguardwidgets.so
+   fun:qt_plugin_instance
+   fun:_ZN13QPluginLoader8instanceEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout12insertLayoutEiP7QLayouti
+   fun:_ZN10QBoxLayout9addLayoutEP7QLayouti
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI22QToolBarAreaLayoutLineE6appendERKS0_
+   fun:_ZN22QToolBarAreaLayoutInfo13insertToolBarEP8QToolBarS1_
+   fun:_ZN17QMainWindowLayout10addToolBarEN2Qt11ToolBarAreaEP8QToolBarb
+   fun:_ZN11QMainWindow10addToolBarEN2Qt11ToolBarAreaEP8QToolBar
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN8QMapData11node_createEPPNS_4NodeEi
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+   fun:_ZNK22QDesignerPropertySheet8propertyEi
+   fun:_ZN18qdesigner_internal14WidgetDataBase21defaultPropertyValuesERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QMenu12addSeparatorEv
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QWidgetAnimatorC1EP7QObject
+   fun:_ZN17QMainWindowLayoutC1EP11QMainWindow
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_Z9constructPN8QVariant7PrivateEPKv
+   fun:_ZN8QVariant6createEiPKv
+   fun:_ZN8QVariantC1EiPKv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+   fun:_ZN19QAbstractScrollAreaC2ER26QAbstractScrollAreaPrivateP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN16QDesignerActions21showPreferencesDialogEv
+   fun:_ZN16QDesignerActions11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout8addStrutEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+   fun:_ZN10QStatusBarC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout13insertStretchEii
+   fun:_ZN10QBoxLayout10addStretchEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znaj
+   fun:_ZN9QHashData6rehashEi
+   fun:_ZN18qdesigner_internal12MetaDataBase3addEP7QObject
+   fun:_ZN18qdesigner_internal13promoteWidgetEP28QDesignerFormEditorInterfaceP7QWidgetRK7QString
+   fun:_ZNK18qdesigner_internal13WidgetFactory12createWidgetERK7QStringP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4QUrlC1Ev
+   fun:_ZNK12QTextBrowser6sourceEv
+   fun:_ZN12QTextBrowser11qt_metacallEN11QMetaObject4CallEiPPv
+   fun:_ZNK13QMetaProperty4readEPK7QObject
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QToolBarLayoutC1EP7QWidget
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK12QFontMetrics5widthE5QChar
+   fun:_ZNK16QComboBoxPrivate17recomputeSizeHintER5QSize
+   fun:_ZNK9QComboBox8sizeHintEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QMenu7addMenuERK7QString
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18qdesigner_internal14WidgetDataBaseC1EP28QDesignerFormEditorInterfaceP7QObject
+   fun:_ZN18qdesigner_internal10FormEditorC1EP7QObject
+   fun:_ZN19QDesignerComponents16createFormEditorEP7QObject
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QRegion4copyEv
+   fun:_ZN7QRegion6detachEv
+   fun:_ZNK7QRegion5uniteERKS_
+   fun:_ZNK7QRegionorERKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout13insertSpacingEii
+   fun:_ZN10QBoxLayout10addSpacingEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z18defaultPenInstancev
+   fun:_ZN4QPenC1Ev
+   fun:_ZN13QPainterStateC1Ev
+   fun:_ZN8QPainterC1EP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout13insertSpacingEii
+   fun:_ZN10QBoxLayout10addSpacingEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayout13insertSpacingEii
+   fun:_ZN10QBoxLayout10addSpacingEi
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidgetC1EPS_6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QAbstractScrollArea11setViewportEP7QWidget
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMenuBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QBoxLayoutC2ENS_9DirectionEP7QWidget
+   fun:_ZN11QHBoxLayoutC1EP7QWidget
+   fun:_ZN10QStatusBar8reformatEv
+   fun:_ZN10QStatusBar18setSizeGripEnabledEb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QMainWindowPrivate4initEv
+   fun:_ZN11QMainWindowC2EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QToolBarC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QStatusBarC1EP7QWidget
+   fun:_ZNK11QMainWindow9statusBarEv
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QMenuC1ERK7QStringP7QWidget
+   fun:_ZN8QMenuBar7addMenuERK7QString
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN6QBrush4initERK6QColorN2Qt10BrushStyleE
+   fun:_ZN6QBrushC1ERK6QColorN2Qt10BrushStyleE
+   fun:_ZN19QApplicationPrivate18x11_apply_settingsEv
+   fun:_Z20qt_set_x11_resourcesPKcS0_S0_S0_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QString7reallocEi
+   fun:_ZN7QString6appendERKS_
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QString7reallocEi
+   fun:_ZN7QString6appendERKS_
+   fun:_ZNK22QDesignerPropertySheet12metaPropertyEi
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidget9setCursorERK7QCursor
+   fun:_ZN9QSizeGrip9moveEventEP10QMoveEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+   fun:_ZN9QSizeGrip5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDesignerToolWindowC1EP18QDesignerWorkbenchP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   obj:/usr/lib/kde4/lib/kde4/plugins/designer/ksysguardwidgets.so
+   fun:_ZN18qdesigner_internal14WidgetDataBase22createCustomWidgetItemEPK30QDesignerCustomWidgetInterfaceRK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate17setWindowIcon_sysEb
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+   fun:_ZN14QWidgetPrivate21setWindowTitle_helperERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+   fun:_ZN14QWidgetPrivate21setWindowTitle_helperERK7QString
+   fun:_ZN7QWidget14setWindowTitleERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN18qdesigner_internal13createIconSetERK7QString
+   fun:_ZN18qdesigner_internal17FormWindowManager12setupActionsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QIcon7addFileERK7QStringRK5QSizeNS_4ModeENS_5StateE
+   fun:_ZN5QIconC1ERK7QString
+   fun:_ZN18qdesigner_internal13createIconSetERK7QString
+   fun:_ZN18qdesigner_internal17FormWindowManager12setupActionsEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:dbus_malloc
+   obj:/usr/lib/libdbus-1.so.3.4.0
+   fun:dbus_message_new_signal
+   obj:/usr/lib/libdbus-1.so.3.4.0
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QLayoutC2EP7QWidget
+   fun:_ZN14QToolBarLayoutC1EP7QWidget
+   fun:_ZN15QToolBarPrivate4initEv
+   fun:_ZN8QToolBarC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QKeySequenceC1Ev
+   fun:_ZN22QAbstractButtonPrivateC2EN11QSizePolicy11ControlTypeE
+   fun:_ZN11QToolButtonC2EP7QWidget
+   fun:_ZN17QToolBarExtensionC1EP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK13QFontEngineFT9loadGlyphEPNS_9QGlyphSetEjNS_11GlyphFormatE
+   fun:_ZN13QFontEngineFT11boundingBoxEj
+   fun:_ZNK13QFontEngineFT15minRightBearingEv
+   fun:_ZNK13QFontEngineFT14minLeftBearingEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QDockWidgetC1EP7QWidget6QFlagsIN2Qt10WindowTypeEE
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QPixmap4initEiiNS_4TypeE
+   fun:_ZN7QPixmapC1Ev
+   fun:_ZN7QPixmap9fromImageERK6QImage6QFlagsIN2Qt19ImageConversionFlagEE
+   fun:_ZNK7QPixmap11transformedERK10QTransformN2Qt18TransformationModeE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QPixmap4initEiiNS_4TypeE
+   fun:_ZN7QPixmapC1Ev
+   fun:_ZN7QPixmap9fromImageERK6QImage6QFlagsIN2Qt19ImageConversionFlagEE
+   fun:_ZN7QPixmap4loadERK7QStringPKc6QFlagsIN2Qt19ImageConversionFlagEE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_Z8qReallocPvj
+   fun:_ZN9QListData7reallocEi
+   fun:_ZN9QListData7prependEv
+   fun:_ZN9QListData6insertEi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QVectorI22QPixmapIconEngineEntryE7reallocEii
+   fun:_ZN7QVectorI22QPixmapIconEngineEntryE6appendERKS0_
+   fun:_ZN17QPixmapIconEngine7addFileERK7QStringRK5QSizeN5QIcon4ModeENS6_5StateE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QMdiAreaC1EP7QWidget
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z25qt_default_window_surfaceP7QWidget
+   fun:_ZN19QWidgetBackingStoreC1EP7QWidget
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate17setWindowIcon_sysEb
+   fun:_ZN7QWidget6createEmbb
+   fun:_ZN14QWidgetPrivate11createWinIdEm
+   fun:_ZN14QWidgetPrivate21setWindowTitle_helperERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znaj
+   fun:_ZN9QHashData6rehashEi
+   fun:_ZN18QItemEditorFactory14registerEditorEN8QVariant4TypeEP22QItemEditorCreatorBase
+   fun:_ZN18qdesigner_internal18ConnectionDelegateC1EP7QWidget
+   fun:_ZN18qdesigner_internal22SignalSlotEditorWindowC1EP28QDesignerFormEditorInterfaceP7QWidget
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:realloc
+   fun:_ZN19QTessellatorPrivate8Scanline4initEi
+   fun:_ZN12QTessellator10tessellateEPK7QPointFi
+   fun:_ZN22QX11PaintEnginePrivate15fillPolygon_devEPK7QPointFiNS_6GCModeEN12QPaintEngine15PolygonDrawModeE
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QString17fromLatin1_helperEPKci
+   fun:_ZNK16Q3TextEditPlugin11includeFileEv
+   fun:_ZN18qdesigner_internal14WidgetDataBase22createCustomWidgetItemEPK30QDesignerCustomWidgetInterfaceRK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK11QMainWindow9statusBarEv
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK7QPixmap11paintEngineEv
+   fun:_ZN19QWidgetBackingStore11cleanRegionERK7QRegionP7QWidgetb
+   fun:_Z19qt_syncBackingStoreP7QWidget
+   fun:_ZN7QWidget5eventEP6QEvent
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI22QToolBarAreaLayoutLineE6appendERKS0_
+   fun:_ZN18QToolBarAreaLayout12restoreStateER11QDataStreamRK5QListIP8QToolBarEh
+   fun:_ZN22QMainWindowLayoutState12restoreStateER11QDataStreamRKS_
+   fun:_ZN17QMainWindowLayout12restoreStateER11QDataStream
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_Z21queuedConnectionTypesRK5QListI10QByteArrayE
+   fun:_ZN7QObject7connectEPKS_PKcS1_S3_N2Qt14ConnectionTypeE
+   fun:_ZN26QAbstractScrollAreaPrivate4initEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDesignerWorkbench18switchToDockedModeEv
+   fun:_ZN18QDesignerWorkbench16applyPreferencesERK11Preferences
+   fun:_ZN18QDesignerWorkbenchC1Ev
+   fun:_ZN9QDesigner10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDockAreaLayoutInfo12restoreStateER11QDataStreamR5QListIP11QDockWidgetE
+   fun:_ZN15QDockAreaLayout12restoreStateER11QDataStreamRK5QListIP11QDockWidgetE
+   fun:_ZN22QMainWindowLayoutState12restoreStateER11QDataStreamRKS_
+   fun:_ZN17QMainWindowLayout12restoreStateER11QDataStream
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QMenuPrivate4initEv
+   fun:_ZN5QMenuC1ERK7QStringP7QWidget
+   fun:_ZN8QMenuBar7addMenuERK7QString
+   fun:_ZN18QDesignerWorkbench10initializeEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z6Balloci
+   fun:_Z3i2bi
+   fun:_Z8pow5multP6Biginti
+   fun:_Z7qstrtodPKcPS0_Pb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI19QDockAreaLayoutItemE6appendERKS0_
+   fun:_ZN19QDockAreaLayoutInfo12restoreStateER11QDataStreamR5QListIP11QDockWidgetE
+   fun:_ZN15QDockAreaLayout12restoreStateER11QDataStreamRK5QListIP11QDockWidgetE
+   fun:_ZN22QMainWindowLayoutState12restoreStateER11QDataStreamRKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QToolBarAreaLayout12restoreStateER11QDataStreamRK5QListIP8QToolBarEh
+   fun:_ZN22QMainWindowLayoutState12restoreStateER11QDataStreamRKS_
+   fun:_ZN17QMainWindowLayout12restoreStateER11QDataStream
+   fun:_ZN11QMainWindow12restoreStateERK10QByteArrayi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4QPenC1ERK6QBrushdN2Qt8PenStyleENS3_11PenCapStyleENS3_12PenJoinStyleE
+   fun:_ZN8QPainter6setPenEN2Qt8PenStyleE
+   fun:_ZN8QPainter8fillRectERK5QRectRK6QBrush
+   fun:_ZNK14QWidgetPrivate15paintBackgroundEP8QPainterRK5QRectb
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListI22QToolBarAreaLayoutItemE6appendERKS0_
+   fun:_ZN18QToolBarAreaLayout12restoreStateER11QDataStreamRK5QListIP8QToolBarEh
+   fun:_ZN22QMainWindowLayoutState12restoreStateER11QDataStreamRKS_
+   fun:_ZN17QMainWindowLayout12restoreStateER11QDataStream
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN14QWidgetPrivate13createTLExtraEv
+   fun:_ZN7QWidget14setWindowTitleERK7QString
+   fun:_ZN18QDesignerWorkbench10initializeEv
+   fun:_ZN18QDesignerWorkbenchC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QX11PaintEngineC1Ev
+   fun:_ZNK7QPixmap11paintEngineEv
+   fun:_ZN19QWidgetBackingStore11cleanRegionERK7QRegionP7QWidgetb
+   fun:_Z19qt_syncBackingStoreP7QWidget
+}

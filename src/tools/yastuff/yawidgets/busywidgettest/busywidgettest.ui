@@ -1,0 +1,47 @@
+<ui version="4.0" >
+ <class>BusyWidgetTest</class>
+ <widget class="QWidget" name="BusyWidgetTest" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>371</width>
+    <height>103</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QCheckBox" name="checkBox" >
+     <property name="text" >
+      <string>I'm checkin'</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="YaBusyWidget" native="1" name="widget" />
+   </item>
+   <item>
+    <widget class="YaBusyWidget2" native="1" name="widget_2" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>YaBusyWidget</class>
+   <extends>QWidget</extends>
+   <header>yabusywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>YaBusyWidget2</class>
+   <extends>QWidget</extends>
+   <header>yabusywidget2.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

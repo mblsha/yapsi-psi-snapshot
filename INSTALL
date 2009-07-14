@@ -1,0 +1,35 @@
+Installation
+------------
+
+-=[ Important ]=-
+
+  For best experience, use of patched Qt is adviced: all required patches
+  are provided in qt-patches directory.
+
+-=[ Linux / Unix ]=-
+
+  For instructions on how to build and install Psi on Unix systems, see 
+  the 'Compiling' section below.
+
+-=[ Windows ]=-
+
+  No installation required for Windows.  You can simply just
+  run the Psi executable.  You might want to move everything into
+  C:\Program Files\Psi
+
+-=[ MacOS X ]=-
+
+  Drag the Psi application file from the disk image into the Applications dir.
+
+
+Compiling
+---------
+
+Requirements:
+  - Qt 4.5.1 with patches
+
+You can obtain Qt at http://www.qtsoftware.com/
+
+For information about building Psi on Unix, see doc/build-unix.txt.
+For information about building Psi on Mac OS X, see doc/build-mac.txt.
+For information about building Psi on Windows, see doc/build-win.txt.

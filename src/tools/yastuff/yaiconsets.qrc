@@ -1,0 +1,67 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+<!--
+		<file>iconsets/roster/roster-big/away.png</file>
+		<file>iconsets/roster/roster-big/dnd.png</file>
+		<file>iconsets/roster/roster-big/icondef.xml</file>
+		<file>iconsets/roster/roster-big/invisible.png</file>
+		<file>iconsets/roster/roster-big/lock.png</file>
+		<file>iconsets/roster/roster-big/offline.png</file>
+		<file>iconsets/roster/roster-big/online.png</file>
+		<file>iconsets/roster/roster-big/warning.png</file>
+-->
+		<file>iconsets/roster/default/icondef.xml</file>
+		<file>iconsets/roster/default/icon-away.png</file>
+		<file>iconsets/roster/default/icon-busy.png</file>
+		<file>iconsets/roster/default/icon-invisible.png</file>
+		<file>iconsets/roster/default/icon-lock.png</file>
+		<file>iconsets/roster/default/icon-offline.png</file>
+		<file>iconsets/roster/default/icon-online.png</file>
+		<file>iconsets/roster/default/icon-warning.png</file>
+<!--
+		<file>iconsets/emoticons/yaemo/icondef.xml</file>
+		<file>iconsets/emoticons/yaemo/+1.png</file>
+		<file>iconsets/emoticons/yaemo/-1.png</file>
+		<file>iconsets/emoticons/yaemo/beer.png</file>
+		<file>iconsets/emoticons/yaemo/boyan1.png</file>
+		<file>iconsets/emoticons/yaemo/boyan2.png</file>
+		<file>iconsets/emoticons/yaemo/boyan3.png</file>
+		<file>iconsets/emoticons/yaemo/brainsucker.png</file>
+		<file>iconsets/emoticons/yaemo/evil.png</file>
+		<file>iconsets/emoticons/yaemo/glasses.png</file>
+		<file>iconsets/emoticons/yaemo/hmm.png</file>
+		<file>iconsets/emoticons/yaemo/lol.png</file>
+		<file>iconsets/emoticons/yaemo/love.png</file>
+		<file>iconsets/emoticons/yaemo/sad.png</file>
+		<file>iconsets/emoticons/yaemo/sad_wink.png</file>
+		<file>iconsets/emoticons/yaemo/sick.png</file>
+		<file>iconsets/emoticons/yaemo/smile.png</file>
+		<file>iconsets/emoticons/yaemo/tongue.png</file>
+		<file>iconsets/emoticons/yaemo/wink.png</file>
+		<file>iconsets/emoticons/yaemo/woot.png</file>
+		<file>iconsets/emoticons/yaemo/wow.png</file>
+
+		<file>iconsets/emoticons/yaemomidget/icondef.xml</file>
+		<file>iconsets/emoticons/yaemomidget/+1.png</file>
+		<file>iconsets/emoticons/yaemomidget/-1.png</file>
+		<file>iconsets/emoticons/yaemomidget/beer.png</file>
+		<file>iconsets/emoticons/yaemomidget/boyan1.png</file>
+		<file>iconsets/emoticons/yaemomidget/boyan2.png</file>
+		<file>iconsets/emoticons/yaemomidget/boyan3.png</file>
+		<file>iconsets/emoticons/yaemomidget/brainsucker.png</file>
+		<file>iconsets/emoticons/yaemomidget/evil.png</file>
+		<file>iconsets/emoticons/yaemomidget/glasses.png</file>
+		<file>iconsets/emoticons/yaemomidget/hmm.png</file>
+		<file>iconsets/emoticons/yaemomidget/lol.png</file>
+		<file>iconsets/emoticons/yaemomidget/love.png</file>
+		<file>iconsets/emoticons/yaemomidget/sad.png</file>
+		<file>iconsets/emoticons/yaemomidget/sad_wink.png</file>
+		<file>iconsets/emoticons/yaemomidget/sick.png</file>
+		<file>iconsets/emoticons/yaemomidget/smile.png</file>
+		<file>iconsets/emoticons/yaemomidget/tongue.png</file>
+		<file>iconsets/emoticons/yaemomidget/wink.png</file>
+		<file>iconsets/emoticons/yaemomidget/woot.png</file>
+		<file>iconsets/emoticons/yaemomidget/wow.png</file>
+-->
+	</qresource>
+</RCC>

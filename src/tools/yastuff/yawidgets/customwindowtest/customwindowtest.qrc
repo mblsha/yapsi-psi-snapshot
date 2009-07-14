@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>../../images/window/close.png</file>
+		<file>../../images/window/minimize.png</file>
+		<file>../../images/window/maximize.png</file>
+	</qresource>
+</RCC>

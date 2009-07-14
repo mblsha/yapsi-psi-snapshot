@@ -1,0 +1,12 @@
+/Makefile
+/Makefile.Debug
+/Makefile.Release
+/_moc
+/_obj
+/_ui
+/debug
+/release
+/.moc
+/.obj
+/.ui
+/crashreporter

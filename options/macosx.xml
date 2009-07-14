@@ -1,0 +1,14 @@
+<!DOCTYPE psi>
+<psi version="defaults" >
+	<options comment="Client options">
+		<shortcuts comment="Shortcuts">
+			<common comment="Common actions" >
+				<history type="QKeySequence" comment="Open the message history">Ctrl+Shift+H</history>
+				<close type="QVariantList" comment="Close the current window/tab">
+					<item type="QKeySequence">Esc</item>
+					<item type="QKeySequence">Ctrl+W</item>
+				</close>
+			</common>
+		</shortcuts>
+	</options>
+</psi>

@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<meta>
+		<name>YaEmoMidget Smilies</name>
+		<version>1.0</version>
+		<description>Icons © Yandex</description>
+		<creation>2008-08-28</creation>
+		<home>http://yandex.ru</home>
+		<author www='http://www.yandex.ru'>Yandex</author>
+	</meta>
+
+	<!-- Normal icons -->
+	<icon>
+		<text>:-)</text>
+		<text>:)</text>
+		<text>(-:</text>
+		<text>(:</text>
+		<text>=)</text>
+		<text>:smile:</text>
+		<text>(smile)</text>
+		<object mime='image/png'>smile.png</object>
+		<x xmlns='ya:description'>Улыбка</x>
+	</icon>
+
+	<icon>
+		<text>;-)</text>
+		<text>;)</text>
+		<text>(-;</text>
+		<text>(;</text>
+		<text>:wink:</text>
+		<text>(wink)</text>
+		<object mime='image/png'>wink.png</object>
+		<x xmlns='ya:description'>Подмигивание</x>
+	</icon>
+
+	<icon>
+		<text>:-P</text>
+		<text>:-p</text>
+		<text>:P</text>
+		<text>:p</text>
+		<text>:razz:</text>
+		<text>(razz)</text>
+		<object mime='image/png'>tongue.png</object>
+		<x xmlns='ya:description'>Показать язык</x>
+	</icon>
+
+	<icon>
+		<text>:-D</text>
+		<text>:-d</text>
+		<text>:D</text>
+		<text>:d</text>
+		<text>:-></text>
+		<text>:></text>
+		<text>:-))</text>
+		<text>:-)))</text>
+		<text>:-))))</text>
+		<text>:-)))))</text>
+		<text>:-))))))</text>
+		<text>:-)))))))</text>
+		<text>:-))))))))</text>
+		<text>:-)))))))))</text>
+		<text>:-))))))))))</text>
+		<text>:))</text>
+		<text>:)))</text>
+		<text>:))))</text>
+		<text>:)))))</text>
+		<text>:))))))</text>
+		<text>:)))))))</text>
+		<text>:))))))))</text>
+		<text>:)))))))))</text>
+		<text>:))))))))))</text>
+		<text>:grin:</text>
+		<text>(grin)</text>
+		<text>:lol:</text>
+		<text>(lol)</text>
+		<object mime='image/png'>lol.png</object>
+		<x xmlns='ya:description'>Смех</x>
+	</icon>
+
+	<icon>
+		<text>:-(</text>
+		<text>:(</text>
+		<text>)-:</text>
+		<text>):</text>
+		<text>:sad:</text>
+		<text>(sad)</text>
+		<object mime='image/png'>sad.png</object>
+		<x xmlns='ya:description'>Грусть</x>
+	</icon>
+
+	<icon>
+		<text>;-(</text>
+		<text>;(</text>
+		<text>)-;</text>
+		<text>);</text>
+		<object mime='image/png'>sad_wink.png</object>
+		<x xmlns='ya:description'>Огорчение</x>
+	</icon>
+
+	<icon>
+		<text>:-O</text>
+		<text>:-o</text>
+		<text>:O</text>
+		<text>:o</text>
+		<text>8-O</text>
+		<text>8-o</text>
+		<text>:O</text>
+		<text>:eek:</text>
+		<text>:surprised:</text>
+		<text>(eek)</text>
+		<text>(surprised)</text>
+		<object mime='image/png'>woot.png</object>
+		<x xmlns='ya:description'>Изумление</x>
+	</icon>
+
+	<icon>
+		<text>:-@</text>
+		<text>:@</text>
+		<object mime='image/png'>wow.png</object>
+		<x xmlns='ya:description'>Испуг</x>
+	</icon>
+
+	<icon>
+		<text>:-$</text>
+		<text>:$</text>
+		<text>(D)</text>
+		<text>(d)</text>
+		<text>%)</text>
+		<object mime='image/png'>sick.png</object>
+		<x xmlns='ya:description'>Болею</x>
+	</icon>
+
+	<icon>
+		<text>B-)</text>
+		<text>B)</text>
+		<text>8-)</text>
+		<text>8)</text>
+		<text>:cool:</text>
+		<text>(cool)</text>
+		<object mime='image/png'>glasses.png</object>
+		<x xmlns='ya:description'>Здорово</x>
+	</icon>
+
+	<icon>
+		<text>o_O</text>
+		<text>O_o</text>
+		<text>o_o</text>
+		<text>O_O</text>
+		<text>:oops:</text>
+		<text>(oops)</text>
+		<object mime='image/png'>brainsucker.png</object>
+		<x xmlns='ya:description'>Недоумение</x>
+	</icon>
+
+	<icon>
+		<text>:-|</text>
+		<text>:|</text>
+		<text>:-/</text>
+		<text>:/</text>
+		<text>:-\</text>
+		<text>:\</text>
+		<object mime='image/png'>hmm.png</object>
+		<x xmlns='ya:description'>Амбивалентность</x>
+	</icon>
+
+	<icon>
+		<text>|~|D</text>
+		<text>(H)</text>
+		<text>(h)</text>
+		<text>(B)</text>
+		<text>(b)</text>
+		<text>:beer:</text>
+		<text>(beer)</text>
+		<object mime='image/png'>beer.png</object>
+		<x xmlns='ya:description'>Пиво</x>
+	</icon>
+
+	<icon>
+		<text>&gt;:-)</text>
+		<text>&gt;:)</text>
+		<text>:evil:</text>
+		<text>(evil)</text>
+		<text>:mad:</text>
+		<text>(mad)</text>
+		<object mime='image/png'>evil.png</object>
+		<x xmlns='ya:description'>Озорник</x>
+	</icon>
+
+	<icon>
+		<text>&lt;3</text>
+		<text>:-*</text>
+		<text>(L)</text>
+		<text>(l)</text>
+		<text>(U)</text>
+		<text>(u)</text>
+		<text>:love:</text>
+		<text>:loved:</text>
+		<text>(love)</text>
+		<text>(loved)</text>
+		<object mime='image/png'>love.png</object>
+		<x xmlns='ya:description'>Сердце</x>
+	</icon>
+
+	<!-- <icon>
+		<text>:'-(</text>
+		<text>:'(</text>
+		<text>;-(</text>
+		<text>;(</text>
+
+		<object mime='image/png'>smile_18.png</object>
+		<x xmlns='ya:description'></x>
+	</icon> -->
+
+	<icon>
+		<text>(+1)</text>
+		<text>+1!</text>
+		<object mime='image/png'>+1.png</object>
+		<x xmlns='ya:description'>Отлично!</x>
+	</icon>
+
+	<icon>
+		<text>(-1)</text>
+		<text>-1!</text>
+		<object mime='image/png'>-1.png</object>
+		<x xmlns='ya:description'>Плохо</x>
+	</icon>
+
+	<icon>
+		<text>[:]||[:]</text>
+		<text>[:]|||[:]</text>
+		<text>[:]||||[:]</text>
+		<text>:]||[:</text>
+		<text>:]|||[:</text>
+		<text>:]||||[:</text>
+		<text>:||:</text>
+		<text>:|||:</text>
+		<text>:||||:</text>
+		<object mime='image/png'>boyan1.png</object>
+		<x xmlns='ya:description'>Баян</x>
+	</icon>
+
+	<icon>
+		<text>[:]|||||[:]</text>
+		<text>[:]||||||[:]</text>
+		<text>[:]|||||||[:]</text>
+		<text>:]|||||[:</text>
+		<text>:]||||||[:</text>
+		<text>:]|||||||[:</text>
+		<text>:|||||:</text>
+		<text>:||||||:</text>
+		<text>:|||||||:</text>
+		<x xmlns='ya:user-selectable'>false</x>
+		<object mime='image/png'>boyan2.png</object>
+		<x xmlns='ya:description'>Большой баян</x>
+	</icon>
+
+	<icon>
+		<text>[:]||||||||[:]</text>
+		<text>[:]|||||||||[:]</text>
+		<text>[:]||||||||||[:]</text>
+		<text>:]||||||||[:</text>
+		<text>:]|||||||||[:</text>
+		<text>:]||||||||||[:</text>
+		<text>:||||||||:</text>
+		<text>:|||||||||:</text>
+		<text>:||||||||||:</text>
+		<x xmlns='ya:user-selectable'>false</x>
+		<object mime='image/png'>boyan3.png</object>
+		<x xmlns='ya:description'>Огромный баян</x>
+	</icon>
+
+</icondef>

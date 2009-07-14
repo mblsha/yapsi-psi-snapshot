@@ -1,0 +1,35 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>../../images/down-arrow/hover.png</file>
+		<file>../../images/down-arrow/normal.png</file>
+		<file>../../images/down-arrow/pressed.png</file>
+
+		<file>../../images/balloon/self/active/arrow.png</file>
+		<file>../../images/balloon/self/active/bottom_center.png</file>
+		<file>../../images/balloon/self/active/bottom_left.png</file>
+		<file>../../images/balloon/self/active/bottom_right.png</file>
+		<file>../../images/balloon/self/active/middle_center.png</file>
+		<file>../../images/balloon/self/active/middle_left.png</file>
+		<file>../../images/balloon/self/active/middle_right.png</file>
+		<file>../../images/balloon/self/active/top_center.png</file>
+		<file>../../images/balloon/self/active/top_left.png</file>
+		<file>../../images/balloon/self/active/top_right.png</file>
+		<file>../../images/balloon/self/normal/arrow.png</file>
+		<file>../../images/balloon/self/normal/bottom_center.png</file>
+		<file>../../images/balloon/self/normal/bottom_left.png</file>
+		<file>../../images/balloon/self/normal/bottom_right.png</file>
+		<file>../../images/balloon/self/normal/middle_center.png</file>
+		<file>../../images/balloon/self/normal/middle_left.png</file>
+		<file>../../images/balloon/self/normal/middle_right.png</file>
+		<file>../../images/balloon/self/normal/top_center.png</file>
+		<file>../../images/balloon/self/normal/top_left.png</file>
+		<file>../../images/balloon/self/normal/top_right.png</file>
+
+		<file>../../iconsets/roster/default/away.png</file>
+		<file>../../iconsets/roster/default/dnd.png</file>
+		<file>../../iconsets/roster/default/icondef.xml</file>
+		<file>../../iconsets/roster/default/invisible.png</file>
+		<file>../../iconsets/roster/default/offline.png</file>
+		<file>../../iconsets/roster/default/online.png</file>
+	</qresource>
+</RCC>

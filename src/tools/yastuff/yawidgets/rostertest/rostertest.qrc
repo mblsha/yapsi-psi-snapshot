@@ -1,0 +1,17 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>../../iconsets/roster/roster-small/icon-away.png</file>
+		<file>../../iconsets/roster/roster-small/icon-busy.png</file>
+		<file>../../iconsets/roster/roster-small/icon-offline.png</file>
+		<file>../../iconsets/roster/roster-small/icon-online.png</file>
+
+		<file>userpics/0.png</file>
+		<file>userpics/1.jpg</file>
+		<file>userpics/2.jpg</file>
+		<file>userpics/3.jpg</file>
+		<file>userpics/4.jpg</file>
+		<file>userpics/5.jpg</file>
+		<file>userpics/6.jpg</file>
+		<file>userpics/7.jpg</file>
+	</qresource>
+</RCC>

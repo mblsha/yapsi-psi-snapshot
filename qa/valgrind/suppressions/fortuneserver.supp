@@ -1,0 +1,118 @@
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libX11.so.6.2.0
+   obj:/usr/lib/libX11.so.6.2.0
+   fun:XrmGetStringDatabase
+   fun:XGetDefault
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:FcPatternCreate
+   fun:_Z6loadFcPK12QFontPrivateiRK8QFontDef
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK13QFontMetricsF7leadingEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z6loadFcPK12QFontPrivateiRK8QFontDef
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK13QFontMetricsF7leadingEv
+   fun:_Z14qt_format_textRK5QFontRK6QRectFiPK11QTextOptionRK7QStringPS2_iPiiP8QPainter
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK13QFontMetricsF7leadingEv
+   fun:_Z14qt_format_textRK5QFontRK6QRectFiPK11QTextOptionRK7QStringPS2_iPiiP8QPainter
+   fun:_Z14qt_format_textRK5QFontRK6QRectFiRK7QStringPS2_iPiiP8QPainter
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_Z14tryPatternLoadP10_FcPatterniRK8QFontDefi
+   fun:_Z6loadFcPK12QFontPrivateiRK8QFontDef
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZNK13QFontMetricsF7leadingEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN11QVectorData6mallocEiiiPS_
+   fun:_ZN7QVectorIP11QFontEngineE7reallocEii
+   fun:_ZN7QVectorIP11QFontEngineE6resizeEi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN9QHashData12allocateNodeEv
+   fun:_ZN13QFreetypeFace7getFaceERKN11QFontEngine6FaceIdE
+   fun:_ZN13QFontEngineFT4initEN11QFontEngine6FaceIdEbNS_11GlyphFormatE
+   fun:_ZN16QFontEngineX11FTC1EP10_FcPatternRK8QFontDefi
+}

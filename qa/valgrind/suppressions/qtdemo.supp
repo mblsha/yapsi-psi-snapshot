@@ -1,0 +1,2067 @@
+
+
+
+
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   fun:dlopen
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   fun:dlopen
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN19ItemCircleAnimation10useGuideQtEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation18switchToNextEffectEv
+   fun:_ZN19ItemCircleAnimation16animationStartedEi
+   fun:_ZN17DemoItemAnimation16playWithoutDelayEv
+   fun:_ZN17DemoItemAnimation11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15readXmlDocumentEv
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourceP10QXmlReaderP7QStringPiS6_
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourcebP7QStringPiS4_
+   fun:_ZN12QDomDocument10setContentEP9QIODevicebP7QStringPiS4_
+   fun:_ZN11MenuManager15readXmlDocumentEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation12setupLettersEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN16QAssistantClientC1ERK7QStringP7QObject
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN16QAssistantClientC1ERK7QStringP7QObject
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN23QDomDocumentTypePrivate4initEv
+   fun:_ZN23QDomDocumentTypePrivateC1EP19QDomDocumentPrivateP15QDomNodePrivate
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourceP10QXmlReaderP7QStringPiS6_
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourcebP7QStringPiS4_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN23QDomDocumentTypePrivate4initEv
+   fun:_ZN23QDomDocumentTypePrivateC1EP19QDomDocumentPrivateP15QDomNodePrivate
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourceP10QXmlReaderP7QStringPiS6_
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourcebP7QStringPiS4_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QAbstractFileEngine6createERK7QString
+   fun:_ZN11QDirPrivate14initFileEngineERK7QString
+   fun:_ZN4QDirC1ERK7QString
+   fun:_ZN11MenuManagerC1Ev
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListIN20QGraphicsItemPrivate11ExtraStructEE6appendERKS1_
+   fun:_ZN13QGraphicsItem9setCursorERK7QCursor
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/lib/tls/i686/cmov/libdl-2.7.so
+   fun:dlopen
+   obj:/usr/lib/libGL.so.169.12
+   obj:/lib/ld-2.7.so
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:XextCreateExtension
+   obj:/usr/lib/libGL.so.169.12
+   fun:_ZN10QGLContext12chooseVisualEv
+   fun:_ZN10QGLContext13chooseContextEPKS_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4QDirC1ERK7QString
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation18switchToNextEffectEv
+   fun:_ZN19ItemCircleAnimation16animationStartedEi
+   fun:_ZN17DemoItemAnimation16playWithoutDelayEv
+   fun:_ZN17DemoItemAnimation11qt_metacallEN11QMetaObject4CallEiPPv
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/libGL.so.169.12
+   obj:/lib/ld-2.7.so
+   obj:/lib/ld-2.7.so
+   obj:*
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDomDocumentPrivate27createProcessingInstructionERK7QStringS2_
+   fun:_ZN11QDomHandler21processingInstructionERK7QStringS2_
+   fun:_ZN23QXmlSimpleReaderPrivate11parsePrologEv
+   fun:_ZN23QXmlSimpleReaderPrivate20parseBeginOrContinueEib
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QDomDocument10setContentEP9QIODevicebP7QStringPiS4_
+   fun:_ZN11MenuManager15readXmlDocumentEv
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QDirPrivateC1EP4QDirPKS0_
+   fun:_ZN4QDirC1ERK7QString
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourceP10QXmlReaderP7QStringPiS6_
+   fun:_ZN19QDomDocumentPrivate10setContentEP15QXmlInputSourcebP7QStringPiS4_
+   fun:_ZN12QDomDocument10setContentEP9QIODevicebP7QStringPiS4_
+   fun:_ZN11MenuManager15readXmlDocumentEv
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation11setupGuidesEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN12QHostAddressC1Ev
+   fun:_ZN22QAbstractSocketPrivateC2Ev
+   fun:_ZN10QTcpSocketC1EP7QObject
+   fun:_ZN16QAssistantClientC1ERK7QStringP7QObject
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+   fun:_ZN8DemoItem13validateImageEv
+   fun:_ZNK8DemoItem12boundingRectEv
+   fun:_ZN14QGraphicsScene11itemUpdatedEP13QGraphicsItemRK6QRectF
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager12createTickerEv
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libX11.so.6.2.0
+   obj:/usr/lib/libX11.so.6.2.0
+   fun:_XlcOpenConverter
+   fun:_XrmDefaultInitParseInfo
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN13QFontDatabase4loadEPK12QFontPrivatei
+   fun:_ZN11QScriptLine16setDefaultHeightEP11QTextEngine
+   fun:_ZN9QTextLine13layout_helperEi
+   fun:_ZN9QTextLine12setLineWidthEd
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QRegionC1ERK5QRectNS_10RegionTypeE
+   fun:_ZN18QRasterPaintEngine16updateClipRegionERK7QRegionN2Qt13ClipOperationE
+   fun:_ZN18QRasterPaintEngine5beginEP12QPaintDevice
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+   fun:_ZN8QPainterC1EP12QPaintDevice
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QTcpSocketC1EP7QObject
+   fun:_ZN16QAssistantClientC1ERK7QStringP7QObject
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN13QFSFileEngineC1ERK7QString
+   fun:_ZN19QAbstractFileEngine6createERK7QString
+   fun:_ZN11QDirPrivate14initFileEngineERK7QString
+   fun:_ZN4QDirC1ERK7QString
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11QRasterizerC1Ev
+   fun:_ZN25QRasterPaintEnginePrivateC1Ev
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8QProcessC1EP7QObject
+   fun:_ZN16QAssistantClientC1ERK7QStringP7QObject
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libfontconfig.so.1.3.0
+   obj:/usr/lib/libfontconfig.so.1.3.0
+   obj:/usr/lib/libfontconfig.so.1.3.0
+   fun:_Z18qt_addPatternPropsP10_FcPatterniiRK8QFontDef
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QRegionC1ERK5QRectNS_10RegionTypeE
+   fun:_ZN18QRasterPaintEngine16updateClipRegionERK7QRegionN2Qt13ClipOperationE
+   fun:_ZN18QRasterPaintEngine5beginEP12QPaintDevice
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN4QPenC1ERK6QBrushdN2Qt8PenStyleENS3_11PenCapStyleENS3_12PenJoinStyleE
+   fun:_ZN8QPainter6setPenERK6QColor
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+   fun:_ZN8DemoItem13validateImageEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager10createInfoEP8DemoItemRK7QString
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager10createInfoEP8DemoItemRK7QString
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:dbus_malloc
+   fun:dbus_threads_init
+   fun:_Z16qDBusInitThreadsv
+   fun:_ZN22QDBusConnectionPrivateC1EP7QObject
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QImageData6createERK5QSizeN6QImage6FormatEi
+   fun:_ZN6QImageC1EiiNS_6FormatE
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+   fun:_ZN8DemoItem13validateImageEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN8DemoItemC2EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN10LetterItemC1EcP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN19ItemCircleAnimation12createLetterEc
+   fun:_ZN19ItemCircleAnimation12setupLettersEv
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager15createLeftMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN6QBrush4initERK6QColorN2Qt10BrushStyleE
+   fun:_ZN6QBrushC1ERK6QColorN2Qt10BrushStyleE
+   fun:_ZN8QPainter6setPenERK6QColor
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:realloc
+   fun:_ZN9QOpenType5shapeEP11QShaperItemPKj
+   fun:_Z11basic_shapeP11QShaperItem
+   fun:_ZNK11QTextEngine9shapeTextEi
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN6QBrush4initERK6QColorN2Qt10BrushStyleE
+   fun:_ZN6QBrushC1ERK9QGradient
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+   fun:_ZN8DemoItem13validateImageEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDomElementPrivateC1EP19QDomDocumentPrivateP15QDomNodePrivateRK7QStringS6_
+   fun:_ZN19QDomDocumentPrivate15createElementNSERK7QStringS2_
+   fun:_ZN11QDomHandler12startElementERK7QStringS2_S2_RK14QXmlAttributes
+   fun:_ZN23QXmlSimpleReaderPrivate22processElementEmptyTagEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN13QGraphicsItemC2EPS_P14QGraphicsScene
+   fun:_ZN8DemoItemC2EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN10LetterItemC1EcP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN19ItemCircleAnimation12createLetterEc
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19ItemCircleAnimation12createLetterEc
+   fun:_ZN19ItemCircleAnimation12setupLettersEv
+   fun:_ZN19ItemCircleAnimationC1EP14QGraphicsSceneP13QGraphicsItem
+   fun:_ZN11MenuManager12createTickerEv
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager16createRightMenu1ERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+   fun:_ZN8QPainterC1EP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager10createInfoEP8DemoItemRK7QString
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN11MenuManager10createInfoEP8DemoItemRK7QString
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN19QDomDocumentPrivate15createElementNSERK7QStringS2_
+   fun:_ZN11QDomHandler12startElementERK7QStringS2_S2_RK14QXmlAttributes
+   fun:_ZN23QXmlSimpleReaderPrivate22processElementEmptyTagEv
+   fun:_ZN23QXmlSimpleReaderPrivate12parseElementEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN9QHashData13detach_helperEPFvPNS_4NodeEPvEi
+   fun:_ZN5QHashI7QStringS0_E13detach_helperEv
+   fun:_ZN11MenuManager20readInfoAboutExampleERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN17DemoItemAnimationC1EP8DemoItemNS_7INOROUTE
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:qt_ft_black_new
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN15QDomAttrPrivate12setNodeValueERK7QString
+   fun:_ZN18QDomElementPrivate14setAttributeNSERK7QStringS2_S2_
+   fun:_ZN11QDomHandler12startElementERK7QStringS2_S2_RK14QXmlAttributes
+   fun:_ZN23QXmlSimpleReaderPrivate22processElementEmptyTagEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN18QDomElementPrivate14setAttributeNSERK7QStringS2_S2_
+   fun:_ZN11QDomHandler12startElementERK7QStringS2_S2_RK14QXmlAttributes
+   fun:_ZN23QXmlSimpleReaderPrivate22processElementEmptyTagEv
+   fun:_ZN23QXmlSimpleReaderPrivate12parseElementEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libfreetype.so.6.3.16
+   fun:_hb_ftglue_realloc
+   fun:hb_buffer_ensure
+   fun:hb_buffer_add_glyph
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znaj
+   fun:_ZN9QHashData6rehashEi
+   fun:_ZN11MenuManager20readInfoAboutExampleERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN10QImageData6createERK5QSizeN6QImage6FormatEi
+   fun:_ZN6QImageC1EiiNS_6FormatE
+   fun:_ZNK10LetterItem11createImageERK7QMatrix
+   fun:_ZN8DemoItem13validateImageEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN9QHashData12allocateNodeEv
+   fun:_ZN5QHashI7QStringS0_EixERKS0_
+   fun:_ZN11MenuManager20readInfoAboutExampleERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:gray_raster_new
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN18QRasterPaintEngine4initEv
+   fun:_ZN18QRasterPaintEngineC1Ev
+   fun:_ZNK6QImage11paintEngineEv
+   fun:_ZN8QPainter5beginEP12QPaintDevice
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN7QObjectC2EPS_
+   fun:_ZN11MenuManagerC1Ev
+   fun:_ZN11MenuManager8instanceEv
+   fun:main
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN9QTimeLineC1EiP7QObject
+   fun:_ZN17DemoItemAnimationC1EP8DemoItemNS_7INOROUTE
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN22QGraphicsItemAnimationC2EP7QObject
+   fun:_ZN17DemoItemAnimationC1EP8DemoItemNS_7INOROUTE
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+   fun:_ZN11MenuManager4initEP10MainWindow
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_Z8qReallocPvj
+   fun:_ZN9QListData7reallocEi
+   fun:_ZN9QListData6appendEv
+   fun:_ZN5QListIP7QObjectE6appendERKS1_
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN5QListIN29QGraphicsItemAnimationPrivate4PairEE6appendERKS1_
+   fun:_ZN29QGraphicsItemAnimationPrivate16insertUniquePairEddP5QListINS_4PairEEPKc
+   fun:_ZN22QGraphicsItemAnimation8setPosAtEdRK7QPointF
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_Z7qMallocj
+   fun:_ZN7QString7reallocEi
+   fun:_ZN7QString6appendERKS_
+   fun:_ZN11MenuManager14createLeafMenuERK11QDomElement
+}
+
+
+
+
+
+
+
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libfreetype.so.6.3.16
+   fun:_hb_ftglue_alloc
+   fun:Load_MarkBasePos
+   fun:_HB_GPOS_Load_SubTable
+}

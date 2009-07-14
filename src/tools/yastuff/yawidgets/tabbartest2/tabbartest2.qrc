@@ -1,0 +1,17 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>../../iconsets/roster/default/icon-away.png</file>
+		<file>../../iconsets/roster/default/icon-busy.png</file>
+		<file>../../iconsets/roster/default/icon-offline.png</file>
+		<file>../../iconsets/roster/default/icon-online.png</file>
+
+		<file>../../images/closetab.png</file>
+		<file>../../images/closetab_chat.png</file>
+		<file>../../images/closetab_hover.png</file>
+		<file>../../images/closetab_pressed.png</file>
+
+		<file>../../images/chevron.png</file>
+		<file>../../images/chevron_pressed.png</file>
+		<file>../../images/chevron_blinking.png</file>
+	</qresource>
+</RCC>

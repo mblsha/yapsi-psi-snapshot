@@ -1,0 +1,126 @@
+<ui version="4.0" >
+ <class>YaManageAccounts</class>
+ <widget class="QWidget" name="YaManageAccounts" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>382</width>
+    <height>261</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Manage Accounts</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="expandingFillerFrame" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>5</height>
+      </size>
+     </property>
+     <property name="styleSheet" >
+      <string>border: 100px solid white; </string>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="AccountInformerView" name="treeView" >
+     <property name="focusPolicy" >
+      <enum>Qt::TabFocus</enum>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>8</number>
+     </property>
+     <property name="topMargin" >
+      <number>8</number>
+     </property>
+     <item>
+      <widget class="YaPushButton" name="addButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>Add</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="../yastuff.qrc" >:/images/user-actions/button_glyph_add.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="YaPushButton" name="deleteButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>Remove</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="../yastuff.qrc" >:/images/user-actions/button_glyph_remove.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>YaPushButton</class>
+   <extends>QPushButton</extends>
+   <header>yapushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AccountInformerView</class>
+   <extends>QTreeView</extends>
+   <header>accountinformerview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../yastuff.qrc" />
+ </resources>
+ <connections/>
+</ui>

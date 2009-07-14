@@ -1,0 +1,60 @@
+<ui version="4.0" >
+ <class>YaLicense</class>
+ <widget class="QWidget" name="YaLicense" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>490</width>
+    <height>557</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Ya.Online</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <property name="topMargin" >
+    <number>30</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="textBrowser_2" >
+     <property name="maximumSize" >
+      <size>
+       <width>160</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:14pt; font-weight:600; vertical-align:super;">Для использования программы Вам необходимо подтвердить свое согласие с лицензионным соглашением.&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; vertical-align:super;">Нажмите «Подтверждаю», чтобы продолжить, или «Не подтверждаю» для выхода из Программы.&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QTextBrowser" name="textBrowser" >
+     <property name="html" >
+      <string></string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::NoButton</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+</ui>
