@@ -4407,7 +4407,7 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>YaRemoveConfirmationMessageBox</name>
+    <name>RemoveConfirmationMessageBox</name>
     <message>
         <location filename="../src/tools/yastuff/yaremoveconfirmationmessagebox.cpp" line="295"/>
         <source>Ya.Online</source>

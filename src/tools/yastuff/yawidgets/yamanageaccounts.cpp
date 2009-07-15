@@ -30,7 +30,7 @@
 #include "yastyle.h"
 #include "accountinformermodel.h"
 #include "psiaccount.h"
-#include "yaremoveconfirmationmessagebox.h"
+#include "removeconfirmationmessagebox.h"
 #include "shortcutmanager.h"
 #include "yapushbutton.h"
 #include "xmpp_xmlcommon.h"
@@ -197,7 +197,7 @@ void YaManageAccounts::deleteAccount(const QString& xml)
 	PsiAccount* account = controller_->contactList()->getAccount(e.attribute("id"));
 
 	if (account) {
-		YaRemoveConfirmationMessageBoxManager::instance()->
+		RemoveConfirmationMessageBoxManager::instance()->
 			removeConfirmation(xml, this, "deleteAccountConfirmation",
 			                   tr("Deleting account"),
 			                   tr("Do you really want to delete <b>%1</b>?")

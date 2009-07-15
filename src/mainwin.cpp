@@ -73,6 +73,7 @@
 #include "modeltest.h"
 #endif
 #endif
+#include "contactlistutil.h"
 
 #include "mainwin_p.h"
 
@@ -1476,7 +1477,12 @@ void MainWin::setWindowIcon(const QPixmap& p)
 #ifdef NEWCONTACTLIST
 void MainWin::removeSelection(QMimeData* selection)
 {
-	qWarning("removeSelection");
+	ContactListUtil::removeContact(0, selection, d->contactListModel_, this, this);
+}
+
+void MainWin::removeContactConfirmation(const QString& id, bool confirmed)
+{
+	ContactListUtil::removeContactConfirmation(id, confirmed, d->contactListModel_, d->contactListView_);
 }
 
 void MainWin::removeGroupWithoutContacts(QMimeData* selection)

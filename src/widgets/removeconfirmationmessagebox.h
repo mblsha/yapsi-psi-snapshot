@@ -1,6 +1,6 @@
 /*
- * yaremoveconfirmationmessagebox.h - generic confirmation of destructive action
- * Copyright (C) 2008  Yandex LLC (Michail Pishchagin)
+ * removeconfirmationmessagebox.h - generic confirmation of destructive action
+ * Copyright (C) 2008-2009  Yandex LLC (Michail Pishchagin)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,19 +18,18 @@
  *
  */
 
-#ifndef YAREMOVECONFIRMATIONMESSAGEBOX_H
-#define YAREMOVECONFIRMATIONMESSAGEBOX_H
+#ifndef REMOVECONFIRMATIONMESSAGEBOX_H
 
 #include <QMessageBox>
 #include <QPointer>
 
 class QPushButton;
 
-class YaRemoveConfirmationMessageBoxManager : public QObject
+class RemoveConfirmationMessageBoxManager : public QObject
 {
 	Q_OBJECT
 public:
-	static YaRemoveConfirmationMessageBoxManager* instance();
+	static RemoveConfirmationMessageBoxManager* instance();
 
 	// slots must accept (QString id, bool confirmed)
 	void removeConfirmation(const QString& id, QObject* obj, const char* slot,
@@ -53,8 +52,8 @@ private slots:
 	void update();
 
 private:
-	YaRemoveConfirmationMessageBoxManager();
-	~YaRemoveConfirmationMessageBoxManager();
+	RemoveConfirmationMessageBoxManager();
+	~RemoveConfirmationMessageBoxManager();
 
 	struct DataCallback {
 		DataCallback(QObject* _obj, const char* _slot)
@@ -85,16 +84,16 @@ private:
 	                 QWidget* parent,
 	                 const QStringList& actionNames);
 
-	static YaRemoveConfirmationMessageBoxManager* instance_;
+	static RemoveConfirmationMessageBoxManager* instance_;
 	QList<Data> data_;
 	static int onlineId_;
 };
 
-class YaRemoveConfirmationMessageBox : public QMessageBox
+class RemoveConfirmationMessageBox : public QMessageBox
 {
 	Q_OBJECT
 protected:
-	YaRemoveConfirmationMessageBox(const QString& title, const QString& informativeText, QWidget* parent);
+	RemoveConfirmationMessageBox(const QString& title, const QString& informativeText, QWidget* parent);
 
 	void setDestructiveActionName(const QString& destructiveAction);
 	void setComplimentaryActionName(const QString& complimentaryAction);
@@ -111,7 +110,7 @@ private:
 	QPushButton* complimentaryButton_;
 	QPushButton* cancelButton_;
 
-	friend class YaRemoveConfirmationMessageBoxManager;
+	friend class RemoveConfirmationMessageBoxManager;
 };
 
 #endif

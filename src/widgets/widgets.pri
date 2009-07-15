@@ -14,6 +14,7 @@ SOURCES += \
 	$$PWD/psirichtext.cpp \
 	$$PWD/psitooltip.cpp \
 	$$PWD/psitiplabel.cpp \
+	$$PWD/removeconfirmationmessagebox.cpp
 
 HEADERS += \
 	$$PWD/stretchwidget.h \
@@ -36,6 +37,7 @@ HEADERS += \
 	$$PWD/psirichtext.h \
 	$$PWD/psitooltip.h \
 	$$PWD/psitiplabel.h \
+	$$PWD/removeconfirmationmessagebox.h
 
 !yapsi {
 	SOURCES += \

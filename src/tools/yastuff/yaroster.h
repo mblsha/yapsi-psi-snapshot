@@ -272,10 +272,6 @@ protected:
 	bool eventFilter(QObject* obj, QEvent* e);
 	void contextMenuEvent(QContextMenuEvent* e);
 
-	QString confirmationData(PsiContact* contact, QMimeData* contactSelection) const;
-	QList<PsiContact*> contactsFor(const QString& confirmationData) const;
-	QStringList contactNamesFor(QList<PsiContact*> contacts) const;
-
 	YaContactListModel* modelForDeleteOperations() const;
 	QList<YaRosterTab*> rosterTabs() const;
 

@@ -63,7 +63,7 @@
 #include "xmpp_tasks.h"
 #include "contactlistmodelselection.h"
 #include "animatedstackedwidget.h"
-#include "yaremoveconfirmationmessagebox.h"
+#include "removeconfirmationmessagebox.h"
 #include "desktoputil.h"
 #include "yawindow.h"
 #include "yawindowtheme.h"
@@ -77,6 +77,7 @@
 #include "yawindow.h"
 #endif
 #include "psicon.h"
+#include "contactlistutil.h"
 
 static const QString tabIndexOptionPath = "options.ya.main-window.tab-index";
 static const QString showContactListGroupsOptionPath = "options.ya.main-window.contact-list.show-groups";
@@ -2399,216 +2400,29 @@ YaContactListModel* YaRoster::contactListModel() const
 	return modelForDeleteOperations();
 }
 
-QString YaRoster::confirmationData(PsiContact* contact, QMimeData* _selection) const
+void YaRoster::removeContact(PsiContact* contact, QMimeData* selection)
 {
-	QString selectionData;
-	YaContactListModel* model = modelForDeleteOperations();
-	QModelIndexList indexes = model->indexesFor(contact, _selection);
-	if (model && !indexes.isEmpty()) {
-		QMimeData* selection = model->mimeData(indexes);
-		ContactListModelSelection* contactListModelSelection = dynamic_cast<ContactListModelSelection*>(selection);
-		if (contactListModelSelection) {
-			selectionData = QCA::Base64().arrayToString(contactListModelSelection->data(contactListModelSelection->mimeType()));
+	YaRosterToolTip* toolTip = YaChatToolTip::instance()->isVisible() ?
+	                           YaChatToolTip::instance() : YaRosterToolTip::instance();
+	// if (!removeConfirmed) {
+		rosterPage_->setCurrentPage(contacts_->pageButton());
+		contacts_->setFilterModeEnabled(false);
+		QRect currentRect = toolTip->currentRect();
+		if (currentRect.isNull()) {
+			QWidget* w = contacts_->contactListView()->viewport();
+			currentRect = QRect(w->mapToGlobal(w->rect().topLeft()),
+			                    w->mapToGlobal(w->rect().bottomRight()));
 		}
-	}
-	return selectionData;
-}
+	// }
 
-QStringList YaRoster::contactNamesFor(QList<PsiContact*> contacts) const
-{
-	QStringList contactNames;
-	foreach(PsiContact* contact, contacts) {
-		if (dynamic_cast<FakeGroupContact*>(contact)) {
-			continue;
-		}
+	toolTip->hide();
 
-		QString name = contact->name();
-		if (name != contact->jid().full()) {
-			// TODO: ideally it should be wrapped in <nobr></nobr>,
-			// but it breaks layout in Qt 4.3.4
-			name = tr("%1 (%2)").arg(name, Qt::escape(contact->jid().full()));
-		}
-		contactNames << QString("<b>%1</b>").arg(Qt::escape(name));
-	}
-	return contactNames;
-}
-
-void YaRoster::removeContact(PsiContact* contact, QMimeData* _selection)
-{
-	YaContactListModel* model = modelForDeleteOperations();
-	QModelIndexList indexes = model->indexesFor(contact, _selection);
-	if (model && !indexes.isEmpty()) {
-		QMimeData* selection = model->mimeData(indexes);
-		ContactListModelSelection* contactListModelSelection = dynamic_cast<ContactListModelSelection*>(selection);
-		QString selectionData = confirmationData(contact, _selection);
-
-		// WARNING: selection could also contain groups. and when there are groups,
-		// all groups' contacts are marked for deletion too
-		QList<PsiContact*> contactsLost = model->contactsLostByRemove(selection);
-		bool removeConfirmed = contactsLost.isEmpty();
-
-		YaRosterToolTip* toolTip = YaChatToolTip::instance()->isVisible() ?
-		                           YaChatToolTip::instance() : YaRosterToolTip::instance();
-		QRect currentRect;
-		if (!removeConfirmed) {
-			rosterPage_->setCurrentPage(contacts_->pageButton());
-			contacts_->setFilterModeEnabled(false);
-			currentRect = toolTip->currentRect();
-			if (currentRect.isNull()) {
-				QWidget* w = contacts_->contactListView()->viewport();
-				currentRect = QRect(w->mapToGlobal(w->rect().topLeft()),
-				                    w->mapToGlobal(w->rect().bottomRight()));
-			}
-		}
-
-		toolTip->hide();
-
-		if (!removeConfirmed) {
-			QStringList contactNames = contactNamesFor(contactsLost);
-
-			QString destructiveActionName;
-			QString complimentaryActionName;
-			const char* complimentaryActionSlot = 0;
-			QString msg;
-			if (!contactNames.isEmpty()) {
-				msg = tr("This will permanently remove<br>"
-				         "%1"
-				         "<br>from your contact list."
-				        ).arg(contactNames.join(", "));
-			}
-
-#ifdef YAPSI
-			ContactListModelSelection contactListSelection(selection);
-			if (contactNames.count() > 1 || contactListSelection.groups().count()) {
-				QStringList tmp;
-				QStringList tmpContactNames = contactNames;
-				while (!tmpContactNames.isEmpty()) {
-					if (tmp.count() >= 10)
-						break;
-
-					tmp << QString("%1. %2").arg(tmp.count() + 1).arg(tmpContactNames.takeFirst());
-				}
-
-				QString andNContacts;
-				if (!tmpContactNames.isEmpty()) {
-					andNContacts = tr("and %n contacts ", 0,
-					                  tmpContactNames.count());
-				}
-
-				if (contactListSelection.groups().count() > 1) {
-					msg = tr("This will permanently remove:<br>"
-					         "%1"
-					         "<br>%2and %n groups from your contact list.",
-					         0,
-					         contactListSelection.groups().count()
-					        ).arg(tmp.join("<br>"))
-					         .arg(andNContacts);
-				}
-				else if (contactListSelection.groups().count() == 1) {
-					msg = tr("This will permanently remove:<br>"
-					         "%1"
-					         "<br>%2and \"%3\" group from your contact list."
-					        ).arg(tmp.join("<br>"))
-					         .arg(andNContacts)
-					         .arg(contactListSelection.groups().first().fullName);
-				}
-				else {
-					msg = tr("This will permanently remove:<br>"
-					         "%1"
-					         "<br>%2from your contact list."
-					        ).arg(tmp.join("<br>"))
-					         .arg(andNContacts);
-				}
-			}
-
-			if (indexes.count() == 1 && model->indexType(indexes.first()) == ContactListModel::GroupType) {
-				if (YaContactListContactsModel::virtualUnremovableGroups().contains(contactListSelection.groups().first().fullName)) {
-					msg = tr("This is a system group and can't be removed. "
-					         "Permanently remove all its contacts from your contact list?");
-					destructiveActionName = tr("Clear Group");
-				}
-				else {
-					msg = tr("This will permanently remove<br>"
-					         "%1"
-					         "<br>group and all its contacts from your contact list.").arg(Qt::escape(indexes.first().data().toString()));
-				}
-			}
-			else if (indexes.count() == 1 && model->indexType(indexes.first()) == ContactListModel::ContactType) {
-				Q_ASSERT(contactListSelection.contacts().count() == 1);
-				ContactListModelSelection::Contact c = contactListSelection.contacts().first();
-
-				PsiAccount* account = contactList()->getAccount(c.account);
-				PsiContact* psiContact = account ? account->findContact(c.jid) : 0;
-				QStringList contactGroupsLostByRemove;
-				if (psiContact) {
-					contactGroupsLostByRemove = model->contactGroupsLostByRemove(psiContact, selection);
-				}
-
-				if (psiContact && !psiContact->inList() && psiContact->blockAvailable()) {
-					msg = tr("This will permanently remove %1 from your contact list. "
-					         "You could block it in order to avoid further messages.")
-					      .arg(contactNames.join(", "));
-					destructiveActionName = tr("Delete");
-					complimentaryActionName = tr("Block");
-					complimentaryActionSlot = "blockContactConfirmation";
-				}
-				else if (psiContact && psiContact->groups().count() > 1 && contactGroupsLostByRemove.count() == 1) {
-					// TODO: needs to be translated
-					msg = tr("This will remove %1 from \"%2\" group. "
-					         "You could also remove it from all groups.")
-					      .arg(contactNames.join(", "))
-					      .arg(contactGroupsLostByRemove.first());
-					destructiveActionName = tr("Delete");
-					complimentaryActionName = tr("Delete From All Groups");
-					// TODO: needs to be implemented
-					complimentaryActionSlot = "removeContactFullyConfirmation";
-				}
-			}
-#endif
-
-			if (!msg.isEmpty()) {
-				if (complimentaryActionSlot) {
-					YaRemoveConfirmationMessageBoxManager::instance()->
-						removeConfirmation(selectionData,
-						                   this, "removeContactConfirmation",
-						                   this, complimentaryActionSlot,
-						                   tr("Deleting contacts"),
-						                   msg,
-						                   this,
-						                   destructiveActionName,
-						                   complimentaryActionName);
-				}
-				else {
-					YaRemoveConfirmationMessageBoxManager::instance()->
-						removeConfirmation(selectionData, this, "removeContactConfirmation",
-						                   tr("Deleting contacts"),
-						                   msg,
-						                   this,
-						                   destructiveActionName);
-				}
-
-				removeConfirmed = false;
-			}
-		}
-
-		removeContactConfirmation(selectionData, removeConfirmed);
-		delete selection;
-	}
+	ContactListUtil::removeContact(contact, selection, modelForDeleteOperations());
 }
 
 void YaRoster::removeContactConfirmation(const QString& id, bool confirmed)
 {
-	ContactListModelSelection selection(0);
-	selection.setData(selection.mimeType(), QCA::Base64().stringToArray(id).toByteArray());
-
-	if (confirmed) {
-		removeContactConfirmation(&selection);
-	}
-
-	// message box steals focus, so we're restoring it back
-	contacts_->contactListView()->restoreSelection(&selection);
-	bringToFront(contacts_->contactListView());
-	contacts_->contactListView()->setFocus();
+	ContactListUtil::removeContactConfirmation(id, confirmed, modelForDeleteOperations(), d->contactListView_, contacts_->contactListView());
 }
 
 void YaRoster::removeContactFullyConfirmation(const QString& id, bool confirmed)
@@ -2628,7 +2442,7 @@ void YaRoster::removeContactFullyConfirmation(const QString& id, bool confirmed)
 
 			QModelIndexList indexes = model->indexesFor(contact, 0);
 			QMimeData* tmp = model->mimeData(indexes);
-			removeContactConfirmation(tmp);
+			ContactListUtil::removeContactConfirmation(tmp);
 			delete tmp;
 		}
 	}
@@ -2639,7 +2453,7 @@ void YaRoster::blockContact(PsiContact* contact, QMimeData* contactSelection)
 	QString selectionData = confirmationData(contact, contactSelection);
 	QStringList contactNames = contactNamesFor(contactsFor(selectionData));
 
-	YaRemoveConfirmationMessageBoxManager::instance()->
+	RemoveConfirmationMessageBoxManager::instance()->
 		removeConfirmation(selectionData, this, "blockContactConfirmation",
 		                   tr("Blocking contact"),
 		                   tr("This will block<br>"
@@ -2653,30 +2467,6 @@ void YaRoster::unblockContact(PsiContact* contact, QMimeData* contactSelection)
 {
 	QString selectionData = confirmationData(contact, contactSelection);
 	unblockContactConfirmation(selectionData, true);
-}
-
-QList<PsiContact*> YaRoster::contactsFor(const QString& confirmationData) const
-{
-	QList<PsiContact*> result;
-
-	YaContactListModel* model = dynamic_cast<YaContactListModel*>(contactListModel_);
-	Q_ASSERT(model);
-
-	if (model) {
-		ContactListModelSelection selection(0);
-		selection.setData(selection.mimeType(), QCA::Base64().stringToArray(confirmationData).toByteArray());
-
-		QModelIndexList indexes = model->indexesFor(0, &selection);
-		foreach(const QModelIndex& index, indexes) {
-			PsiContact* contact = model->contactFor(index);
-			if (!contact)
-				continue;
-
-			result << contact;
-		}
-	}
-
-	return result;
 }
 
 void YaRoster::blockContactConfirmationHelper(const QString& id, bool confirmed, bool doBlock)
@@ -2724,18 +2514,6 @@ void YaRoster::renameContact(PsiContact* contact, QMimeData* selection)
 
 	if (contacts_->contactListView()->currentIndex().isValid()) {
 		contacts_->contactListView()->rename();
-	}
-}
-
-void YaRoster::removeContactConfirmation(QMimeData* contactSelection)
-{
-	Q_ASSERT(contactSelection);
-	YaContactListModel* model = modelForDeleteOperations();
-	QModelIndexList indexes = model->indexesFor(0, contactSelection);
-	if (model && !indexes.isEmpty()) {
-		QMimeData* selection = model->mimeData(indexes);
-		model->removeIndexes(selection);
-		delete selection;
 	}
 }
 

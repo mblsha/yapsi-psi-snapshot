@@ -63,7 +63,6 @@ HEADERS += \
 	$$PWD/yapreferences.h \
 	$$PWD/yaprivacymanager.h \
 	$$PWD/yaipc.h \
-	$$PWD/yaremoveconfirmationmessagebox.h \
 	$$PWD/yatoastercentral.h \
 	$$PWD/yadayuse.h \
 	$$PWD/yalicense.h \
@@ -99,7 +98,6 @@ SOURCES += \
 	$$PWD/yapreferences.cpp \
 	$$PWD/yaprivacymanager.cpp \
 	$$PWD/yaipc.cpp \
-	$$PWD/yaremoveconfirmationmessagebox.cpp \
 	$$PWD/yatoastercentral.cpp \
 	$$PWD/yadayuse.cpp \
 	$$PWD/yalicense.cpp \

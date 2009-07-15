@@ -43,7 +43,7 @@
 #ifdef YAPSI_ACTIVEX_SERVER
 #include "yaonline.h"
 #endif
-#include "yaremoveconfirmationmessagebox.h"
+#include "removeconfirmationmessagebox.h"
 #include "yamanageaccounts.h"
 #include "yawindowtheme.h"
 #include "chatdlg.h"
@@ -520,7 +520,7 @@ void YaPreferences::clearMessageHistory(YaPreferences::ClearMessageHistoryType t
 		msg = tr("Do you really want to remove <b>all</b> message logs from this computer?");
 	}
 
-	YaRemoveConfirmationMessageBoxManager::instance()->
+	RemoveConfirmationMessageBoxManager::instance()->
 		removeConfirmation(doc.toString(), this, "clearMessageHistoryConfirmation",
 		                   tr("Removing message logs"),
 		                   msg,

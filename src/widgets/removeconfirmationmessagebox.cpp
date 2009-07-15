@@ -1,6 +1,6 @@
 /*
- * yaremoveconfirmationmessagebox.cpp - generic confirmation of destructive action
- * Copyright (C) 2008  Yandex LLC (Michail Pishchagin)
+ * removeconfirmationmessagebox.cpp - generic confirmation of destructive action
+ * Copyright (C) 2008-2009  Yandex LLC (Michail Pishchagin)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,13 +18,18 @@
  *
  */
 
-#include "yaremoveconfirmationmessagebox.h"
+#include "removeconfirmationmessagebox.h"
 
 #include <QApplication>
 #include <QPushButton>
 #include <QTimer>
+#include <QStyle>
 
+#ifdef YAPSI
 #include "yastyle.h"
+#endif
+
+#include "applicationinfo.h"
 
 #ifdef YAPSI_ACTIVEX_SERVER
 #include "yaonline.h"
@@ -32,21 +37,21 @@
 #endif
 
 //----------------------------------------------------------------------------
-// YaRemoveConfirmationMessageBoxManager
+// RemoveConfirmationMessageBoxManager
 //----------------------------------------------------------------------------
 
-YaRemoveConfirmationMessageBoxManager* YaRemoveConfirmationMessageBoxManager::instance_ = 0;
-int YaRemoveConfirmationMessageBoxManager::onlineId_ = 0;
+RemoveConfirmationMessageBoxManager* RemoveConfirmationMessageBoxManager::instance_ = 0;
+int RemoveConfirmationMessageBoxManager::onlineId_ = 0;
 
-YaRemoveConfirmationMessageBoxManager* YaRemoveConfirmationMessageBoxManager::instance()
+RemoveConfirmationMessageBoxManager* RemoveConfirmationMessageBoxManager::instance()
 {
 	if (!instance_) {
-		instance_ = new YaRemoveConfirmationMessageBoxManager();
+		instance_ = new RemoveConfirmationMessageBoxManager();
 	}
 	return instance_;
 }
 
-void YaRemoveConfirmationMessageBoxManager::processData(const QString& id, const QList<DataCallback> callbacks, const QString& title, const QString& informativeText, QWidget* parent, const QStringList& actionNames)
+void RemoveConfirmationMessageBoxManager::processData(const QString& id, const QList<DataCallback> callbacks, const QString& title, const QString& informativeText, QWidget* parent, const QStringList& actionNames)
 {
 	Data data;
 	data.onlineId = ++onlineId_;
@@ -79,21 +84,21 @@ void YaRemoveConfirmationMessageBoxManager::processData(const QString& id, const
 
 	YaOnlineHelper::instance()->messageBox(parentString,
 	                                       QString::number(data.onlineId),
-	                                       YaRemoveConfirmationMessageBox::tr("Ya.Online"),
-	                                       YaRemoveConfirmationMessageBox::processInformativeText(data.informativeText),
+	                                       RemoveConfirmationMessageBox::tr("Ya.Online"),
+	                                       RemoveConfirmationMessageBox::processInformativeText(data.informativeText),
 	                                       data.buttons,
 	                                       QMessageBox::Warning);
 #endif
 }
 
-void YaRemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj, const char* slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& destructiveActionName)
+void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj, const char* slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& destructiveActionName)
 {
 	QStringList buttons;
 	if (!destructiveActionName.isEmpty())
 		buttons << destructiveActionName;
 	else
-		buttons << YaRemoveConfirmationMessageBox::tr("Delete");
-	buttons << YaRemoveConfirmationMessageBox::tr("Cancel");
+		buttons << RemoveConfirmationMessageBox::tr("Delete");
+	buttons << RemoveConfirmationMessageBox::tr("Cancel");
 
 	QList<DataCallback> callbacks;
 	callbacks << DataCallback(obj, slot);
@@ -101,12 +106,12 @@ void YaRemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id
 	processData(id, callbacks, title, informativeText, parent, buttons);
 }
 
-void YaRemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj1, const char* action1slot, QObject* obj2, const char* action2slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& action1name, const QString& action2name)
+void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj1, const char* action1slot, QObject* obj2, const char* action2slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& action1name, const QString& action2name)
 {
 	QStringList buttons;
 	buttons << action1name;
 	buttons << action2name;
-	buttons << YaRemoveConfirmationMessageBox::tr("Cancel");
+	buttons << RemoveConfirmationMessageBox::tr("Cancel");
 
 	QList<DataCallback> callbacks;
 	callbacks << DataCallback(obj1, action1slot);
@@ -115,14 +120,14 @@ void YaRemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id
 	processData(id, callbacks, title, informativeText, parent, buttons);
 }
 
-void YaRemoveConfirmationMessageBoxManager::update()
+void RemoveConfirmationMessageBoxManager::update()
 {
 #ifndef YAPSI_ACTIVEX_SERVER
 	while (!data_.isEmpty()) {
 		Data data = data_.takeFirst();
 
 		Q_ASSERT(data.buttons.count() >= 2 && data.buttons.count() <= 3);
-		YaRemoveConfirmationMessageBox msgBox(data.title, data.informativeText, data.parent);
+		RemoveConfirmationMessageBox msgBox(data.title, data.informativeText, data.parent);
 
 		QStringList buttons = data.buttons;
 		buttons.takeLast(); // Cancel
@@ -155,7 +160,7 @@ void YaRemoveConfirmationMessageBoxManager::update()
 }
 
 #ifdef YAPSI_ACTIVEX_SERVER
-void YaRemoveConfirmationMessageBoxManager::onlineCallback(const QString& id, int button)
+void RemoveConfirmationMessageBoxManager::onlineCallback(const QString& id, int button)
 {
 	if (id.isEmpty())
 		return;
@@ -181,7 +186,7 @@ void YaRemoveConfirmationMessageBoxManager::onlineCallback(const QString& id, in
 }
 #endif
 
-YaRemoveConfirmationMessageBoxManager::YaRemoveConfirmationMessageBoxManager()
+RemoveConfirmationMessageBoxManager::RemoveConfirmationMessageBoxManager()
 	: QObject(QCoreApplication::instance())
 {
 #ifdef YAPSI_ACTIVEX_SERVER
@@ -189,12 +194,12 @@ YaRemoveConfirmationMessageBoxManager::YaRemoveConfirmationMessageBoxManager()
 #endif
 }
 
-YaRemoveConfirmationMessageBoxManager::~YaRemoveConfirmationMessageBoxManager()
+RemoveConfirmationMessageBoxManager::~RemoveConfirmationMessageBoxManager()
 {
 }
 
 //----------------------------------------------------------------------------
-// YaRemoveConfirmationMessageBox
+// RemoveConfirmationMessageBox
 //----------------------------------------------------------------------------
 
 #ifdef Q_WS_WIN
@@ -286,15 +291,20 @@ int MsgBoxEx(HWND hwnd, LPCTSTR szText, LPCTSTR szCaption, UINT uType)
 }
 #endif
 
-YaRemoveConfirmationMessageBox::YaRemoveConfirmationMessageBox(const QString& title, const QString& informativeText, QWidget* parent)
+RemoveConfirmationMessageBox::RemoveConfirmationMessageBox(const QString& title, const QString& informativeText, QWidget* parent)
 	: QMessageBox()
 	, removeButton_(0)
 	, complimentaryButton_(0)
 	, cancelButton_(0)
 {
+#ifdef YAPSI
 	setStyle(YaStyle::defaultStyle());
 
 	setWindowTitle(tr("Ya.Online"));
+#else
+	setWindowTitle(ApplicationInfo::name());
+#endif
+
 	setText(title);
 	setInformativeText(informativeText);
 
@@ -311,7 +321,7 @@ YaRemoveConfirmationMessageBox::YaRemoveConfirmationMessageBox(const QString& ti
 	Q_UNUSED(parent);
 }
 
-void YaRemoveConfirmationMessageBox::setDestructiveActionName(const QString& destructiveAction)
+void RemoveConfirmationMessageBox::setDestructiveActionName(const QString& destructiveAction)
 {
 	Q_ASSERT(!removeButton_);
 	Q_ASSERT(!cancelButton_);
@@ -320,7 +330,7 @@ void YaRemoveConfirmationMessageBox::setDestructiveActionName(const QString& des
 	setDefaultButton(removeButton_);
 }
 
-void YaRemoveConfirmationMessageBox::setComplimentaryActionName(const QString& complimentaryAction)
+void RemoveConfirmationMessageBox::setComplimentaryActionName(const QString& complimentaryAction)
 {
 	Q_ASSERT(removeButton_);
 	Q_ASSERT(cancelButton_);
@@ -328,7 +338,7 @@ void YaRemoveConfirmationMessageBox::setComplimentaryActionName(const QString& c
 	complimentaryButton_ = addButton(complimentaryAction, QMessageBox::AcceptRole);
 }
 
-QString YaRemoveConfirmationMessageBox::processInformativeText(const QString& informativeText)
+QString RemoveConfirmationMessageBox::processInformativeText(const QString& informativeText)
 {
 	QString text = informativeText;
 	text.replace("<br>", "\n");
@@ -338,7 +348,7 @@ QString YaRemoveConfirmationMessageBox::processInformativeText(const QString& in
 	return text;
 }
 
-void YaRemoveConfirmationMessageBox::doExec()
+void RemoveConfirmationMessageBox::doExec()
 {
 	if (!removeButton_) {
 		setDestructiveActionName(tr("Delete"));
@@ -362,17 +372,19 @@ void YaRemoveConfirmationMessageBox::doExec()
 #else
 	Q_ASSERT(removeButton_);
 	Q_ASSERT(cancelButton_);
+#ifdef YAPSI
 	YaStyle::makeMeNativeLooking(this);
+#endif
 	exec();
 #endif
 }
 
-bool YaRemoveConfirmationMessageBox::removeAction() const
+bool RemoveConfirmationMessageBox::removeAction() const
 {
 	return clickedButton() == removeButton_;
 }
 
-bool YaRemoveConfirmationMessageBox::complimentaryAction() const
+bool RemoveConfirmationMessageBox::complimentaryAction() const
 {
 	return clickedButton() == complimentaryButton_;
 }

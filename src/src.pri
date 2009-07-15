@@ -472,7 +472,8 @@ newcontactlist {
 		$$PWD/contactlistaccountmenu.h \
 		$$PWD/contactlistitem.h \
 		$$PWD/contactlistitemmenu.h \
-		$$PWD/psiaccountmenu.h
+		$$PWD/psiaccountmenu.h \
+		$$PWD/contactlistutil.h
 
 	SOURCES += \
 		$$PWD/contactlistview.cpp \
@@ -496,7 +497,8 @@ newcontactlist {
 		$$PWD/contactlistaccountmenu.cpp \
 		$$PWD/contactlistitem.cpp \
 		$$PWD/contactlistitemmenu.cpp \
-		$$PWD/psiaccountmenu.cpp
+		$$PWD/psiaccountmenu.cpp \
+		$$PWD/contactlistutil.cpp
 
 	!yapsi {
 		HEADERS += \

@@ -33,7 +33,7 @@
 #include "psicontactlist.h"
 #ifdef YAPSI
 #include "yastyle.h"
-#include "yaremoveconfirmationmessagebox.h"
+#include "removeconfirmationmessagebox.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -238,7 +238,7 @@ void XmlPrompt::doTransmit()
 
 // FIXME: properly port this one
 #ifdef YAPSI
-		YaRemoveConfirmationMessageBoxManager::instance()->
+		RemoveConfirmationMessageBoxManager::instance()->
 			removeConfirmation(str, this, "transmitMalformedXmlConfirmation",
 			                   title,
 			                   msg,

@@ -149,6 +149,8 @@ private slots:
 	void showSelfChanged(bool);
 	void showOfflineChanged(bool);
 	void setShowStatusMsg(bool);
+
+	void removeContactConfirmation(const QString& id, bool confirmed);
 #endif
 
 public slots:

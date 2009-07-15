@@ -431,7 +431,9 @@ QStringList PsiContact::groups() const
 				groupName = generalGroupName();
 			}
 #endif
-			result << groupName;
+			if (!result.contains(groupName)) {
+				result << groupName;
+			}
 		}
 	}
 

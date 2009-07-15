@@ -399,18 +399,22 @@ void ContactListDragModel::renameGroup(ContactListGroup* group, const QString& n
 	performContactOperations(operations, Operation_GroupRename);
 }
 
+QString ContactListDragModel::processContactSetGroupName(const QString& groupName) const
+{
+	if (accountsEnabled()) {
+		QStringList split = groupName.split(ContactListGroup::groupDelimiter());
+		split.takeFirst();
+		return split.join(ContactListGroup::groupDelimiter());
+	}
+
+	return groupName;
+}
+
 QStringList ContactListDragModel::processContactSetGroupNames(const QStringList& groups) const
 {
 	QStringList result;
 	foreach(const QString& g, groups) {
-		if (!accountsEnabled()) {
-			result << g;
-		}
-		else {
-			QStringList split = g.split(ContactListGroup::groupDelimiter());
-			split.takeFirst();
-			result << split.join(ContactListGroup::groupDelimiter());
-		}
+		result << processContactSetGroupName(g);
 	}
 	return result;
 }
@@ -587,12 +591,12 @@ ContactListModelOperationList ContactListDragModel::removeOperationsFor(const QM
 		PsiAccount* account = contactList()->getAccount(contact.account);
 		PsiContact* psiContact = account ? account->findContact(contact.jid) : 0;
 		operations.addOperation(psiContact,
-		                        contact.group,
+		                        processContactSetGroupName(contact.group),
 		                        QString());
 	}
 
 	foreach(ContactListModelSelection::Group group, selection.groups()) {
-		addOperationsForGroupRename(group.fullName, QString(), &operations);
+		addOperationsForGroupRename(processContactSetGroupName(group.fullName), QString(), &operations);
 	}
 
 	// qWarning("*** removeOperationsFor: New operation list: ***");
