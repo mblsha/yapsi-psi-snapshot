@@ -39,7 +39,7 @@
 class ActiveProfiles::Private : public QWidget
 {
 public:
-	Private(ActiveProfiles *aprof) : app(ApplicationInfo::IPCName()), home(ApplicationInfo::homeDir()), ap(aprof), profile(""), mutex(0), changesMutex(0) {
+	Private(ActiveProfiles *aprof) : app(ApplicationInfo::IPCName()), home(ApplicationInfo::homeDir()), profile(""), ap(aprof), mutex(0), changesMutex(0) {
 
 		app.replace('\\', '/');	// '\\' has a special meaning in mutex name
 		home.replace('\\', '/');
@@ -99,7 +99,7 @@ public:
 	static WPARAM raiseCommand;	// = 1
 
 	// WM_COPYDATA
-	static const int stringListMessage = 1;
+	static const DWORD stringListMessage = 1;
 
 	bool sendMessage(const QString &to, UINT message, WPARAM wParam, LPARAM lParam) const;
 	bool winEvent(MSG *msg, long *result);
@@ -173,7 +173,9 @@ bool ActiveProfiles::Private::winEvent(MSG *msg, long *result)
 			}
 
 			if (list[0] == "openUri") {
-				emit ap->openUri(list[1]);
+				QUrl uri;
+				uri.setEncodedUrl(list[1].toLatin1());
+				emit ap->openUri(uri);
 				*result = 0;	// ok
 			}
 		}

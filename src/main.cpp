@@ -55,6 +55,7 @@ extern "C" {
 #include <QtCrypto>
 #include <QTranslator>
 #include <QDir>
+#include <QProcess>
 
 #include <stdlib.h>
 #include <time.h>
@@ -79,6 +80,10 @@ extern "C" {
 
 #ifdef Q_OS_WIN
 #	include <qt_windows.h> // for RegDeleteKey
+#endif
+
+#ifdef Q_OS_WIN
+#define URI_RESTART
 #endif
 
 /** \mainpage Psi API Documentation
@@ -335,13 +340,114 @@ static void startOnline()
 }
 #endif
 
+#ifdef URI_RESTART
+// all printable chars except for space, dash, and double-quote are
+//   backslash-escaped.
+static QByteArray encodeUri(const QByteArray &in)
+{
+	QByteArray out;
+	for(int n = 0; n < in.size(); ++n) {
+		unsigned char c = (unsigned char)in[n];
+		if(c == '\\') {
+			out += "\\\\";
+		}
+		else if(c >= 0x21 && c < 0x7f && c != '-' && c != '\"') {
+			out += in[n];
+		}
+		else {
+			char hex[5];
+			qsnprintf(hex, 5, "\\x%02x", c);
+			out += QByteArray::fromRawData(hex, 4);
+		}
+	}
+	return out;
+}
+
+static QString decodeUri(const QString &in)
+{
+	// note that the input is an 8-bit text encoding which is then escaped,
+	//   and the result is a latin1-compatible string.  to decode this, we
+	//   need to first unescape back to 8-bit, and then decode the 8-bit
+	//   into unicode
+
+	QByteArray dec;
+	for(int n = 0; n < in.length(); ++n) {
+		if(in[n] == '\\') {
+			if(n + 1 < in.length()) {
+				++n;
+				if(in[n] == '\\') {
+					dec += '\\';
+				}
+				else if(in[n] == 'x') {
+					if(n + 2 < in.length()) {
+						++n;
+						QString xs = in.mid(n, 2);
+						++n;
+						bool ok = false;
+						int x = xs.toInt(&ok, 16);
+						if(ok) {
+							unsigned char c = (unsigned char)x;
+							dec += c;
+						}
+					}
+				}
+			}
+		}
+		else
+			dec += in[n].toLatin1();
+	}
+
+	return QString::fromLocal8Bit(dec);
+}
+
+// NOTE: this function is called without qapp existing
+static int restart_process(int argc, char **argv, const QByteArray &uri)
+{
+	// FIXME: in the future we should use CreateProcess instead, but for
+	//   now it is easier to use qprocess, and it should be safe if
+	//   qcoreapp is used instead of qapp which i believe does not read
+	//   args
+	/*BOOL ret;
+	QT_WA(
+		ret = CreateProcessW();
+	,
+		ret = CreateProcessA();
+	)*/
+
+	// re-run ourself, with encoded uri
+	QCoreApplication qapp(argc, argv);
+	QString selfExe = QCoreApplication::applicationFilePath();
+
+	// don't use QCoreApplication::arguments(), because that calls
+	//   GetCommandLine which is not clipped.  instead, use the provided
+	//   argc/argv.
+	QStringList args;
+	for(int n = 1; n < argc; ++n) {
+		args += QString::fromLocal8Bit(argv[n]);
+	}
+
+	if(!uri.isEmpty()) {
+		args += QString("--encuri=") + QString::fromLatin1(encodeUri(uri));
+	}
+
+	if(QProcess::startDetached(selfExe, args)) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
+}
+#endif
+
 int main(int argc, char *argv[])
 {
 	// If Psi runs as uri handler the commandline might contain
 	// almost arbitary network supplied data after the "--uri" argument.
 	// To prevent any potentially dangerous options in Psi or
-	// Qt to be triggered by this, filter out the uri and any following data
-	// as early as possible.
+	// Qt to be triggered by this, filter out the uri and any following
+	// data as early as possible.  We even filter before qca init, just in
+	// case qca ever decides to check commandline arguments in a future
+	// version.
 	// see http://www.mozilla.org/security/announce/2007/mfsa2007-23.html
 	// for how this problem affected firefox on windows.
 
@@ -360,18 +466,22 @@ int main(int argc, char *argv[])
 
 		if (var == "--uri") {
 			uriBA = val;
-#ifdef Q_WS_WIN
-			// FIXME think about handling of quirks on the windows platform.
-#endif
 			if (uriBA.isEmpty() && i+1 < argc) {
 				uriBA = QByteArray(argv[i+1]);
 			}
 
-			// terminate args here. Everything that follow mustn't be availible
-			// in later commandline scanning.
+			// terminate args here. Everything that follows mustn't
+			// be availible in later commandline scanning.
+#ifdef URI_RESTART
+			// for windows, we have to do this by restarting the
+			// process
+			return restart_process(i, argv, uriBA);
+#else
+			// otherwise, it should enough to modify argc/argv
 			argc = i;
 			argv[i] = 0;
 			break;
+#endif
 		}
 		
 	}
@@ -477,6 +587,10 @@ int main(int argc, char *argv[])
 			val = str.mid(x+1);
 		}
 
+#ifdef URI_RESTART
+		if(var == "--encuri")
+			uri = decodeUri(val);
+#endif
 		//if(var == "--no-gpg")
 		//	use_gpg = false;
 		//else if(var == "--no-gpg-agent")
