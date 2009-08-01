@@ -666,6 +666,7 @@ bool PsiCon::init()
 #else
 	d->mainwin = new MainWin(PsiOptions::instance()->getOption("options.ui.contactlist.always-on-top").toBool(), (PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() && PsiOptions::instance()->getOption("options.contactlist.use-toolwindow").toBool()), this, "psimain");
 #endif
+	d->mainwin->setUseDock(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool());
 
 #ifdef YAPSI
 // #ifndef Q_WS_MAC
@@ -1940,7 +1941,7 @@ void PsiCon::promptUserToCreateAccount()
 		AccountRegDlg w(proxy());
 		int n = w.exec();
 		if (n == QDialog::Accepted) {
-			contactList()->createAccount(w.jid().node(),w.jid(),w.pass(),w.useHost(),w.host(),w.port(),w.legacySSLProbe(),w.ssl(),w.proxy(),w.tlsOverrideDomain(), w.tlsOverrideCert(), false);
+			contactList()->createAccount(w.jid().node(),w.jid(),w.pass(),w.useHost(),w.host(),w.port(),w.legacySSLProbe(),w.ssl(),w.proxy(),w.tlsOverrideDomain(), w.tlsOverrideCert());
 		}
 	}
 }

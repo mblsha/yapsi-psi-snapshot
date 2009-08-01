@@ -72,7 +72,7 @@ public:
 
 	UserAccountList getUserAccountList() const;
 
-	PsiAccount* createAccount(const QString& name, const Jid& j = "", const QString& pass = "", bool opt_host = false, const QString& host = "", int port = 5222, bool legacy_ssl_probe = true, UserAccount::SSLFlag ssl = UserAccount::SSL_Auto, QString proxyID = "", const QString &tlsOverrideDomain="", const QByteArray &tlsOverrideCert=QByteArray(), bool modify = true);
+	PsiAccount* createAccount(const QString& name, const Jid& j = "", const QString& pass = "", bool opt_host = false, const QString& host = "", int port = 5222, bool legacy_ssl_probe = true, UserAccount::SSLFlag ssl = UserAccount::SSL_Auto, QString proxyID = "", const QString &tlsOverrideDomain="", const QByteArray &tlsOverrideCert=QByteArray());
 	void createAccount(const UserAccount&);
 	void removeAccount(PsiAccount*);
 	void setAccountEnabled(PsiAccount*, bool enabled = TRUE);

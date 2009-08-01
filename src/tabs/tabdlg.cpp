@@ -555,7 +555,6 @@ QString TabDlg::desiredCaption() const
 	}
 #endif
 	if (tabWidget_->currentPage()) {
-		cap += static_cast<TabbableWidget*>(tabWidget_->currentPage())->getDisplayName();
 #ifndef YAPSI
 		if (simplifiedCaption_ && tabs_.count() > 1) {
 			cap += tr("%1 Conversations").arg(tabs_.count());
@@ -565,6 +564,8 @@ QString TabDlg::desiredCaption() const
 				cap += tr(" is composing");
 			}
 		}
+#else
+		cap += static_cast<TabbableWidget*>(tabWidget_->currentPage())->getDisplayName();
 #endif
 	}
 	return cap;

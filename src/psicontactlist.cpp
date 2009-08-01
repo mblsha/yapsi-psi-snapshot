@@ -218,7 +218,7 @@ PsiAccount* PsiContactList::yandexTeamAccount() const
 /**
  * Creates new PsiAccount based on some initial settings. This is used by AccountAddDlg.
  */
-PsiAccount* PsiContactList::createAccount(const QString& name, const Jid& j, const QString& pass, bool opt_host, const QString& host, int port, bool legacy_ssl_probe, UserAccount::SSLFlag ssl, QString proxyID, const QString &tlsOverrideDomain, const QByteArray &tlsOverrideCert, bool modify)
+PsiAccount* PsiContactList::createAccount(const QString& name, const Jid& j, const QString& pass, bool opt_host, const QString& host, int port, bool legacy_ssl_probe, UserAccount::SSLFlag ssl, QString proxyID, const QString &tlsOverrideDomain, const QByteArray &tlsOverrideCert)
 {
 	UserAccount acc;
 	acc.name = name;
@@ -257,10 +257,6 @@ PsiAccount* PsiContactList::createAccount(const QString& name, const Jid& j, con
 
 	PsiAccount *pa = loadAccount(acc);
 	emit saveAccounts();
-
-	// pop up the modify dialog so the user can customize the new account
-	if (modify)
-		pa->modify();
 
 	return pa;
 }

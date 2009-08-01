@@ -830,12 +830,12 @@ public slots:
 	void doModify()
 	{
 		AccountModifyDlg *w = account->findDialog<AccountModifyDlg*>();
-		if(w)
-			bringToFront(w);
-		else {
+		if(!w) {
 			w = new AccountModifyDlg(account, 0);
 			w->show();
 		}
+
+		bringToFront(w);
 	}
 
         void incoming_call()
