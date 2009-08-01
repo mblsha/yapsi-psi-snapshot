@@ -97,6 +97,8 @@ bool ContactListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& s
 		}
 	case ContactListModel::AccountType:
 		return true;
+	case ContactListModel::InvalidType:
+		return true;
 	default:
 		Q_ASSERT(false);
 	}

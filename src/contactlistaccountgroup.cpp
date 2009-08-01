@@ -31,10 +31,12 @@
 
 ContactListAccountGroup::ContactListAccountGroup(ContactListModel* model, ContactListGroup* parent, PsiAccount* account)
 	: ContactListNestedGroup(model, parent, QString())
+	, isRoot_(!account)
 	, account_(account)
 {
 	if (account_) {
 		model->groupCache()->addGroup(this);
+		connect(account_, SIGNAL(destroyed(QObject*)), SLOT(accountUpdated()));
 		connect(account_, SIGNAL(updatedAccount()), SLOT(accountUpdated()));
 	}
 }
@@ -114,7 +116,7 @@ void ContactListAccountGroup::contactGroupsChanged(PsiContact* contact, QStringL
 
 bool ContactListAccountGroup::isRoot() const
 {
-	return account_ == 0;
+	return isRoot_;
 }
 
 ContactListAccountGroup* ContactListAccountGroup::findAccount(PsiAccount* account) const
@@ -137,16 +139,15 @@ void ContactListAccountGroup::removeAccount(ContactListAccountGroup* accountGrou
 
 void ContactListAccountGroup::accountUpdated()
 {
-	if (account_) {
-		Q_ASSERT(!isRoot());
-		ContactListAccountGroup* root = dynamic_cast<ContactListAccountGroup*>(parent());
-		Q_ASSERT(root);
-		model()->updatedItem(root->findGroup(this));
+	Q_ASSERT(!isRoot());
+	ContactListAccountGroup* root = dynamic_cast<ContactListAccountGroup*>(parent());
+	Q_ASSERT(root);
 
-		if (!account_->enabled()) {
-			clearGroup();
-			root->removeAccount(this);
-		}
+	model()->updatedItem(root->findGroup(this));
+
+	if (account_.isNull() || !account_->enabled()) {
+		clearGroup();
+		root->removeAccount(this);
 	}
 }
 

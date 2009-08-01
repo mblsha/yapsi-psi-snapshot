@@ -24,6 +24,8 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QHash>
+#include <QPointer>
 
 class PsiAccount;
 class PsiContact;
@@ -97,6 +99,7 @@ public:
 	QModelIndex groupToIndex(ContactListGroup* group) const;
 
 	virtual ContactListModel* clone() const = 0;
+	void contactListItemProxyCreated(ContactListItemProxy* proxy);
 
 	bool groupsEnabled() const;
 	void setGroupsEnabled(bool enabled);
@@ -193,6 +196,7 @@ private:
 	bool emitDeltaSignals_;
 	ContactListGroupState* groupState_;
 	ContactListGroupCache* groupCache_;
+	QHash<ContactListItemProxy*, QPointer<ContactListItemProxy> > contactListItemProxyHash_;
 
 protected:
 	virtual QStringList filterContactGroups(QStringList groups) const;

@@ -133,6 +133,9 @@ void ContactListViewDelegate::paint(QPainter* painter, const QStyleOptionViewIte
 	case ContactListModel::AccountType:
 		drawAccount(painter, opt(), index);
 		break;
+	case ContactListModel::InvalidType:
+		painter->fillRect(option.rect, Qt::red);
+		break;
 	default:
 		QItemDelegate::paint(painter, option, index);
 	}

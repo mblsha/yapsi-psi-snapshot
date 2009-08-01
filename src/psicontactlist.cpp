@@ -558,6 +558,7 @@ void PsiContactList::addEnabledAccount(PsiAccount* account)
 	connect(account, SIGNAL(removedContact(PsiContact*)), SLOT(accountRemovedContact(PsiContact*)));
 
 	emit beginBulkContactUpdate();
+	accountAddedContact(account->selfContact());
 	foreach(PsiContact* contact, account->contactList())
 		accountAddedContact(contact);
 	emit endBulkContactUpdate();
@@ -569,6 +570,7 @@ void PsiContactList::removeEnabledAccount(PsiAccount* account)
 		return;
 
 	emit beginBulkContactUpdate();
+	accountRemovedContact(account->selfContact());
 	foreach(PsiContact* contact, account->contactList())
 		accountRemovedContact(contact);
 	emit endBulkContactUpdate();

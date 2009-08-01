@@ -238,18 +238,29 @@ QStringList ContactListModel::filterContactGroups(QStringList groups) const
 
 void ContactListModel::addContact(PsiContact* contact)
 {
+	Q_ASSERT(contact);
+	if (!accountsEnabled() && contact->isSelf())
+		return;
+
 	addContact(contact, contact->groups());
 }
 
 void ContactListModel::removeContact(PsiContact* contact)
 {
+	Q_ASSERT(contact);
+	if (!accountsEnabled() && contact->isSelf())
+		return;
+
 	contactGroupsChanged(contact, QStringList());
 }
 
 void ContactListModel::contactGroupsChanged(PsiContact* contact)
 {
-	Q_ASSERT(rootGroup_);
 	Q_ASSERT(contact);
+	if (!accountsEnabled() && contact->isSelf())
+		return;
+
+	Q_ASSERT(rootGroup_);
 	contactGroupsChanged(contact, contact->groups());
 }
 
@@ -407,6 +418,9 @@ QVariant ContactListModel::contactGroupData(const ContactListGroup* group, int r
 QVariant ContactListModel::accountData(const ContactListAccountGroup* account, int role) const
 {
 	Q_ASSERT(account);
+	if (!account->account()) {
+		return QVariant();
+	}
 
 	if (role == JidRole) {
 		return QVariant(account->account()->jid().full());
@@ -723,7 +737,14 @@ ContactListItemProxy* ContactListModel::itemProxy(const QModelIndex& index) cons
 {
 	if ((index.row() < 0) || (index.column() < 0) || (index.model() != this))
 		return 0;
-	return static_cast<ContactListItemProxy*>(index.internalPointer());
+	ContactListItemProxy* proxy = static_cast<ContactListItemProxy*>(index.internalPointer());
+#if 0
+	if (contactListItemProxyHash_.contains(proxy) && !contactListItemProxyHash_[proxy].isNull())
+		return proxy;
+	return 0;
+#else
+	return proxy;
+#endif
 }
 
 PsiAccount* ContactListModel::account(const QModelIndex& index) const
@@ -822,4 +843,11 @@ QModelIndex ContactListModel::groupToIndex(ContactListGroup* group) const
 	}
 
 	return QModelIndex();
+}
+
+void ContactListModel::contactListItemProxyCreated(ContactListItemProxy* proxy)
+{
+#if 0
+	contactListItemProxyHash_[proxy] = proxy;
+#endif
 }

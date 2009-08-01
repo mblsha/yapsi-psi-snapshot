@@ -1,6 +1,6 @@
 /*
  * contactlistitemproxy.h - proxy item contact list item class
- * Copyright (C) 2008  Yandex LLC (Michail Pishchagin)
+ * Copyright (C) 2008-2009  Yandex LLC (Michail Pishchagin)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,23 +21,24 @@
 #ifndef CONTACTLISTITEMPROXY_H
 #define CONTACTLISTITEMPROXY_H
 
+#include <QObject>
+#include <QPointer>
+
 class ContactListItem;
 class ContactListGroup;
 
-class ContactListItemProxy
+class ContactListItemProxy : public QObject
 {
 public:
-	ContactListItemProxy(ContactListGroup* parent, ContactListItem* item)
-		: item_(item)
-		, parent_(parent)
-	{}
+	ContactListItemProxy(ContactListGroup* parent, ContactListItem* item);
+	~ContactListItemProxy();
 
 	ContactListItem* item() const { return item_; }
 	ContactListGroup* parent() const { return parent_; }
 
 private:
-	ContactListItem* item_;
-	ContactListGroup* parent_;
+	QPointer<ContactListItem> item_;
+	QPointer<ContactListGroup> parent_;
 };
 
 #endif

@@ -23,6 +23,8 @@
 
 #include "contactlistnestedgroup.h"
 
+#include <QPointer>
+
 class PsiAccount;
 
 class ContactListAccountGroup : public ContactListNestedGroup
@@ -58,7 +60,8 @@ private slots:
 	void accountUpdated();
 
 private:
-	PsiAccount* account_;
+	bool isRoot_;
+	QPointer<PsiAccount> account_;
 	QList<ContactListAccountGroup*> accounts_;
 };
 
