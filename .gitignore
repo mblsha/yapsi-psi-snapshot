@@ -24,6 +24,7 @@
 moc_*.cpp
 ui_*.h
 
+*.tmproj
 /Makefile
 /psi
 /tmtags

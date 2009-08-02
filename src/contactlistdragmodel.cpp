@@ -149,11 +149,9 @@ Qt::ItemFlags ContactListDragModel::flags(const QModelIndex& index) const
 	ContactListItemProxy* item = static_cast<ContactListItemProxy*>(index.internalPointer());
 
 	if (item && item->item()) {
-		// TODO: disable dragging of groups if account is offline!
 		return f | Qt::ItemIsDropEnabled | (item->item()->isEditable() ? Qt::ItemIsDragEnabled : f);
 	}
 
-// FIXME: only do this if account display is disabled
 	if (!index.isValid()) {
 		return f | Qt::ItemIsDropEnabled;
 	}

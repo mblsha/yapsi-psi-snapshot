@@ -42,6 +42,7 @@ public:
 	virtual const QString& displayName() const;
 	virtual QString internalGroupName() const;
 	virtual ContactListItemMenu* contextMenu(ContactListModel* model);
+	virtual bool isEditable() const;
 
 	// reimplemented
 	virtual void addContact(PsiContact* contact, QStringList contactGroups);

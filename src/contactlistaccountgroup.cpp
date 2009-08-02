@@ -179,3 +179,8 @@ ContactListItemMenu* ContactListAccountGroup::contextMenu(ContactListModel* mode
 {
 	return new ContactListAccountMenu(this, model);
 }
+
+bool ContactListAccountGroup::isEditable() const
+{
+	return true;
+}
