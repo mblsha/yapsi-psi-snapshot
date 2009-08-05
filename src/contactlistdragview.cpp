@@ -781,10 +781,10 @@ void ContactListDragView::restoreBackedUpSelection()
 {
 	restoreSelection(backedUpSelection_);
 
-	if (backedUpSelection_) {
-		delete backedUpSelection_;
-		backedUpSelection_ = 0;
-	}
+	// if (backedUpSelection_) {
+	// 	delete backedUpSelection_;
+	// 	backedUpSelection_ = 0;
+	// }
 }
 
 void ContactListDragView::modelChanged()

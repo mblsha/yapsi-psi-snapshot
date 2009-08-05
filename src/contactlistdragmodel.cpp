@@ -195,6 +195,11 @@ QModelIndexList ContactListDragModel::indexesFor(const QMimeData* data) const
 		if (!account)
 			continue;
 		PsiContact* psiContact = account->findContact(contact.jid);
+		if (!psiContact) {
+			if (account->selfContact()->jid() == contact.jid)
+				psiContact = account->selfContact();
+		}
+
 		if (!psiContact)
 			continue;
 
