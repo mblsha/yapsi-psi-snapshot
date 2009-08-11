@@ -425,11 +425,12 @@ void ContactListDragView::dropEvent(QDropEvent* e)
 
 QAbstractItemView::DropIndicatorPosition ContactListDragView::dropPosition(QDropEvent* e, const ContactListModelSelection& selection, const QModelIndex& index) const
 {
-	if (selection.groups().count() > 0 || selection.accounts().count() > 0) {
+	if ((selection.groups().count() > 0 || selection.accounts().count() > 0) && selection.contacts().count() == 0) {
 		// TODO: return OnItem in case the special modifiers are pressed
 		// even in case there are multiple groups selected
 		// in order to create nested groups
-		if (selection.groups().count() == 1 || selection.accounts().count() == 1) {
+		int totalSelectedGroups = selection.groups().count() + selection.accounts().count();
+		if (totalSelectedGroups == 1) {
 			QModelIndex group = itemToReorderGroup(selection, index);
 			if (group.isValid()) {
 				QRect rect = groupVisualRect(group);

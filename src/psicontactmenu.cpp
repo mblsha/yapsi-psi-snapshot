@@ -496,7 +496,7 @@ private slots:
 		if (contact_->isAgent()) {
 			groupMenu_->setVisible(false);
 		}
-		groupMenu_->setEnabled(contact_->isEditable());
+		groupMenu_->setEnabled(contact_->isEditable() && contact_->isDragEnabled());
 		transportLogonAction_->setVisible(contact_->isAgent());
 		transportLogonAction_->setEnabled(contact_->account()->isAvailable() && contact_->status().type() == XMPP::Status::Offline);
 		transportLogoffAction_->setVisible(contact_->isAgent());

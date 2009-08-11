@@ -25,6 +25,7 @@
 #include "contactlistitem.h"
 #include "contactlistgroup.h"
 #include "contactlistitemproxy.h"
+#include "contactlistspecialgroup.h"
 
 ContactListProxyModel::ContactListProxyModel(QObject* parent)
 	: QSortFilterProxyModel(parent)
@@ -39,6 +40,8 @@ void ContactListProxyModel::setSourceModel(QAbstractItemModel* model)
 	QSortFilterProxyModel::setSourceModel(model);
 	connect(model, SIGNAL(showOfflineChanged()), SLOT(filterParametersChanged()));
 	connect(model, SIGNAL(showSelfChanged()), SLOT(filterParametersChanged()));
+	connect(model, SIGNAL(showSelfChanged()), SLOT(filterParametersChanged()));
+	connect(model, SIGNAL(showTransportsChanged()), SLOT(filterParametersChanged()));
 }
 
 bool ContactListProxyModel::showOffline() const
@@ -49,6 +52,11 @@ bool ContactListProxyModel::showOffline() const
 bool ContactListProxyModel::showSelf() const
 {
 	return static_cast<ContactListModel*>(sourceModel())->showSelf();
+}
+
+bool ContactListProxyModel::showTransports() const
+{
+	return static_cast<ContactListModel*>(sourceModel())->showTransports();
 }
 
 bool ContactListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
@@ -79,6 +87,9 @@ bool ContactListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& s
 		if (psiContact->isSelf()) {
 			return showSelf();
 		}
+		else if (psiContact->isAgent()) {
+			return showTransports();
+		}
 
 		if (!showOffline()) {
 			return psiContact->isOnline();
@@ -88,6 +99,12 @@ bool ContactListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& s
 		}
 	}
 	case ContactListModel::GroupType:
+		ContactListGroup::SpecialType specialGroupType = static_cast<ContactListGroup::SpecialType>(index.data(ContactListModel::SpecialGroupTypeRole).toInt());
+		if (specialGroupType != ContactListGroup::SpecialType_None) {
+			if (specialGroupType == ContactListGroup::SpecialType_Transports)
+				return showTransports();
+		}
+
 		if (!showOffline()) {
 			ContactListGroup* group = dynamic_cast<ContactListGroup*>(item);
 			return group->haveOnlineContacts();

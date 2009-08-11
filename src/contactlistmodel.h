@@ -74,12 +74,13 @@ public:
 		OnlineContactsRole = Qt::UserRole + 13,
 		TotalContactsRole = Qt::UserRole + 14,
 		InternalGroupNameRole = Qt::UserRole + 15,
+		SpecialGroupTypeRole = Qt::UserRole + 16,
 
 		// accounts
-		UsingSSLRole = Qt::UserRole + 16,
+		UsingSSLRole = Qt::UserRole + 17,
 
 #ifdef YAPSI
-		GenderRole = Qt::UserRole + 17,
+		GenderRole = Qt::UserRole + 18,
 #endif
 	};
 
@@ -110,6 +111,7 @@ public:
 
 	bool showOffline() const;
 	bool showSelf() const;
+	bool showTransports() const;
 	bool hasContacts(bool onlineOnly) const;
 
 	int groupOrder(const QString& groupFullName) const;
@@ -158,6 +160,7 @@ public:
 signals:
 	void showOfflineChanged();
 	void showSelfChanged();
+	void showTransportsChanged();
 	void inPlaceRename();
 
 public slots:

@@ -36,6 +36,7 @@
 #include "contactlistgroupstate.h"
 #include "contactlistgroupcache.h"
 #include "contactlistmodelupdater.h"
+#include "contactlistspecialgroup.h"
 #include "userlist.h"
 #ifdef YAPSI
 #include "yacommon.h"
@@ -67,6 +68,7 @@ ContactListModel::ContactListModel(PsiContactList* contactList)
 	connect(contactList_, SIGNAL(destroying()), SLOT(destroyingContactList()));
 	connect(contactList_, SIGNAL(showOfflineChanged(bool)), SIGNAL(showOfflineChanged()));
 	connect(contactList_, SIGNAL(showSelfChanged(bool)), SIGNAL(showSelfChanged()));
+	connect(contactList_, SIGNAL(showAgentsChanged(bool)), SIGNAL(showTransportsChanged()));
 	connect(contactList_, SIGNAL(rosterRequestFinished()), SLOT(rosterRequestFinished()));
 }
 
@@ -410,6 +412,9 @@ QVariant ContactListModel::contactGroupData(const ContactListGroup* group, int r
 	}
 	else if (role == InternalGroupNameRole) {
 		return QVariant(group->internalGroupName());
+	}
+	else if (role == SpecialGroupTypeRole) {
+		return QVariant(group->specialGroupType());
 	}
 
 	return contactListItemData(group, role);
@@ -812,6 +817,13 @@ bool ContactListModel::showSelf() const
 	if (!contactList_)
 		return false;
 	return contactList_->showSelf();
+}
+
+bool ContactListModel::showTransports() const
+{
+	if (!contactList_)
+		return false;
+	return contactList_->showAgents();
 }
 
 bool ContactListModel::updatesEnabled() const

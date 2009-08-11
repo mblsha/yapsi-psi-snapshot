@@ -91,11 +91,6 @@ void ContactListAccountGroup::addContact(PsiContact* contact, QStringList contac
 	}
 }
 
-void ContactListAccountGroup::contactUpdated(PsiContact* contact)
-{
-	ContactListNestedGroup::contactUpdated(contact);
-}
-
 void ContactListAccountGroup::contactGroupsChanged(PsiContact* contact, QStringList contactGroups)
 {
 	if (isRoot()) {
@@ -183,4 +178,9 @@ ContactListItemMenu* ContactListAccountGroup::contextMenu(ContactListModel* mode
 bool ContactListAccountGroup::isEditable() const
 {
 	return true;
+}
+
+bool ContactListAccountGroup::canContainSpecialGroups() const
+{
+	return !isRoot() && model()->groupsEnabled();
 }

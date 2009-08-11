@@ -468,6 +468,7 @@ newcontactlist {
 		$$PWD/contactlistgroup.h \
 		$$PWD/contactlistnestedgroup.h \
 		$$PWD/contactlistaccountgroup.h \
+		$$PWD/contactlistspecialgroup.h \
 		$$PWD/contactlistgroupmenu.h \
 		$$PWD/contactlistaccountmenu.h \
 		$$PWD/contactlistitem.h \
@@ -494,6 +495,7 @@ newcontactlist {
 		$$PWD/contactlistgroup.cpp \
 		$$PWD/contactlistnestedgroup.cpp \
 		$$PWD/contactlistaccountgroup.cpp \
+		$$PWD/contactlistspecialgroup.cpp \
 		$$PWD/contactlistgroupmenu.cpp \
 		$$PWD/contactlistaccountmenu.cpp \
 		$$PWD/contactlistitem.cpp \

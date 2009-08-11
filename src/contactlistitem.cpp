@@ -37,6 +37,11 @@ bool ContactListItem::isEditable() const
 	return false;
 }
 
+bool ContactListItem::isDragEnabled() const
+{
+	return isEditable();
+}
+
 bool ContactListItem::isRemovable() const
 {
 	return false;

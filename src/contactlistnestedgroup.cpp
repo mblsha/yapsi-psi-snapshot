@@ -24,6 +24,7 @@
 
 #include "psicontact.h"
 #include "contactlistitemproxy.h"
+#include "contactlistspecialgroup.h"
 
 ContactListNestedGroup::ContactListNestedGroup(ContactListModel* model, ContactListGroup* parent, QString name)
 	: ContactListGroup(model, parent)
@@ -51,6 +52,14 @@ void ContactListNestedGroup::clearGroup()
 
 void ContactListNestedGroup::addContact(PsiContact* contact, QStringList contactGroups)
 {
+	if (canContainSpecialGroups()) {
+		ContactListGroup* group = specialGroupFor(contact);
+		if (group) {
+			group->addContact(contact, contactGroups);
+			return;
+		}
+	}
+
 	foreach(QString groupName, contactGroups) {
 		if (groupName == name()) {
 			ContactListGroup::addContact(contact, contactGroups);
@@ -72,9 +81,8 @@ void ContactListNestedGroup::addContact(PsiContact* contact, QStringList contact
 			ContactListGroup* group = findGroup(nestedGroups.first());
 			if (!group) {
 				group = new ContactListNestedGroup(model(), this, nestedGroups.first());
-				groups_.append(group);
+				addGroup(group);
 // qWarning("ContactListNextedGroup(%x)::addContact: %s", this, qPrintable(group->fullName()));
-				addItem(new ContactListItemProxy(this, group));
 			}
 
 			QStringList moreGroups;
@@ -82,6 +90,14 @@ void ContactListNestedGroup::addContact(PsiContact* contact, QStringList contact
 			group->addContact(contact, moreGroups);
 		}
 	}
+}
+
+void ContactListNestedGroup::addGroup(ContactListGroup* group)
+{
+	Q_ASSERT(group);
+	Q_ASSERT(!groups_.contains(group));
+	groups_.append(group);
+	addItem(new ContactListItemProxy(this, group));
 }
 
 void ContactListNestedGroup::contactUpdated(PsiContact* contact)
@@ -97,6 +113,22 @@ void ContactListNestedGroup::contactUpdated(PsiContact* contact)
 
 void ContactListNestedGroup::contactGroupsChanged(PsiContact* contact, QStringList contactGroups)
 {
+	if (canContainSpecialGroups()) {
+		ContactListGroup* specialGroup = specialGroupFor(contact);
+		QHashIterator<ContactListGroup::SpecialType, QPointer<ContactListGroup> > it(specialGroups_);
+		while (it.hasNext()) {
+			it.next();
+			if (!it.value().isNull()) {
+				it.value()->contactGroupsChanged(contact, it.value() == specialGroup ?
+				                                 contactGroups : QStringList());
+			}
+		}
+
+		if (specialGroup) {
+			return;
+		}
+	}
+
 #ifdef CONTACTLISTNESTEDGROUP_OLD_CONTACTGROUPSCHANGED
 	bool addToSelf = false;
 	QList<QStringList> splitGroupNames;
@@ -229,9 +261,43 @@ void ContactListNestedGroup::contactGroupsChanged(PsiContact* contact, QStringLi
 
 ContactListGroup* ContactListNestedGroup::findGroup(const QString& groupName) const
 {
-	foreach(ContactListGroup* group, groups_)
-		if (group->name() == groupName)
-			return group;
+	foreach(ContactListGroup* group, groups_) {
+		if (group->name() == groupName) {
+			if (!dynamic_cast<ContactListSpecialGroup*>(group))
+				return group;
+		}
+	}
 
 	return 0;
+}
+
+bool ContactListNestedGroup::canContainSpecialGroups() const
+{
+	return !parent() && model()->groupsEnabled();
+}
+
+ContactListGroup* ContactListNestedGroup::specialGroupFor(PsiContact* contact)
+{
+	ContactListGroup::SpecialType type = ContactListGroup::SpecialType_None;
+	if (!contact->inList()) {
+		type = ContactListGroup::SpecialType_NotInList;
+	}
+	else if (contact->isPrivate()) {
+		type = ContactListGroup::SpecialType_MUCPrivateChats;
+	}
+	else if (contact->isAgent()) {
+		type = ContactListGroup::SpecialType_Transports;
+	}
+	// else if (contact->noGroups()) {
+	// 	type = ContactListGroup::SpecialType_General;
+	// }
+	else {
+		return 0;
+	}
+
+	if (!specialGroups_.contains(type) || specialGroups_[type].isNull()) {
+		specialGroups_[type] = new ContactListSpecialGroup(model(), this, type);
+		addGroup(specialGroups_[type]);
+	}
+	return specialGroups_[type];
 }

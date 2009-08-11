@@ -54,6 +54,8 @@ public:
 	virtual bool isSelf() const;
 	virtual bool isAgent() const;
 	virtual bool inList() const;
+	virtual bool isPrivate() const;
+	virtual bool noGroups() const;
 	virtual bool authorized() const;
 	virtual bool authorizesToSeeStatus() const;
 	virtual bool askingForAuth() const;
@@ -89,6 +91,7 @@ public:
 	virtual void setName(const QString& name);
 	virtual ContactListItemMenu* contextMenu(ContactListModel* model);
 	virtual bool isEditable() const;
+	virtual bool isDragEnabled() const;
 	virtual bool compare(const ContactListItem* other) const;
 	virtual bool isRemovable() const;
 

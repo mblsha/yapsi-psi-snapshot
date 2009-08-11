@@ -176,6 +176,10 @@ void IconAction::setPsiIcon(const QString &name)
 #ifdef WIDGET_PLUGIN
 	d->iconName = name;
 #else
+	if (name.isEmpty()) {
+		setPsiIcon( 0 );
+		return;
+	}
 	setPsiIcon( IconsetFactory::iconPtr(name) );
 #endif
 }

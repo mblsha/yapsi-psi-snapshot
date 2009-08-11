@@ -1,5 +1,5 @@
 /*
- * contactlistaccountgroup.h
+ * contactlistspecialgroup.h
  * Copyright (C) 2009  Michail Pishchagin
  *
  * This program is free software; you can redistribute it and/or
@@ -18,52 +18,35 @@
  *
  */
 
-#ifndef CONTACTLISTACCOUNTGROUP_H
-#define CONTACTLISTACCOUNTGROUP_H
+#ifndef CONTACTLISTSPECIALGROUP_H
+#define CONTACTLISTSPECIALGROUP_H
 
 #include "contactlistnestedgroup.h"
 
-#include <QPointer>
-
-class PsiAccount;
-
-class ContactListAccountGroup : public ContactListNestedGroup
+class ContactListSpecialGroup : public ContactListNestedGroup
 {
 	Q_OBJECT
 public:
-	ContactListAccountGroup(ContactListModel* model, ContactListGroup* parent, PsiAccount* account);
-	~ContactListAccountGroup();
-
-	PsiAccount* account() const;
-	ContactListAccountGroup* findAccount(PsiAccount* account) const;
+	ContactListSpecialGroup(ContactListModel* model, ContactListGroup* parent, ContactListGroup::SpecialType type);
 
 	// reimplemented
-	virtual ContactListModel::Type type() const;
-	virtual const QString& displayName() const;
-	virtual QString internalGroupName() const;
-	virtual ContactListItemMenu* contextMenu(ContactListModel* model);
 	virtual bool isEditable() const;
-	virtual bool canContainSpecialGroups() const;
+	virtual bool isRemovable() const;
+	virtual bool isSpecial() const;
+	virtual SpecialType specialGroupType() const;
+	virtual QString internalGroupName() const;
+	virtual const QString& name() const;
+	virtual bool compare(const ContactListItem* other) const;
 
 	// reimplemented
 	virtual void addContact(PsiContact* contact, QStringList contactGroups);
 	virtual void contactGroupsChanged(PsiContact* contact, QStringList contactGroups);
 
-protected:
-	void removeAccount(ContactListAccountGroup* accountGroup);
-	ContactListItemProxy* findGroup(ContactListGroup* group) const;
-	bool isRoot() const;
-
-	// reimplemented
-	virtual void clearGroup();
-
-private slots:
-	void accountUpdated();
-
 private:
-	bool isRoot_;
-	QPointer<PsiAccount> account_;
-	QList<ContactListAccountGroup*> accounts_;
+	SpecialType specialType_;
+	QString name_;
+	QString displayName_;
 };
+
 
 #endif

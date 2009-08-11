@@ -41,6 +41,7 @@ public:
 	virtual void setName(const QString& name) = 0;
 
 	virtual bool isEditable() const;
+	virtual bool isDragEnabled() const;
 	virtual bool isRemovable() const;
 
 	virtual bool isExpandable() const;

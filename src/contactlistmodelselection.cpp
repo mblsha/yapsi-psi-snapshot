@@ -39,7 +39,7 @@ ContactListModelSelection::ContactListModelSelection(QList<ContactListItemProxy*
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("items");
-	root.setAttribute("version", "1.0");
+	root.setAttribute("version", "2.0");
 	doc.appendChild(root);
 
 	// TODO: maybe also embed a random instance-specific token to
@@ -80,6 +80,9 @@ ContactListModelSelection::ContactListModelSelection(QList<ContactListItemProxy*
 
 			jids << group->fullName();
 		}
+		else {
+			qWarning("ContactListModelSelection::ContactListModelSelection(): Unable to serialize %d, unsupported type", itemProxy->item()->type());
+		}
 	}
 
 	setText(jids.join(";"));
@@ -108,7 +111,7 @@ QDomElement ContactListModelSelection::rootElementFor(const QMimeData* mimeData)
 		return QDomElement();
 
 	QDomElement root = doc.documentElement();
-	if (root.tagName() != "items" || root.attribute("version") != "1.0")
+	if (root.tagName() != "items" || root.attribute("version") != "2.0")
 		return QDomElement();
 
 	return root;

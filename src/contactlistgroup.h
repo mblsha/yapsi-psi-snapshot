@@ -86,6 +86,18 @@ public:
 	void dumpTree() const;
 #endif
 
+	enum SpecialType {
+		SpecialType_None = 0,
+
+		// SpecialType_General,
+		SpecialType_NotInList,
+		SpecialType_Transports,
+		SpecialType_MUCPrivateChats
+	};
+
+	virtual bool isSpecial() const;
+	virtual SpecialType specialGroupType() const;
+
 protected:
 	void addItem(ContactListItemProxy* item);
 	void removeItem(ContactListItemProxy* item);

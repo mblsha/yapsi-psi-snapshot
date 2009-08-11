@@ -366,7 +366,14 @@ bool PsiContact::isEditable() const
 		return false;
 	}
 #endif
-	return account()->isAvailable();
+	return account()->isAvailable() && inList();
+}
+
+bool PsiContact::isDragEnabled() const
+{
+	return isEditable()
+	       && !isPrivate()
+	       && !isAgent();
 }
 
 /**
@@ -404,15 +411,15 @@ QStringList PsiContact::groups() const
 	if (!account())
 		return result;
 
-	if (d->u_.isPrivate()) {
-		result << tr("Private messages");
-		return result;
-	}
+	// if (d->u_.isPrivate()) {
+	// 	result << tr("Private messages");
+	// 	return result;
+	// }
 
-	if (!d->u_.inList()) {
-		result << notInListGroupName();
-		return result;
-	}
+	// if (!d->u_.inList()) {
+	// 	result << notInListGroupName();
+	// 	return result;
+	// }
 
 	if (d->u_.groups().isEmpty()) {
 		// empty group name means that the contact should be added
@@ -945,6 +952,16 @@ bool PsiContact::inList() const
 	return userListItem().inList();
 }
 
+bool PsiContact::isPrivate() const
+{
+	return userListItem().isPrivate();
+}
+
+bool PsiContact::noGroups() const
+{
+	return userListItem().groups().isEmpty();
+}
+
 /*!
  * Returns true if contact could see our status.
  */
@@ -970,6 +987,12 @@ bool PsiContact::askingForAuth() const
 
 bool PsiContact::isOnline() const
 {
+	if (!inList() ||
+	    isPrivate())
+	{
+		return true;
+	}
+
 	return d->status_.type()    != XMPP::Status::Offline ||
 	       d->oldStatus_.type() != XMPP::Status::Offline
 #ifdef YAPSI

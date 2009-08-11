@@ -149,7 +149,7 @@ Qt::ItemFlags ContactListDragModel::flags(const QModelIndex& index) const
 	ContactListItemProxy* item = static_cast<ContactListItemProxy*>(index.internalPointer());
 
 	if (item && item->item()) {
-		return f | Qt::ItemIsDropEnabled | (item->item()->isEditable() ? Qt::ItemIsDragEnabled : f);
+		return f | Qt::ItemIsDropEnabled | (item->item()->isDragEnabled() ? Qt::ItemIsDragEnabled : f);
 	}
 
 	if (!index.isValid()) {
@@ -262,6 +262,16 @@ bool ContactListDragModel::supportsMimeDataOnIndex(const QMimeData* data, const 
 		return false;
 	}
 #endif
+
+	{
+		// disable dragging to special groups
+		ContactListItemProxy* item = itemProxy(parent);
+		ContactListGroup* group = dynamic_cast<ContactListGroup*>(item ? item->item() : 0);
+		if (!group)
+			group = item ? item->parent() : 0;
+		if (group && group->isSpecial())
+			return false;
+	}
 
 	foreach(QModelIndex index, indexesFor(data)) {
 		if (index == parent) {

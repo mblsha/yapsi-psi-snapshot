@@ -25,9 +25,12 @@
 
 class ContactListNestedGroup : public ContactListGroup
 {
+	Q_OBJECT
 public:
 	ContactListNestedGroup(ContactListModel* model, ContactListGroup* parent, QString name);
 	~ContactListNestedGroup();
+
+	virtual bool canContainSpecialGroups() const;
 
 	// reimplemented
 	virtual void addContact(PsiContact* contact, QStringList contactGroups);
@@ -35,6 +38,8 @@ public:
 	virtual void contactGroupsChanged(PsiContact* contact, QStringList contactGroups);
 
 protected:
+	ContactListGroup* specialGroupFor(PsiContact* contact);
+	void addGroup(ContactListGroup* group);
 	ContactListGroup* findGroup(const QString& groupName) const;
 
 	// reimplemented
@@ -42,6 +47,7 @@ protected:
 
 private:
 	QVector<ContactListGroup*> groups_;
+	QHash<ContactListGroup::SpecialType, QPointer<ContactListGroup> > specialGroups_;
 };
 
 #endif

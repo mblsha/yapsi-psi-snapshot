@@ -420,6 +420,10 @@ bool ContactListGroup::compare(const ContactListItem* other) const
 {
 	const ContactListGroup* group = dynamic_cast<const ContactListGroup*>(other);
 	if (group) {
+		if (group->isSpecial()) {
+			return !group->compare(this);
+		}
+
 		int order = model()->groupState()->groupOrder(group) - model()->groupState()->groupOrder(this);
 		if (order) {
 			return order > 0;
@@ -475,3 +479,13 @@ void ContactListGroup::dumpTree() const
 	dumpTree(0);
 }
 #endif
+
+bool ContactListGroup::isSpecial() const
+{
+	return false;
+}
+
+ContactListGroup::SpecialType ContactListGroup::specialGroupType() const
+{
+	return SpecialType_None;
+}
