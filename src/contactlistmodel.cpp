@@ -481,6 +481,12 @@ QVariant ContactListModel::contactData(const PsiContact* contact, int role) cons
 	else if (role == AskingForAuthRole) {
 		return QVariant(contact->askingForAuth());
 	}
+	else if (role == IsAlertingRole) {
+		return QVariant(contact->alerting());
+	}
+	else if (role == AlertPictureRole) {
+		return QVariant(contact->alertPicture());
+	}
 #ifdef YAPSI
 	else if (role == Qt::ForegroundRole) {
 		return QVariant(Ya::statusColor(contact->status().type()));

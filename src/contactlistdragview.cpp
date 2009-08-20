@@ -660,6 +660,9 @@ bool ContactListDragView::extendedSelectionAllowed() const
 
 bool ContactListDragView::activateItemsOnSingleClick() const
 {
+// #ifndef YAPSI
+// 	return PsiOptions::instance()->getOption("options.ui.contactlist.use-single-click").toBool();
+// #endif
 	return false;
 	// return style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this);
 	// return !extendedSelectionAllowed() &&

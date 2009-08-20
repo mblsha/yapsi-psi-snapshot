@@ -99,7 +99,7 @@ public:
 	virtual XMPP::Status status() const;
 	virtual QString toolTip() const;
 	virtual QIcon picture() const;
-	virtual QIcon statusIcon() const;
+	virtual QIcon alertPicture() const;
 
 #ifdef YAPSI
 	XMPP::VCard::Gender gender() const;
@@ -134,8 +134,6 @@ public slots:
 	virtual void openActiveChat(QString resource);
 	virtual void sendFile();
 	virtual void inviteToGroupchat(QString groupChat);
-	virtual void logon();
-	virtual void logoff();
 	virtual void toggleBlockedState();
 	virtual void toggleBlockedStateConfirmation();
 	virtual void rerequestAuthorizationFrom();

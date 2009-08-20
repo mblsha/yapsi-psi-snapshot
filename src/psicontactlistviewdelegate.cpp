@@ -55,6 +55,18 @@ const QPixmap& PsiContactListViewDelegate::statusPixmap(const QModelIndex& index
 {
 	int s = statusType(index);
 	if (ContactListModel::indexType(index) == ContactListModel::ContactType) {
+		if (index.data(ContactListModel::IsAlertingRole).toBool()) {
+			QVariant alertData = index.data(ContactListModel::AlertPictureRole);
+			QIcon alert;
+			if (alertData.isValid()) {
+				if (alertData.type() == QVariant::Icon) {
+					alert = qvariant_cast<QIcon>(alertData);
+				}
+			}
+
+			return alert.pixmap(100, 100);
+		}
+
 		if (!index.data(ContactListModel::PresenceErrorRole).toString().isEmpty())
 			s = STATUS_ERROR;
 		else if (index.data(ContactListModel::IsAgentRole).toBool())

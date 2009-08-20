@@ -247,9 +247,6 @@ void PsiContact::activate()
 {
 	if (!account())
 		return;
-	// FIXME: probably should obsolete this option
-	// if(option.singleclick)
-	// 	return;
 	account()->actionDefault(jid());
 }
 
@@ -324,18 +321,7 @@ QIcon PsiContact::picture() const
 }
 
 /**
- * Returns contact's status picture, or alert frame, if alert is present.
- */
-QIcon PsiContact::statusIcon() const
-{
-	if (d->alerting())
-		return d->currentAlertFrame();
-
-	return PsiIconset::instance()->status(jid(), status()).icon();
-}
-
-/**
- * TODO
+ * Creates a menu with actions for this contact.
  */
 ContactListItemMenu* PsiContact::contextMenu(ContactListModel* model)
 {
@@ -507,13 +493,23 @@ bool PsiContact::alerting() const
 	return d->alerting();
 }
 
+QIcon PsiContact::alertPicture() const
+{
+	Q_ASSERT(alerting());
+	if (!alerting())
+		return QIcon();
+	return d->currentAlertFrame();
+}
+
 /**
  * Sets alert icon for contact. Pass null pointer in order to clear alert.
  */
 void PsiContact::setAlert(const PsiIcon* icon)
 {
+#ifndef YAPSI
 	d->setAlert(icon);
 	// updateParent();
+#endif
 }
 
 /**
@@ -628,18 +624,6 @@ void PsiContact::inviteToGroupchat(QString groupChat)
 	if (account())
 		account()->actionInvite(jid(), groupChat);
 }
-
-// TODO: implement PsiAgent class and move these functions there
-void PsiContact::logon()
-{
-	qWarning("PsiContact::logon()");
-}
-
-void PsiContact::logoff()
-{
-	qWarning("PsiContact::logoff()");
-}
-
 
 void PsiContact::toggleBlockedState()
 {

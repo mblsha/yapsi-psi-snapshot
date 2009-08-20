@@ -66,21 +66,23 @@ public:
 		IsAgentRole = Qt::UserRole + 7,
 		AuthorizesToSeeStatusRole = Qt::UserRole + 8,
 		AskingForAuthRole = Qt::UserRole + 9,
+		IsAlertingRole = Qt::UserRole + 10,
+		AlertPictureRole = Qt::UserRole + 11,
 
 		// groups
-		ExpandedRole = Qt::UserRole + 10,
-		TotalItemsRole = Qt::UserRole + 11,
-		FullGroupNameRole = Qt::UserRole + 12,
-		OnlineContactsRole = Qt::UserRole + 13,
-		TotalContactsRole = Qt::UserRole + 14,
-		InternalGroupNameRole = Qt::UserRole + 15,
-		SpecialGroupTypeRole = Qt::UserRole + 16,
+		ExpandedRole = Qt::UserRole + 12,
+		TotalItemsRole = Qt::UserRole + 13,
+		FullGroupNameRole = Qt::UserRole + 14,
+		OnlineContactsRole = Qt::UserRole + 15,
+		TotalContactsRole = Qt::UserRole + 16,
+		InternalGroupNameRole = Qt::UserRole + 17,
+		SpecialGroupTypeRole = Qt::UserRole + 18,
 
 		// accounts
-		UsingSSLRole = Qt::UserRole + 17,
+		UsingSSLRole = Qt::UserRole + 19,
 
 #ifdef YAPSI
-		GenderRole = Qt::UserRole + 18,
+		GenderRole = Qt::UserRole + 20,
 #endif
 	};
 

@@ -6846,14 +6846,6 @@ QString PsiAccount::toolTip() const
 	return "<qt><center><b>" + name() + " " + groupInfo() + "</b></center> " + d->selfContact->toolTip() + "</qt>";
 }
 
-QIcon PsiAccount::statusIcon() const
-{
-	if (d->alerting())
-		return d->currentAlertFrame();
-
-	return PsiIconset::instance()->status(jid(), status()).icon();
-}
-
 bool PsiAccount::compare(const ContactListItem* other) const
 {
 	const PsiAccount* account = dynamic_cast<const PsiAccount*>(other);
