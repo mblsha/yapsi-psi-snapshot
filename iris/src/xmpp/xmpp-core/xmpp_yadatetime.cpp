@@ -20,6 +20,13 @@
 
 #include "xmpp_yadatetime.h"
 
+#include <QHash>
+
+uint qHash(const XMPP::YaDateTime& yaDateTime)
+{
+	return qHash(yaDateTime.toYaTime_t());
+}
+
 XMPP::YaDateTime::YaDateTime()
 	: QDateTime()
 	, microsec_(0)
@@ -36,6 +43,11 @@ XMPP::YaDateTime::YaDateTime(const YaDateTime& dateTime)
 	: QDateTime(dateTime)
 	, microsec_(dateTime.microsec_)
 {
+}
+
+bool XMPP::YaDateTime::isNull() const
+{
+	return !QDateTime::isValid();
 }
 
 int XMPP::YaDateTime::microsec() const
@@ -82,7 +94,7 @@ XMPP::YaDateTime XMPP::YaDateTime::fromYaTime_t(const QString& str)
 	YaDateTime result;
 	if (str.isEmpty())
 		return result;
-	result.microsec_ = timeStamp.right(6).toInt();
+	result.microsec_ = getMicrosec(timeStamp.right(6));
 	timeStamp.chop(6);
 	QDateTime ts = QDateTime::fromTime_t(timeStamp.toInt());
 	// ts.setTimeSpec(Qt::UTC);
@@ -110,7 +122,7 @@ XMPP::YaDateTime XMPP::YaDateTime::fromYaIsoTime(const QString& str)
 		return result;
 	QString timeStamp = str;
 	if (timeStamp.length() == 26) {
-		result.microsec_ = timeStamp.right(6).toInt();
+		result.microsec_ = getMicrosec(timeStamp.right(6));
 		timeStamp.chop(7);
 	}
 	else {
@@ -159,4 +171,13 @@ bool XMPP::YaDateTime::operator>=(const YaDateTime& other) const
 	if (time() != other.time())
 		return time() >= other.time();
 	return microsec_ >= other.microsec_;
+}
+
+// WEBCHAT-2480, ONLINE-2275
+int XMPP::YaDateTime::getMicrosec(const QString& str)
+{
+	QString s = str;
+	s.chop(2);
+	s += "00";
+	return s.toInt();
 }

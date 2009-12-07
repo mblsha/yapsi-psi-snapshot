@@ -533,11 +533,17 @@ void YaChatView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int 
 	for (int i = start; i <= end; ++i) {
 		delegate()->indexAboutToBeRemoved(index(i));
 	}
+
+	// workaround for ONLINE-2049
+	viewport()->update();
 }
 
 void YaChatView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
 	QListView::rowsInserted(parent, start, end);
+
+	// workaround for ONLINE-2049
+	viewport()->update();
 }
 
 void YaChatView::setDialog(QWidget* dialog)
@@ -787,6 +793,14 @@ bool YaChatView::event(QEvent* event)
 					}
 				}
 			}
+#if 0
+			else {
+				toolTip = QString("<div style='white-space:pre'>DateTimeRole = %3</div>\n<div style='white-space:pre'>YaDateTimeRole = %1</div>\n<div style='white-space:pre'>YaFlagsRole = %2</div>")
+				.arg(currentIndex.data(YaChatViewModel::YaDateTimeRole).value<XMPP::YaDateTime>().toYaIsoTime())
+				.arg(currentIndex.data(YaChatViewModel::YaFlagsRole).toInt())
+				.arg(currentIndex.data(YaChatViewModel::DateTimeRole).toDateTime().toUTC().toString("yyyy-MM-dd HH:mm:ss"));
+			}
+#endif
 		}
 
 		PsiToolTip::showText(pos, toolTip, this);
@@ -888,16 +902,6 @@ void YaChatView::scrollContentsBy(int dx, int dy)
 	// setDirtyRegion(faderRect().translated(dx, dy));
 
 	QListView::scrollContentsBy(dx, dy);
-
-	// workaround for ONLINE-2049
-	QRect r(viewport()->rect());
-	if (dy > 0) {
-		r = QRect(r.left(), r.top(), r.width(), dy);
-	}
-	else {
-		r = QRect(r.left(), r.bottom() + dy, r.width(), qAbs(dy));
-	}
-	setDirtyRegion(r);
 }
 
 void YaChatView::composingEventTimerTimeout()

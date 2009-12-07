@@ -76,6 +76,7 @@ namespace Ya {
 	QString nickFromVCard(const XMPP::Jid& jid, const XMPP::VCard* vcard);
 	bool isYaInformer(PsiEvent* event);
 	bool isYaJid(const XMPP::Jid&);
+	bool isYandexTeamJid(const XMPP::Jid&);
 	bool historyAvailable(PsiAccount* account, const XMPP::Jid&);
 	bool useMaleMessage(XMPP::VCard::Gender gender);
 	QString statusFullName(XMPP::Status::Type status, XMPP::VCard::Gender gender = XMPP::VCard::UnknownGender);
@@ -127,12 +128,10 @@ namespace Ya {
 	};
 
 	QList<SpooledMessage> lastMessages(const PsiAccount* me, const XMPP::Jid& interlocutor, unsigned int count = 0);
-	const QString history(const PsiAccount* me, const XMPP::Jid& interlocutor);
 	const void showHistory(const PsiAccount* me, const XMPP::Jid& interlocutor);
 
 	// colorize stanzas
 	const QString colorString(bool local, bool spooled);
-	const QString formatStanza(bool needOpeningTitle, QString color, QString timestr, QString who, QString txt);
 
 	class DateFormatter : public QObject
 	{

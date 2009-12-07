@@ -31,6 +31,10 @@ class RemoveConfirmationMessageBoxManager : public QObject
 public:
 	static RemoveConfirmationMessageBoxManager* instance();
 
+	void showInformation(const QString& id,
+	                     const QString& title, const QString& informativeText,
+	                     QWidget* parent);
+
 	// slots must accept (QString id, bool confirmed)
 	void removeConfirmation(const QString& id, QObject* obj, const char* slot,
 	                        const QString& title, const QString& informativeText,
@@ -72,6 +76,7 @@ private:
 		QString informativeText;
 		QStringList buttons;
 		QWidget* parent;
+		QMessageBox::Icon icon;
 
 		int onlineId;
 		QString id;
@@ -82,7 +87,8 @@ private:
 	                 const QList<DataCallback> callbacks,
 	                 const QString& title, const QString& informativeText,
 	                 QWidget* parent,
-	                 const QStringList& actionNames);
+	                 const QStringList& actionNames,
+	                 QMessageBox::Icon icon);
 
 	static RemoveConfirmationMessageBoxManager* instance_;
 	QList<Data> data_;
@@ -97,17 +103,20 @@ protected:
 
 	void setDestructiveActionName(const QString& destructiveAction);
 	void setComplimentaryActionName(const QString& complimentaryAction);
+	void setInfoActionName(const QString& infoAction);
 
 	void doExec();
 
 	bool removeAction() const;
 	bool complimentaryAction() const;
+	bool infoAction() const;
 
 	static QString processInformativeText(const QString& informativeText);
 
 private:
 	QPushButton* removeButton_;
 	QPushButton* complimentaryButton_;
+	QPushButton* infoButton_;
 	QPushButton* cancelButton_;
 
 	friend class RemoveConfirmationMessageBoxManager;

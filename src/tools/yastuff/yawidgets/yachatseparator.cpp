@@ -32,6 +32,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QStyleOptionToolButton>
+#include <QCursor>
 
 #include "iconset.h"
 #include "yaclosebutton.h"
@@ -87,9 +88,17 @@ static QPixmap buttonBackground(bool pressed)
 	return pix;
 }
 
-static QPixmap emoticonOverlay()
+static QPixmap emoticonOverlay(bool hover)
 {
 	static QPixmap pix;
+	static QPixmap pix_hover;
+
+	if (hover) {
+		if (pix_hover.isNull()) {
+			pix_hover = QPixmap(":images/chat/emoticon_overlay_hover.png");
+		}
+		return pix_hover;
+	}
 
 	if (pix.isNull()) {
 		pix = QPixmap(":images/chat/emoticon_overlay.png");
@@ -173,6 +182,26 @@ void YaChatSeparatorPushButton::drawForeground(QPainter* p)
 	if (isDown())
 		textRect.adjust(0, 1, 0, 1);
 	p->drawText(textRect, Qt::AlignCenter | Qt::AlignVCenter, text());
+}
+
+//----------------------------------------------------------------------------
+// YaChatSeparatorOverlayButton
+//----------------------------------------------------------------------------
+
+YaChatSeparatorOverlayButton::YaChatSeparatorOverlayButton(QWidget* parent)
+	: QPushButton(parent)
+{
+	setAttribute(Qt::WA_Hover, true);
+}
+
+YaChatSeparatorOverlayButton::~YaChatSeparatorOverlayButton()
+{
+}
+
+void YaChatSeparatorOverlayButton::paintEvent(QPaintEvent*)
+{
+	QPainter p(this);
+	p.drawPixmap(rect(), emoticonOverlay(underMouse()));
 }
 
 //----------------------------------------------------------------------------
@@ -441,6 +470,7 @@ void YaChatEmoticonToolBar::setIconset(const Iconset &iconset)
 
 	foreach(QToolButton* button, findChildren<QToolButton*>()) {
 		PsiToolTip::install(button);
+		button->setCursor(Qt::PointingHandCursor);
 	}
 }
 
@@ -474,8 +504,11 @@ YaChatSeparatorExtra::YaChatSeparatorExtra(QWidget* parent, YaChatSeparator* ove
 	toolBar_ = new YaChatEmoticonToolBar(this);
 	connect(toolBar_, SIGNAL(textSelected(QString)), SIGNAL(textSelected(QString)));
 
-	pixmap_ = emoticonOverlay();
+	pixmap_ = emoticonOverlay(false);
 	background_ = buttonBackground(false);
+
+	overlayButton_ = new YaChatSeparatorOverlayButton(this);
+	connect(overlayButton_, SIGNAL(clicked()), SLOT(overlayClicked()));
 
 	addButton_ = new YaChatSeparatorPushButton(tr("Add"), this);
 	connect(addButton_, SIGNAL(clicked()), SIGNAL(addContact()));
@@ -544,17 +577,20 @@ void YaChatSeparatorExtra::paintEvent(QPaintEvent*)
 	p.drawTiledPixmap(backgroundRect, background_);
 
 	// p.fillRect(toolBar_->geometry(), Qt::red);
-
-	p.drawPixmap(pixmapRect(), pixmap_);
 }
 
 bool YaChatSeparatorExtra::eventFilter(QObject* obj, QEvent* e)
 {
-	if (obj == this && e->type() == QEvent::MouseButtonPress) {
-		expand();
-	}
+	// if (obj == this && e->type() == QEvent::MouseButtonPress) {
+	// 	expand();
+	// }
 
 	return QWidget::eventFilter(obj, e);
+}
+
+void YaChatSeparatorExtra::overlayClicked()
+{
+	expand();
 }
 
 int YaChatSeparatorExtra::normalWidth() const
@@ -611,6 +647,7 @@ void YaChatSeparatorExtra::setState(State state)
 		state = Normal;
 
 	state_ = state;
+	overlayButton_->update();
 
 	switch (state_) {
 	case Normal:
@@ -697,6 +734,7 @@ void YaChatSeparatorExtra::updateChildWidgets()
 	// closeRect.adjust(offset, 0, offset, 0);
 	// toolBarRect.adjust(offset, 0, offset, 0);
 
+	overlayButton_->setGeometry(pixmapRect());
 	closeButton_->setGeometry(closeRect);
 	toolBar_->setGeometry(toolBarRect);
 }

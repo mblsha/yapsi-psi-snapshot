@@ -53,10 +53,15 @@
 #include "yahistorycachemanager.h"
 #include "psilogger.h"
 #include "vcardfactory.h"
+#include "xmpp_yadatetime.h"
+#include "yachatseparator.h"
+#include "msgmle.h"
 
 static const QString emoticonsEnabledOptionPath = "options.ya.emoticons-enabled";
 static const QString enableTypographyOptionPath = "options.ya.typography.enable";
 static const QString textColorOptionPath = "options.ya.chat-window.text-color";
+static const QString spellCheckEnabledOptionPath = "options.ui.spell-check.enabled";
+static const QString sendButtonEnabledOptionPath = "options.ya.chat-window.send-button.enabled";
 
 class YaChatDlgShared : public QObject
 {
@@ -64,6 +69,8 @@ class YaChatDlgShared : public QObject
 public:
 	QAction* typographyAction() const { return typographyAction_; }
 	QAction* emoticonsAction() const { return emoticonsAction_; }
+	QAction* checkSpellingAction() const { return checkSpellingAction_; }
+	QAction* sendButtonEnabledAction() const { return sendButtonEnabledAction_; }
 
 	static YaChatDlgShared* instance()
 	{
@@ -85,6 +92,16 @@ private slots:
 		PsiOptions::instance()->setOption(emoticonsEnabledOptionPath, enabled);
 	}
 
+	void checkSpellingActionTriggered(bool enabled)
+	{
+		PsiOptions::instance()->setOption(spellCheckEnabledOptionPath, enabled);
+	}
+
+	void sendButtonEnabledActionTriggered(bool enabled)
+	{
+		PsiOptions::instance()->setOption(sendButtonEnabledOptionPath, enabled);
+	}
+
 	void optionChanged(const QString& option)
 	{
 		if (option == emoticonsEnabledOptionPath) {
@@ -92,6 +109,12 @@ private slots:
 		}
 		else if (option == enableTypographyOptionPath) {
 			typographyAction_->setChecked(PsiOptions::instance()->getOption(enableTypographyOptionPath).toBool());
+		}
+		else if (option == spellCheckEnabledOptionPath) {
+			checkSpellingAction_->setChecked(PsiOptions::instance()->getOption(spellCheckEnabledOptionPath).toBool());
+		}
+		else if (option == sendButtonEnabledOptionPath) {
+			sendButtonEnabledAction_->setChecked(PsiOptions::instance()->getOption(sendButtonEnabledOptionPath).toBool());
 		}
 	}
 
@@ -107,14 +130,26 @@ private:
 		emoticonsAction_->setCheckable(true);
 		connect(emoticonsAction_, SIGNAL(triggered(bool)), SLOT(emoticonsActionTriggered(bool)));
 
+		checkSpellingAction_ = new QAction(tr("Check spelling"), this);
+		checkSpellingAction_->setCheckable(true);
+		connect(checkSpellingAction_, SIGNAL(triggered(bool)), SLOT(checkSpellingActionTriggered(bool)));
+
+		sendButtonEnabledAction_ = new QAction(tr("Show 'Send' button"), this);
+		sendButtonEnabledAction_->setCheckable(true);
+		connect(sendButtonEnabledAction_, SIGNAL(triggered(bool)), SLOT(sendButtonEnabledActionTriggered(bool)));
+
 		connect(PsiOptions::instance(), SIGNAL(optionChanged(const QString&)), SLOT(optionChanged(const QString&)));
 		optionChanged(emoticonsEnabledOptionPath);
 		optionChanged(enableTypographyOptionPath);
+		optionChanged(spellCheckEnabledOptionPath);
+		optionChanged(sendButtonEnabledOptionPath);
 	}
 
 	static YaChatDlgShared* instance_;
 	QPointer<QAction> typographyAction_;
 	QPointer<QAction> emoticonsAction_;
+	QPointer<QAction> checkSpellingAction_;
+	QPointer<QAction> sendButtonEnabledAction_;
 };
 
 YaChatDlgShared* YaChatDlgShared::instance_ = 0;
@@ -189,13 +224,13 @@ void YaChatDlg::initUi()
 
 	ui_.contactName->setMinimumSize(100, 30);
 
-	connect(ui_.separator, SIGNAL(textSelected(QString)), SLOT(addEmoticon(QString)));
-	connect(ui_.separator, SIGNAL(addContact()), SLOT(addContact()));
-	connect(ui_.separator, SIGNAL(authContact()), SLOT(authContact()));
+	connect(ui_.bottomFrame->separator(), SIGNAL(textSelected(QString)), SLOT(addEmoticon(QString)));
+	connect(ui_.bottomFrame->separator(), SIGNAL(addContact()), SLOT(addContact()));
+	connect(ui_.bottomFrame->separator(), SIGNAL(authContact()), SLOT(authContact()));
 
 	{
 		if (PsiIconset::instance()->yaEmoticonSelectorIconset()) {
-			ui_.separator->setIconset(*PsiIconset::instance()->yaEmoticonSelectorIconset());
+			ui_.bottomFrame->separator()->setIconset(*PsiIconset::instance()->yaEmoticonSelectorIconset());
 		}
 	}
 
@@ -216,7 +251,7 @@ void YaChatDlg::initUi()
 void YaChatDlg::initActions()
 {
 	ChatDlg::initActions();
-	ui_.sendButton->setAction(actionSend());
+	ui_.bottomFrame->setSendAction(actionSend());
 }
 
 void YaChatDlg::restoreLastMessages()
@@ -243,9 +278,9 @@ void YaChatDlg::retrieveHistoryFinishedHelper()
 	foreach(const YaHistoryCacheManager::Message& msg, list) {
 		if (!msg.isMood) {
 			if (isEmoteText(msg.body))
-				appendEmoteMessage(spooled, msg.timeStamp, msg.originLocal, false, QString(), XMPP::ReceiptNone, messageText(msg.body, true), msg.timeStamp);
+				appendEmoteMessage(spooled, msg.timeStamp, msg.originLocal, false, QString(), XMPP::ReceiptNone, messageText(msg.body, true), msg.timeStamp, YaChatViewModel::NoFlags);
 			else
-				appendNormalMessage(spooled, msg.timeStamp, msg.originLocal, false, QString(), XMPP::ReceiptNone, messageText(msg.body, false), msg.timeStamp);
+				appendNormalMessage(spooled, msg.timeStamp, msg.originLocal, false, QString(), XMPP::ReceiptNone, messageText(msg.body, false), msg.timeStamp, YaChatViewModel::NoFlags);
 		}
 		else {
 			Q_ASSERT(!msg.originLocal);
@@ -330,8 +365,8 @@ void YaChatDlg::updateModelNotices()
 	model_->setAccountIsOfflineNoticeVisible(!account()->isAvailable());
 	model_->setAccountIsDisabledNoticeVisible(!account()->enabled());
 
-	ui_.separator->setShowAddButton(contact && (contact->addAvailable() || (contact->isBlocked() && account()->isAvailable())));
-	ui_.separator->setShowAuthButton(!ui_.separator->showAddButton() && contact && contact->authAvailable() && showAuthButton_);
+	ui_.bottomFrame->separator()->setShowAddButton(contact && (contact->addAvailable() || (contact->isBlocked() && account()->isAvailable())));
+	ui_.bottomFrame->separator()->setShowAuthButton(!ui_.bottomFrame->separator()->showAddButton() && contact && contact->authAvailable() && showAuthButton_);
 }
 
 void YaChatDlg::updateAvatar()
@@ -355,18 +390,18 @@ void YaChatDlg::appendSysMsg(const QString &str)
 #ifndef YAPSI
 	appendNormalMessage(Spooled_None, QDateTime::currentDateTime(), false, str);
 #else
-	appendNormalMessage(Spooled_None, QDateTime::currentDateTime(), false, 0, QString(), XMPP::ReceiptNone, str, XMPP::YaDateTime());
+	appendNormalMessage(Spooled_None, QDateTime::currentDateTime(), false, 0, QString(), XMPP::ReceiptNone, str, XMPP::YaDateTime(), YaChatViewModel::NoFlags);
 #endif
 }
 
-void YaChatDlg::appendEmoteMessage(ChatDlg::SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime)
+void YaChatDlg::appendEmoteMessage(ChatDlg::SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags)
 {
-	model_->addEmoteMessage(static_cast<YaChatViewModel::SpooledType>(spooled), time, local, spamFlag, id, messageReceipt, txt, yaTime);
+	model_->addEmoteMessage(static_cast<YaChatViewModel::SpooledType>(spooled), time, local, spamFlag, id, messageReceipt, txt, yaTime, yaFlags);
 }
 
-void YaChatDlg::appendNormalMessage(ChatDlg::SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime)
+void YaChatDlg::appendNormalMessage(ChatDlg::SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags)
 {
-	model_->addMessage(static_cast<YaChatViewModel::SpooledType>(spooled), time, local, spamFlag, id, messageReceipt, txt, yaTime);
+	model_->addMessage(static_cast<YaChatViewModel::SpooledType>(spooled), time, local, spamFlag, id, messageReceipt, txt, yaTime, yaFlags);
 }
 
 void YaChatDlg::appendMessageFields(const Message& m)
@@ -395,7 +430,7 @@ void YaChatDlg::appendMessageFields(const Message& m)
 #ifndef YAPSI
 	appendNormalMessage(spooledType, m.timeStamp(), false, txt);
 #else
-	appendNormalMessage(spooledType, m.timeStamp(), false, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()));
+	appendNormalMessage(spooledType, m.timeStamp(), false, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()), m.yaFlags());
 #endif
 }
 
@@ -406,7 +441,7 @@ ChatViewClass* YaChatDlg::chatView() const
 
 ChatEdit* YaChatDlg::chatEdit() const
 {
-	return ui_.mle;
+	return ui_.bottomFrame->chatEdit();
 }
 
 void YaChatDlg::showContactProfile()
@@ -486,7 +521,7 @@ void YaChatDlg::aboutToShow()
 	// visible to avoid jump when it appears, but it doesn't actually work
 	// when YaChatDlg is created for the first time due to font size
 	// not instantly propagated to LineEdit (due to QCSS?)
-	// ui_.separator->updateChatEditHeight();
+	// ui_.bottomFrame->separator()->updateChatEditHeight();
 
 	ui_.bottomFrame->layout()->activate();
 	ui_.chatSplitter->layout()->activate();
@@ -521,9 +556,11 @@ void YaChatDlg::chatEditCreated()
 {
 	ChatDlg::chatEditCreated();
 
-	ui_.separator->setChatWidgets(chatEdit(), chatView());
+	ui_.bottomFrame->separator()->setChatWidgets(chatEdit(), chatView());
 	chatEdit()->setTypographyAction(YaChatDlgShared::instance()->typographyAction());
 	chatEdit()->setEmoticonsAction(YaChatDlgShared::instance()->emoticonsAction());
+	chatEdit()->setCheckSpellingAction(YaChatDlgShared::instance()->checkSpellingAction());
+	chatEdit()->setSendButtonEnabledAction(YaChatDlgShared::instance()->sendButtonEnabledAction());
 	optionChanged(textColorOptionPath);
 }
 
@@ -531,7 +568,7 @@ void YaChatDlg::setLooks()
 {
 	ChatDlg::setLooks();
 
-	ui_.separator->updateChatEditHeight();
+	ui_.bottomFrame->separator()->updateChatEditHeight();
 }
 
 void YaChatDlg::addContact()

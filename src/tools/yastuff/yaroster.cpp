@@ -75,9 +75,11 @@
 #ifdef YAPSI_ACTIVEX_SERVER
 #include "yaonline.h"
 #include "yawindow.h"
+#include "yaonlinemainwin.h"
 #endif
 #include "psicon.h"
 #include "contactlistutil.h"
+#include "contactlistitemproxy.h"
 
 static const QString tabIndexOptionPath = "options.ya.main-window.tab-index";
 static const QString showContactListGroupsOptionPath = "options.ya.main-window.contact-list.show-groups";
@@ -766,6 +768,16 @@ protected:
 
 		return false;
 	}
+
+	// reimplemented
+	bool lessThan(const QModelIndex& left, const QModelIndex& right) const
+	{
+		ContactListItemProxy* item1 = static_cast<ContactListItemProxy*>(left.internalPointer());
+		ContactListItemProxy* item2 = static_cast<ContactListItemProxy*>(right.internalPointer());
+		if (!item1 || !item2)
+			return false;
+		return item1->item()->compare(item2->item());
+	}
 };
 
 //----------------------------------------------------------------------------
@@ -1024,10 +1036,16 @@ public:
 		{
 			addButton_ = new YaRosterAddContactToolButton(this, yaRosterTab_->yaRoster());
 			addButton_->setText(tr("Add a contact"));
-			addButton_->setToolTip(tr("Add a contact"));
 			addButton_->setCheckable(true);
 			// icon is now set in YaRosterContactsTab::setAddContactModeEnabled(bool enabled)
 			connect(addButton_, SIGNAL(clicked()), roster(), SLOT(addButtonClicked()));
+
+			QList<QKeySequence> keys = ShortcutManager::instance()->shortcuts("appwide.add-contact");
+			if (keys.isEmpty())
+				addButton_->setToolTip(tr("Add a contact"));
+			else
+				addButton_->setToolTip(tr("Add a contact (%1)")
+				                          .arg(keys.first().toString(QKeySequence::NativeText)));
 		}
 	}
 
@@ -1920,7 +1938,7 @@ private slots:
 
 	void linkedAccountDestroyed()
 	{
-		if (dummyContactList_) {
+		if (dummyContactList_ && linkedAccount_) {
 			dummyContactList_->unlink(linkedAccount_);
 			linkedAccount_ = 0;
 		}
@@ -2723,7 +2741,14 @@ void YaRoster::bringToFront(QWidget* widget) const
 	Q_ASSERT(widget == window() || widget->window() == window());
 #ifdef YAPSI_ACTIVEX_SERVER
 	if (contactList_->psi()->yaOnline()->chatIsMain()) {
-		::bringToFront(widget);
+		if (widget->window() == window()) {
+			YaOnlineMainWin* yaOnlineMainWin = dynamic_cast<YaOnlineMainWin*>(window());
+			Q_ASSERT(yaOnlineMainWin);
+			yaOnlineMainWin->doBringToFront();
+		}
+		else {
+			::bringToFront(widget);
+		}
 	}
 #else
 	::bringToFront(widget);

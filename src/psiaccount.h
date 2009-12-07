@@ -87,10 +87,12 @@ class TabManager;
 class GoogleFileTransfer;
 #endif
 class PsiIcon;
+class QIcon;
 
 #ifdef YAPSI
 class YaLastMail;
 class YaUnreadMessagesManager;
+#include "xmpp_yadatetime.h"
 #endif
 
 // sick sick remove this someday please!
@@ -117,6 +119,9 @@ public:
 	bool isConnected() const;
 	const QString &name() const;
 	const QString &id() const;
+
+	bool alerting() const;
+	QIcon alertPicture() const;
 
 	const UserAccount & userAccount() const;
 	virtual void setUserAccount(const UserAccount &);
@@ -214,7 +219,7 @@ public:
 	bool ensureKey(const Jid &);
 	void tryVerify(UserListItem *, UserResource *);
 
-	static void getErrorInfo(int err, AdvancedConnector *conn, Stream *stream, QCATLSHandler *tlsHandler, QString *_str, bool *_reconn, bool *_disableAutoConnect, bool *_isAuthError);
+	static void getErrorInfo(int err, AdvancedConnector *conn, Stream *stream, QCATLSHandler *tlsHandler, QString *_str, bool *_reconn, bool *_disableAutoConnect, bool *_isAuthError, bool *_isTemporaryAuthFailure);
 
 	void deleteQueueFile();
 	void sendFiles(const Jid&, const QStringList&, bool direct = false);
@@ -250,6 +255,8 @@ signals:
 	void moodChanged();
 	void lastMailNotify(const XMPP::Message&);
 	void lastMailNotify(const YaLastMail&);
+	void messageReadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp);
+	void messageUnreadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp, const QString& body);
 #endif
 	void pgpKeyChanged();
 	void encryptedMessageSent(int, bool, int, const QString &);
@@ -257,7 +264,7 @@ signals:
 	void startBounce();
 
 public slots:
-	void setStatus(const XMPP::Status &, bool withStatus = false);
+	void setStatus(const XMPP::Status &, bool withStatus = false, bool isManualStatus = false);
 
 	void capsChanged(const Jid&);
 	void tuneStopped();

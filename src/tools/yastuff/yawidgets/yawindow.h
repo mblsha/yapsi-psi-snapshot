@@ -139,6 +139,7 @@ protected:
 	bool isMoveOperationActive() const;
 	virtual void interactiveOperationStarted();
 	virtual void interactiveOperationFinished();
+	virtual bool interactiveOperationEnabled() const;
 
 	virtual void initCurrentOperation(const QPoint& mousePos);
 	virtual void deinitCurrentOperation();
@@ -199,6 +200,7 @@ private:
 	Mode mode_;
 	Operation currentOperation_;
 	bool isInInteractiveMode_;
+	QPoint mousePressGlobalPosition_;
 	QPoint mousePressPosition_;
 	QRect oldGeometry_;
 	OperationInfoMap operationMap_;
@@ -237,8 +239,11 @@ protected:
 	virtual bool expandWidthWhenMaximized() const;
 	virtual int cornerRadius() const;
 	virtual QRegion getMask() const;
+	virtual bool enableTopLeftBorderResize() const;
+	QPoint mousePressGlobalPosition() const;
 	QPoint mousePressPosition() const;
 	void getPreviousGeometry();
+	bool isInInteractiveMode() const;
 
 	virtual void invalidateMask();
 	QRect yaMaximizedRect() const;

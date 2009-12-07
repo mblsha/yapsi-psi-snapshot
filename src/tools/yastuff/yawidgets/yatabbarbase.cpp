@@ -59,6 +59,7 @@ YaTabBarBase::YaTabBarBase(QWidget* parent)
 	: QTabBar(parent)
 	, layoutUpdatesEnabled_(true)
 	, timeLine_(new QTimeLine(1500, this))
+	, drawTabNumbers_(false)
 	, cachedTextHeight_(0)
 {
 	Q_ASSERT(dynamic_cast<YaTabWidget*>(parentWidget()));
@@ -213,6 +214,21 @@ void YaTabBarBase::drawTab(QPainter* painter, int index, const QRect& tabRect)
 
 	QRect textRect = tabTextRect(index);
 	QString text = tabText(index);
+
+	if (drawTabNumbers_ && index < 10) {
+		int numberToDraw = index + 1;
+		if (numberToDraw > 9) {
+			numberToDraw = 0;
+		}
+
+		painter->save();
+		painter->setPen(Qt::gray);
+		QString numberToDrawText = QString::number(numberToDraw) + " ";
+		painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, numberToDrawText);
+		textRect.adjust(fontMetrics().width(numberToDrawText), 0, 0, 0);
+		painter->restore();
+	}
+
 	painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, text);
 #ifndef WIDGET_PLUGIN
 	if (textWidth(text) > textRect.width() && backgroundColor.isValid()) {
@@ -578,4 +594,17 @@ bool YaTabBarBase::event(QEvent* event)
 	}
 
 	return QTabBar::event(event);
+}
+
+bool YaTabBarBase::drawTabNumbers() const
+{
+	return drawTabNumbers_;
+}
+
+void YaTabBarBase::setDrawTabNumbers(bool drawTabNumbers)
+{
+	if (drawTabNumbers_ != drawTabNumbers) {
+		drawTabNumbers_ = drawTabNumbers;
+		update();
+	}
 }

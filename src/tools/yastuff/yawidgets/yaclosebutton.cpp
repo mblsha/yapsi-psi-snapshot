@@ -20,19 +20,36 @@
 
 #include "yaclosebutton.h"
 
+#include <QTimer>
+#include <QPainter>
+
+#include "yavisualutil.h"
+
 YaCloseButton::YaCloseButton(QWidget* parent)
 	: QToolButton(parent)
 	, chatButton_(false)
+	, closeFrame_(0)
+	, closeButtonAnimationTimer_(0)
 {
+	setAttribute(Qt::WA_Hover, true);
 	setFocusPolicy(Qt::NoFocus);
 	setCursor(Qt::PointingHandCursor);
+
+	closeButtonAnimationTimer_ = new QTimer(this);
+	closeButtonAnimationTimer_->setSingleShot(false);
+	closeButtonAnimationTimer_->setInterval(20);
+	connect(closeButtonAnimationTimer_, SIGNAL(timeout()), SLOT(closeButtonAnimation()));
 
 	setChatButton(chatButton_);
 }
 
 QSize YaCloseButton::sizeHint() const
 {
-	return normal_.size();
+	if (!chatButton_) {
+		return normal_.size();
+	}
+
+	return closePixmaps_[closeFrame_].size();
 }
 
 QSize YaCloseButton::minimumSizeHint() const
@@ -69,6 +86,7 @@ void YaCloseButton::setChatButton(bool chatButton)
 	}
 	else {
 		normal_  = QPixmap(":/images/closetab.png");
+		closePixmaps_ = Ya::VisualUtil::closeTabButtonPixmaps();
 
 		setStyleSheet(
 		"QToolButton {"
@@ -82,4 +100,43 @@ void YaCloseButton::setChatButton(bool chatButton)
 		);
 	}
 #endif
+}
+
+void YaCloseButton::enterEvent(QEvent* event)
+{
+	QToolButton::enterEvent(event);
+	if (!chatButton_)
+		return;
+	closeButtonAnimationTimer_->start();
+}
+
+void YaCloseButton::leaveEvent(QEvent* event)
+{
+	QToolButton::leaveEvent(event);
+	if (!chatButton_)
+		return;
+	closeButtonAnimationTimer_->start();
+}
+
+void YaCloseButton::closeButtonAnimation()
+{
+	closeFrame_ += underMouse() ? +1 : -1;
+	closeFrame_ = qMax(0, qMin(closeFrame_, closePixmaps_.count() - 1));
+
+	if (closeFrame_ == 0 || closeFrame_ == closePixmaps_.count() - 1) {
+		closeButtonAnimationTimer_->stop();
+	}
+
+	update();
+}
+
+void YaCloseButton::paintEvent(QPaintEvent* e)
+{
+	if (!chatButton_) {
+		QToolButton::paintEvent(e);
+		return;
+	}
+
+	QPainter p(this);
+	p.drawPixmap(0, 0, closePixmaps_[closeFrame_]);
 }

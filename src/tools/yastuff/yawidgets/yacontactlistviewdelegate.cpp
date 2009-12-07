@@ -61,8 +61,7 @@ QSize YaContactListViewDelegate::sizeHint(const QStyleOptionViewItem& option, co
 
 QString YaContactListViewDelegate::nameText(const QStyleOptionViewItem& o, const QModelIndex& index) const
 {
-	QString name = index.data(Qt::DisplayRole).toString();
-	return name;
+	return index.data(Qt::DisplayRole).toString();
 }
 
 void YaContactListViewDelegate::drawName(QPainter* painter, const QStyleOptionViewItem& o, const QRect& rect, const QString& name, const QModelIndex& index) const

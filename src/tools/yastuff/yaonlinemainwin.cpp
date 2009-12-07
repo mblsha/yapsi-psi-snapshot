@@ -128,8 +128,18 @@ YaOnlineMainWin::YaOnlineMainWin(PsiCon* controller, QWidget* parent, Qt::Window
 
 	afterWindowMovedTimer_ = new QTimer(this);
 	connect(afterWindowMovedTimer_, SIGNAL(timeout()), SLOT(afterWindowMoved()));
-	afterWindowMovedTimer_->setInterval(500);
+	afterWindowMovedTimer_->setInterval(1000);
 	afterWindowMovedTimer_->setSingleShot(true);
+
+	showOnlineWithoutAnimationTimer_ = new QTimer(this);
+	connect(showOnlineWithoutAnimationTimer_, SIGNAL(timeout()), SLOT(showOnlineWithoutAnimation()));
+	showOnlineWithoutAnimationTimer_->setInterval(0);
+	showOnlineWithoutAnimationTimer_->setSingleShot(true);
+
+	showOnlineAfterDesktopResizeTimer_ = new QTimer(this);
+	connect(showOnlineAfterDesktopResizeTimer_, SIGNAL(timeout()), SLOT(showOnlineAfterDesktopResize()));
+	showOnlineAfterDesktopResizeTimer_->setInterval(100);
+	showOnlineAfterDesktopResizeTimer_->setSingleShot(true);
 
 	activationChangeUpdateTimer()->setInterval(isOnlineActive_.delay());
 
@@ -162,6 +172,19 @@ YaOnlineMainWin::~YaOnlineMainWin()
 PsiCon* YaOnlineMainWin::controller() const
 {
 	return controller_;
+}
+
+void YaOnlineMainWin::doBringToFront()
+{
+#ifdef YAPSI_ACTIVEX_SERVER
+	bool doShowOnline = (isMinimized() || !isVisible()) && controller()->yaOnline()->onlineShouldBeVisible();
+	if (doShowOnline) {
+		showingSidebarWithoutRaise_ = true;
+		setWindowVisible(true);
+		showOnline(false, false);
+	}
+#endif
+	::bringToFront(this);
 }
 
 void YaOnlineMainWin::setWindowVisible(bool visible)
@@ -303,7 +326,12 @@ void YaOnlineMainWin::hideOnline()
 	if (onlineWinId_ != -1) {
 		ShowWindow((HWND)onlineWinId_, SW_HIDE);
 	}
-	controller()->yaOnline()->hideOnline();
+	if (controller()->contactList()->accountsLoaded()) {
+		controller()->yaOnline()->hideOnline();
+	}
+
+	showOnlineWithoutAnimationTimer_->stop();
+	showOnlineAfterDesktopResizeTimer_->stop();
 }
 
 void YaOnlineMainWin::showOnline(bool animate, bool raiseWindow)
@@ -377,6 +405,9 @@ void YaOnlineMainWin::onlineVisible()
 	delayingVisibility_ = false;
 
 	showingSidebarWithoutRaise_ = false;
+	if (isMoveOperationActive() && isInInteractiveMode()) {
+		initCurrentOperation(mousePressGlobalPosition());
+	}
 }
 
 void YaOnlineMainWin::afterShowWidgetOffscreen()
@@ -397,7 +428,7 @@ void YaOnlineMainWin::onlineCreated(int onlineWinId)
 
 bool YaOnlineMainWin::isOnlineVisible() const
 {
-	return !onlineExpansionVisible_;
+	return !onlineExpansionVisible_ && (onlineWinId_ != -1);
 }
 
 bool YaOnlineMainWin::isOnlineActive() const
@@ -438,7 +469,7 @@ void YaOnlineMainWin::showRelativeToOnline(const QRect& onlineRect)
 	r = contentsGeometryToFrameGeometry(r);
 	r = ensureGeometryVisible(r);
 	setGeometry(r);
-	if (isOnlineVisible()) {
+	if (!onlineExpansionVisible_) {
 		onlineShowRoster();
 	}
 	else {
@@ -472,6 +503,14 @@ void YaOnlineMainWin::interactiveOperationFinished()
 	interactiveOperationFinishedHelper();
 }
 
+bool YaOnlineMainWin::interactiveOperationEnabled() const
+{
+	if (isMoveOperationActive() && isInInteractiveMode()) {
+		return isOnlineVisible() || !controller()->yaOnline()->onlineShouldBeVisible();
+	}
+	return true;
+}
+
 void YaOnlineMainWin::interactiveOperationFinishedHelper()
 {
 	updateInteractiveOperationTimer_->stop();
@@ -501,15 +540,13 @@ void YaOnlineMainWin::activationChangeUpdate()
 {
 	YaWindow::activationChangeUpdate();
 
+	if (!controller()->contactList()->accountsLoaded() || !controller()->yaOnline())
+		return;
 	if (isActiveWindow() && !onlineExpansionVisible_ && !QApplication::activePopupWidget()) {
-		if (controller()->contactList()->accountsLoaded()) {
-			controller()->yaOnline()->activateOnline();
-		}
+		controller()->yaOnline()->activateOnline();
 	}
 	else if (!isActiveWindow() && !QApplication::activePopupWidget()) {
-		if (controller()->contactList()->accountsLoaded()) {
-			controller()->yaOnline()->deactivateOnline();
-		}
+		controller()->yaOnline()->deactivateOnline();
 	}
 }
 
@@ -551,6 +588,7 @@ bool YaOnlineMainWin::event(QEvent* e)
 		                         (windowStateChangeEvent->oldState() & Qt::WindowMinimized);
 		bool invisible = isMinimized() || !isVisible();
 		if (invisible && controller()->yaOnline()->chatIsMain()) {
+			temporarilyHiddenOnline_ = false;
 			hideOnline();
 		}
 	}
@@ -566,7 +604,7 @@ void YaOnlineMainWin::setYaMaximized(bool maximized)
 	}
 	YaWindow::setYaMaximized(maximized);
 	if (controller()->yaOnline()->onlineShouldBeVisible()) {
-		QTimer::singleShot(0, this, SLOT(showOnlineWithoutAnimation()));
+		showOnlineWithoutAnimationTimer_->start();
 	}
 }
 
@@ -629,7 +667,7 @@ void YaOnlineMainWin::desktopResized(int desktop)
 
 	if (!isMinimized() && isVisible() && controller()->yaOnline()->onlineShouldBeVisible()) {
 		hideOnline();
-		QTimer::singleShot(100, this, SLOT(showOnlineAfterDesktopResize()));
+		showOnlineAfterDesktopResizeTimer_->start();
 	}
 }
 
@@ -647,14 +685,24 @@ void YaOnlineMainWin::resizeEvent(QResizeEvent* e)
 
 void YaOnlineMainWin::afterWindowMoved()
 {
+	if (isMoveOperationActive() && isInInteractiveMode()) {
+		afterWindowMovedTimer_->start();
+		return;
+	}
+
 	if (!isMinimized() && isVisible() && isOnlineVisible() && !temporarilyHiddenOnline_) {
 		QRect r = frameGeometryToContentsGeometry(geometry()).adjusted(-1, 0, 0, 0);
 		QRect onlineR = controller()->yaOnline()->onlineSidebarGeometry();
 		if (r.left() != onlineR.right() || onlineR.top() < r.top() || onlineR.bottom() > r.bottom() ) {
 			hideOnline();
-			QTimer::singleShot(100, this, SLOT(showOnlineAfterDesktopResize()));
+			showOnlineAfterDesktopResizeTimer_->start();
 		}
 	}
+}
+
+bool YaOnlineMainWin::enableTopLeftBorderResize() const
+{
+	return false;
 }
 #endif
 
@@ -670,4 +718,13 @@ void YaOnlineMainWin::raiseSidebar()
 const YaWindowTheme& YaOnlineMainWin::theme() const
 {
 	return theme_;
+}
+
+void YaOnlineMainWin::decorateButton(int)
+{
+#ifdef YAPSI_ACTIVEX_SERVER
+	if (controller()->contactList()->accountsLoaded()) {
+		controller()->yaOnline()->setCurrentlyVisibleStatus(statusType());
+	}
+#endif
 }

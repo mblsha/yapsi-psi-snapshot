@@ -79,6 +79,7 @@ public:
 		menu->addAction(act_modifyAccount);
 
 #ifndef YAPSI
+		// FIXME: do they still work on modern servers?
 		if (PsiOptions::instance()->getOption("options.ui.menu.account.admin").toBool()) {
 			QMenu* adminMenu = menu->addMenu(tr("&Admin"));
 			adminMenu->setEnabled(account->loggedIn());

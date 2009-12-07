@@ -27,6 +27,8 @@
 #include "spellchecker.h"
 
 #include <QCoreApplication>
+#include <QRegExp>
+#include <QtDebug>
 
 #if defined(Q_WS_MAC)
 #include "macspellchecker.h"
@@ -34,15 +36,44 @@
 #include "aspellchecker.h"
 #endif
 
+#include "yandexspeller.h"
+#include "textutil.h"
+
+//----------------------------------------------------------------------------
+// QtTextRange
+//----------------------------------------------------------------------------
+
+QtTextRange::QtTextRange(int index, int length)
+	: index(index), length(length)
+{ }
+
+bool QtTextRange::operator==(const QtTextRange &other) const
+{
+	return (index == other.index && length == other.length);
+}
+
+QDebug operator<<(QDebug d, const QtTextRange &range)
+{
+	d << "index " << range.index << " length " << range.length;
+	return d;
+}
+
+//----------------------------------------------------------------------------
+// SpellChecker
+//----------------------------------------------------------------------------
+
 SpellChecker* SpellChecker::instance() 
 {
 	if (!instance_) {
+		instance_ = new YandexSpeller();
+#if 0
 #ifdef Q_WS_MAC
 		instance_ = new MacSpellChecker();
 #elif defined(HAVE_ASPELL)
 		instance_ = new ASpellChecker();
 #else
 		instance_ = new SpellChecker();
+#endif
 #endif
 	}
 	return instance_;
@@ -64,11 +95,12 @@ bool SpellChecker::available() const
 
 bool SpellChecker::writable() const
 {
-	return true;
+	return false;
 }
 
-bool SpellChecker::isCorrect(const QString&)
+bool SpellChecker::isSpeltCorrectly(const QString&, SyntaxHighlighter* highlighter)
 {
+	Q_UNUSED(highlighter);
 	return true;
 }
 
@@ -77,9 +109,77 @@ QList<QString> SpellChecker::suggestions(const QString&)
 	return QList<QString>();
 }
 
-bool SpellChecker::add(const QString&)
+void SpellChecker::ignoreSpelling(const QString &word, SyntaxHighlighter* highlighter)
+{
+	Q_UNUSED(highlighter);
+	learnSpelling(word);
+}
+
+bool SpellChecker::learnSpelling(const QString&)
 {
 	return false;
+}
+
+static QString stripLinksFromText(const QString& _text)
+{
+	static QRegExp href("\\<a href.+\\>(.+)\\<\\/a\\>");
+	href.setMinimal(true);
+
+	QString text = TextUtil::linkify(_text);
+	if (text != _text) {
+		int index = text.indexOf(href);
+		Q_ASSERT(index >= 0);
+		while (index >= 0) {
+			int length = href.matchedLength();
+			QString unescapedUrl = TextUtil::unescape(href.capturedTexts()[1]);
+			text.replace(index, length, QString(unescapedUrl.length(), ' '));
+			index = text.indexOf(href, index + unescapedUrl.length());
+		}
+	}
+	return text;
+}
+
+QList<QtTextRange> SpellChecker::splitTextIntoWords(const QString& _text, bool* needRehighlight, int cursorPositionInCurrentBlock) const
+{
+	QList<QtTextRange> ranges;
+
+	static QRegExp expression("\\b\\w+\\b");
+	static QRegExp number("^\\d+$");
+
+	QString text = stripLinksFromText(_text);
+
+	int index = text.indexOf(expression);
+	while (index >= 0) {
+		int length = expression.matchedLength();
+		if (expression.cap().indexOf(number) >= 0) {
+			// skipping numbers
+		}
+		else if (cursorPositionInCurrentBlock >= index && (cursorPositionInCurrentBlock <= index + length)) {
+			*needRehighlight = true;
+		}
+		else {
+			ranges << QtTextRange(index, length);
+		}
+		index = text.indexOf(expression, index + length);
+	}
+
+	return ranges;
+}
+
+QList<QtTextRange> SpellChecker::spellingErrorIndexes(const QString& text, SyntaxHighlighter* highlighter, int cursorPositionInCurrentBlock, bool* needRehighlight, int blockCount)
+{
+	Q_UNUSED(blockCount);
+	Q_ASSERT(needRehighlight);
+
+	QList<QtTextRange> ranges;
+
+	foreach(const QtTextRange& range, splitTextIntoWords(text, needRehighlight, cursorPositionInCurrentBlock)) {
+		if (!isSpeltCorrectly(text.mid(range.index, range.length), highlighter)) {
+			ranges << range;
+		}
+	}
+
+	return ranges;
 }
 
 SpellChecker* SpellChecker::instance_ = NULL;

@@ -46,7 +46,6 @@
 #include "jidutil.h"
 #include "psioptions.h"
 #include "iconaction.h"
-#include "pgputil.h"
 #include "alerticon.h"
 #include "avatars.h"
 #include "psiiconset.h"
@@ -59,6 +58,9 @@
 #include "xmpp_message.h"
 #include "textutil.h"
 #include "bookmarkmanager.h"
+#ifdef HAVE_PGPUTIL
+#include "pgputil.h"
+#endif
 
 static inline int rankStatus(int status) 
 {
@@ -1387,12 +1389,14 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 			pm.insertItem(tr("&Picture"), avpm);
 		}
 
+#ifdef HAVE_PGPUTIL
 		if(PGPUtil::instance().pgpAvailable() && PsiOptions::instance()->getOption("options.ui.menu.contact.custom-pgp-key").toBool()) {
 			if(u->publicKeyID().isEmpty())
 				pm.insertItem(IconsetFactory::icon("psi/gpg-yes").icon(), tr("Assign Open&PGP Key"), 21);
 			else
 				pm.insertItem(IconsetFactory::icon("psi/gpg-no").icon(), tr("Unassign Open&PGP Key"), 22);
 		}
+#endif
 
 		d->cv->qa_vcard->addTo( &pm );
 

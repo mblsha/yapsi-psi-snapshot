@@ -74,6 +74,18 @@ private:
 	bool typoEnabled_;
 };
 
+class YaChatSeparatorOverlayButton : public QPushButton
+{
+	Q_OBJECT
+public:
+	YaChatSeparatorOverlayButton(QWidget* parent);
+	~YaChatSeparatorOverlayButton();
+
+protected:
+	// reimplemented
+	void paintEvent(QPaintEvent*);
+};
+
 class YaChatEmoticonToolBar : public QToolBar
 {
 	Q_OBJECT
@@ -130,6 +142,7 @@ signals:
 	void collapsing();
 
 private slots:
+	void overlayClicked();
 	void collapse();
 	void expand();
 	void animate();
@@ -142,6 +155,7 @@ private:
 		Collapsing
 	};
 
+	QPushButton* overlayButton_;
 	QPushButton* addButton_;
 	QPushButton* authButton_;
 	YaChatSeparatorTypoButton* typographyButton_;

@@ -70,6 +70,7 @@ signals:
 	// void doOnlineConnected();
 	void showPreferences();
 	void doGetChatPreferences();
+	QString doGetChatAccounts();
 	void doStopAccountUpdates();
 	void doApplyPreferences(const QString& xml);
 	void doApplyImmediatePreferences(const QString& xml);
@@ -88,6 +89,7 @@ signals:
 	void doJDisconnect();
 	void doJSendRaw(const QString& xml);
 	void doJSetPresence(const QString& type);
+	void doJSetCanConnectConnections(bool canConnectConnections);
 
 	void doOnlineHiding();
 	void doOnlineVisible();
@@ -133,6 +135,7 @@ public slots:
 	void screenUnlocked();
 	void showProperties();
 	void getChatPreferences();
+	QString getChatAccounts();
 	void stopAccountUpdates();
 	void applyPreferences(const QString& xml);
 	void applyImmediatePreferences(const QString& xml);

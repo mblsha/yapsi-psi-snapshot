@@ -449,6 +449,12 @@ QVariant ContactListModel::accountData(const ContactListAccountGroup* account, i
 	else if (role == UsingSSLRole) {
 		return QVariant(account->account()->usingSSL());
 	}
+	else if (role == IsAlertingRole) {
+		return QVariant(account->account()->alerting());
+	}
+	else if (role == AlertPictureRole) {
+		return QVariant(account->account()->alertPicture());
+	}
 
 	return contactGroupData(account, role);
 }

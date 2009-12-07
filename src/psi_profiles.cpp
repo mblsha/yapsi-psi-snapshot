@@ -35,7 +35,6 @@
 
 #include "eventdlg.h"
 #include "chatdlg.h"
-#include "pgputil.h"
 #include "xmpp_xmlcommon.h"
 #include "fancylabel.h"
 #include "advwidget.h"
@@ -44,6 +43,9 @@
 #include "atomicxmlfile.h"
 #include "psitoolbar.h"
 #include "optionstree.h"
+#ifdef HAVE_PGPUTIL
+#include "pgputil.h"
+#endif
 
 using namespace XMPP;
 using namespace XMLHelper;
@@ -242,14 +244,16 @@ void UserAccount::fromOptions(OptionsTree *o, QString base)
 	
 	resource = o->getOption(base + ".resource").toString();
 	priority = o->getOption(base + ".priority").toInt();
-	
+
+#ifdef HAVE_PGPUTIL
 	QString pgpSecretKeyID = o->getOption(base + ".pgp-secret-key-id").toString();
 	if (!pgpSecretKeyID.isEmpty()) {
 		QCA::KeyStoreEntry e = PGPUtil::instance().getSecretKeyStoreEntry(pgpSecretKeyID);
 		if (!e.isNull())
 			pgpSecretKey = e.pgpSecretKey();
 	}
-	
+#endif
+
 	tmp = o->getOption(base + ".allow-plain").toString();
 	if (tmp == "never") {
 		allow_plain = XMPP::ClientStream::NoAllowPlain;
@@ -566,11 +570,13 @@ void UserAccount::fromXml(const QDomElement &a)
 	readNumEntry(a, "priority", &priority);
 	QString pgpSecretKeyID;
 	readEntry(a, "pgpSecretKeyID", &pgpSecretKeyID);
+#ifdef HAVE_PGPUTIL
 	if (!pgpSecretKeyID.isEmpty()) {
 		QCA::KeyStoreEntry e = PGPUtil::instance().getSecretKeyStoreEntry(pgpSecretKeyID);
 		if (!e.isNull())
 			pgpSecretKey = e.pgpSecretKey();
 	}
+#endif
 
 	QDomElement r = findSubTag(a, "roster", &found);
 	if(found) {

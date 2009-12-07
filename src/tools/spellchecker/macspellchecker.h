@@ -1,7 +1,7 @@
 /*
- * macspellchecker.h
- *
- * Copyright (C) 2006  Remko Troncon
+* macspellchecker.h
+* Copyright (C) 2006-2009  Remko Troncon, Yandex LLC (Michail Pishchagin)
+* based on http://doc.trolltech.com/solutions/4/qtspellcheckingtextedit/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,16 +32,25 @@
 
 #include "spellchecker.h"
 
+class QtMacCocoaAutoReleasePool;
+
 class MacSpellChecker : public SpellChecker
 {
 public:
 	MacSpellChecker();
 	~MacSpellChecker();
+
+	// reimplemented
 	virtual QList<QString> suggestions(const QString&);
-	virtual bool isCorrect(const QString&);
-	virtual bool add(const QString&);
+	virtual bool isSpeltCorrectly(const QString&, SyntaxHighlighter* highlighter);
+	virtual void ignoreSpelling(const QString &word, SyntaxHighlighter* highlighter);
+	virtual bool learnSpelling(const QString&);
 	virtual bool available() const;
 	virtual bool writable() const;
+	virtual QList<QtTextRange> spellingErrorIndexes(const QString& text, SyntaxHighlighter* highlighter, int cursorPositionInCurrentBlock, bool* needRehighlight, int blockCount);
+
+private:
+	QtMacCocoaAutoReleasePool pool_;
 };
 
 #endif

@@ -114,9 +114,7 @@ QString VisualUtil::scaledAvatarPath(PsiAccount* account, const XMPP::Jid& jid, 
 	Q_ASSERT(account);
 	QString fileName = account->avatarFactory()->getCachedAvatarFileName(jid);
 	if (fileName.isEmpty() || !QFile::exists(fileName)) {
-		PsiContact* contact = account->findContact(jid);
-		XMPP::VCard::Gender gender = contact ? contact->gender() : XMPP::VCard::UnknownGender;
-		fileName = Ya::VisualUtil::noAvatarPixmapFileName(gender);
+		fileName = Ya::VisualUtil::noAvatarPixmapFileName(contactGender(account, jid));
 	}
 
 	QFileInfo fi(fileName);
@@ -147,7 +145,7 @@ QString VisualUtil::contactName(PsiAccount* account, const XMPP::Jid& jid)
 	return result;
 }
 
-QString VisualUtil::contactGender(XMPP::VCard::Gender gender)
+QString VisualUtil::contactGenderString(XMPP::VCard::Gender gender)
 {
 	if (gender == XMPP::VCard::Male)
 		return "m";
@@ -156,11 +154,22 @@ QString VisualUtil::contactGender(XMPP::VCard::Gender gender)
 	return "u";
 }
 
-QString VisualUtil::contactGender(PsiAccount* account, const XMPP::Jid& jid)
+XMPP::VCard::Gender VisualUtil::contactGender(PsiAccount* account, const XMPP::Jid& jid)
 {
 	PsiContact* contact = account->findContact(jid);
 	XMPP::VCard::Gender gender = contact ? contact->gender() : XMPP::VCard::UnknownGender;
-	return contactGender(gender);
+	if (!contact) {
+		const VCard *vcard = VCardFactory::instance()->vcard(jid);
+		if (vcard) {
+			gender = vcard->gender();
+		}
+	}
+	return gender;
+}
+
+QString Ya::VisualUtil::contactGenderString(PsiAccount* account, const XMPP::Jid& jid)
+{
+	return contactGenderString(contactGender(account, jid));
 }
 
 QString Ya::VisualUtil::contactAgeLocation(PsiAccount* account, const XMPP::Jid& jid, bool* stubTextWasUsed)
@@ -176,7 +185,7 @@ QString Ya::VisualUtil::contactAgeLocation(PsiAccount* account, const XMPP::Jid&
 	}
 
 	if (vcard && !vcard->addressString().isEmpty()) {
-		info << Ya::ljUtf8Hack(jid, vcard->addressString());
+		info << vcard->addressString();
 	}
 
 	QString text;
@@ -771,6 +780,7 @@ const QIcon& Ya::VisualUtil::chatWindowIcon()
 	static QIcon pix;
 	if (pix.isNull()) {
 		pix.addFile(":images/chat_windowicon.png", QSize(16, 16));
+		pix.addFile(":images/chat_windowicon32.png", QSize(32, 32));
 	}
 	Q_ASSERT(!pix.isNull());
 	return pix;
@@ -801,6 +811,16 @@ QPixmap VisualUtil::dashBackgroundPixmap()
 		pix = QPixmap(":images/group/background.png");
 	}
 	return pix;
+}
+
+QList<QPixmap> VisualUtil::closeTabButtonPixmaps()
+{
+	QList<QPixmap> result;
+	QDir dir(":images/chat/closetab_button");
+	foreach(QString file, dir.entryList()) {
+		result << QPixmap(dir.absoluteFilePath(file));
+	}
+	return result;
 }
 
 };

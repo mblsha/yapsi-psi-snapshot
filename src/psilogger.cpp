@@ -55,6 +55,10 @@ PsiLogger::PsiLogger(const QString& logFileName)
 		if (p) {
 			enableLogging = true;
 		}
+
+		QString extraLogFileName = ApplicationInfo::homeDir() + "/extra-log";
+		if (QFile::exists(extraLogFileName))
+			enableLogging = true;
 	}
 
 	if (!enableLogging)
@@ -76,10 +80,11 @@ PsiLogger::PsiLogger(const QString& logFileName)
 	stream_->setCodec("UTF-8");
 	qWarning("Logging started: '%s'", qPrintable(fileName));
 #ifdef YAPSI
-	log(QString("*** LOG STARTED %1 (%2 / %3)")
+	log(QString("*** LOG STARTED %1 (%2 / %3) %4")
 	    .arg(YaDayUse::ver())
 	    .arg(YaDayUse::osId())
-	    .arg(YaDayUse::osVer()));
+	    .arg(YaDayUse::osVer())
+	    .arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 #endif
 }
 

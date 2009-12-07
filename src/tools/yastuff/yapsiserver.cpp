@@ -78,6 +78,8 @@ YaPsiServer::YaPsiServer(QObject* parent)
 
 YaPsiServer::~YaPsiServer()
 {
+	onlineObject_ = 0;
+
 	deinitProfile();
 	delete yaOnline_;
 	instance_ = 0;
@@ -85,7 +87,8 @@ YaPsiServer::~YaPsiServer()
 
 void YaPsiServer::applicationAboutToQuit()
 {
-	deinitProfile();
+	PsiLogger::instance()->log("YaPsiServer::applicationAboutToQuit()");
+	// deinitProfile();
 }
 
 void YaPsiServer::start(bool offlineMode)
@@ -216,6 +219,12 @@ void YaPsiServer::getChatPreferences()
 	emit doGetChatPreferences();
 }
 
+QString YaPsiServer::getChatAccounts()
+{
+	QString result = doGetChatAccounts();
+	return result;
+}
+
 void YaPsiServer::applyPreferences(const QString& xml)
 {
 	emit doApplyPreferences(xml);
@@ -239,7 +248,7 @@ void YaPsiServer::setOnlineObject(IDispatch* obj)
 	}
 
 	if (obj) {
-		onlineObject_ = new QAxObject(reinterpret_cast<IUnknown*>(obj), this);
+		onlineObject_ = new QAxObject(reinterpret_cast<IUnknown*>(obj), 0);
 	}
 
 	emit onlineObjectChanged();
@@ -249,7 +258,7 @@ void YaPsiServer::doQuit()
 {
 	Q_ASSERT(!onlineObject_.isNull());
 	Q_ASSERT(!InSendMessage());
-	quitting_ = true;
+
 	if (!InSendMessage())
 		onlineObject_->dynamicCall("chatExit(const QString&)", QString());
 	else
@@ -276,7 +285,7 @@ void YaPsiServer::dynamicCall(const char* function, const QVariant& var1, const 
 
 void YaPsiServer::dynamicCallTimerTimeout()
 {
-	if (quitting_)
+	if (quitting_ || !instance_)
 		return;
 
 	// prevent 'A synchronous OLE call made by the recipient of an
@@ -307,6 +316,8 @@ void YaPsiServer::dynamicCallTimerTimeout()
 
 void YaPsiServer::shutdown()
 {
+	quitting_ = true;
+
 	PsiLogger::instance()->log("YaPsiServer::shutdown()");
 	delete onlineObject_;
 	QPointer<QApplication> app(qApp);
@@ -461,6 +472,8 @@ void YaPsiServer::jabberAction(const QString& type, const QString& param1, const
 		emit doJSendRaw(param1);
 	else if (type == "set_presence")
 		emit doJSetPresence(param1);
+	else if (type == "set_can_connect_connections")
+		emit doJSetCanConnectConnections(param1 == "true");
 	else
 		Q_ASSERT(false);
 }

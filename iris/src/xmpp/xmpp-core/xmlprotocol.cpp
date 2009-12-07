@@ -263,7 +263,8 @@ XmlProtocol::TransferItem::TransferItem(const QDomElement &_elem, bool sent, boo
 }
 
 XmlProtocol::XmlProtocol()
-	: QObject(qApp)
+	// : QObject(qApp) // ONLINE-2555
+	: QObject()
 {
 	init();
 }

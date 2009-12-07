@@ -60,12 +60,7 @@ YaMultiLineTabBar::YaMultiLineTabBar(QWidget* parent)
 	connect(scrollBar_, SIGNAL(valueChanged(int)), SLOT(scrollBarValueChanged(int)));
 	scrollBar_->hide();
 
-	{
-		QDir dir(":images/chat/closetab_button");
-		foreach(QString file, dir.entryList()) {
-			closePixmaps_ << QPixmap(dir.absoluteFilePath(file));
-		}
-	}
+	closePixmaps_ = Ya::VisualUtil::closeTabButtonPixmaps();
 
 	closeButtonAnimationTimer_ = new QTimer(this);
 	closeButtonAnimationTimer_->setSingleShot(false);
@@ -188,6 +183,7 @@ void YaMultiLineTabBar::paintEvent(QPaintEvent*)
 
 QSize YaMultiLineTabBar::tabSizeHint(int index) const
 {
+	Q_UNUSED(index);
 	return QSize();
 }
 
@@ -290,9 +286,14 @@ void YaMultiLineTabBar::relayoutTabs(bool ensureCurrentVisible)
 		tabWidth = qMax(minimumTabWidth(), qMin(maximumTabWidth(), fullWidth / numTabsInRow));
 		// emptySpace_.setRight(numTabsInRow * tabWidth - 1);
 
+		// workaround for weird data access bug, on Mac OS X when
+		// compiled with optimization
+		QRect prevTabRect;
+
 		for (int i = 0; i < count(); ++i) {
 			if (tabRect_[i].left()) {
-				tabRect_[i].moveLeft(tabRect_[i-1].right() + 1);
+				Q_ASSERT(i > 0);
+				tabRect_[i].moveLeft(prevTabRect.right() + 1);
 			}
 
 			if (tabRect_[i].left() + tabWidth + 10 >= fullWidth) {
@@ -301,6 +302,8 @@ void YaMultiLineTabBar::relayoutTabs(bool ensureCurrentVisible)
 			else {
 				tabRect_[i].setWidth(tabWidth);
 			}
+
+			prevTabRect = tabRect_[i];
 		}
 	}
 	else {

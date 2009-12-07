@@ -26,6 +26,7 @@ YaProgressDialog::YaProgressDialog(const QString& labelText, const QString& canc
 	, wasCanceled_(false)
 {
 	ui_.setupUi(this);
+	updateContentsMargins();
 	ui_.label->setText(labelText);
 	ui_.busyWidget->start();
 

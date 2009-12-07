@@ -40,6 +40,9 @@ public:
 
 	virtual bool highlightBlock(const QString &text) = 0;
 
+public slots:
+	void rehighlight() { hl()->rehighlight(); }
+
 private:
 	CombinedSyntaxHighlighter* hl() const { return hl_; }
 	bool eventFilter(QObject*, QEvent*);
@@ -58,9 +61,6 @@ protected:
 	void setFormat(int start, int count, const QTextCharFormat& format) { hl()->setFormat(start, count, format); }
 	void setFormat(int start, int count, const QColor& color) { hl()->setFormat(start, count, color); }
 	void setFormat(int start, int count, const QFont& font) { hl()->setFormat(start, count, font); }
-
-protected slots:
-	void rehighlight() { hl()->rehighlight(); }
 
 protected:
 	struct HighlightingRule

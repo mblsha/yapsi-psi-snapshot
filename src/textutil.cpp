@@ -23,6 +23,8 @@ QString TextUtil::escape(const QString& plain)
 			rich += QLatin1String("&gt;");
 		else if (plain.at(i) == QLatin1Char('"'))
 			rich += QLatin1String("&quot;");
+		else if (plain.at(i) == QLatin1Char('\''))
+			rich += QLatin1String("&apos;");
 		else if (plain.at(i) == QLatin1Char('&'))
 			rich += QLatin1String("&amp;");
 		else
@@ -37,6 +39,7 @@ QString TextUtil::unescape(const QString& escaped)
 	plain.replace("&lt;", "<");
 	plain.replace("&gt;", ">");
 	plain.replace("&quot;", "\"");
+	plain.replace("&apos;", "\'");
 	plain.replace("&amp;", "&");
 	return plain;
 }
@@ -192,8 +195,8 @@ QString TextUtil::rich2plain(const QString &in)
 				if(i == 0 || out.length() == 0)
 					out += ' ';
 				else {
-					QChar last = out.at(out.length()-1);
-					bool ok = true;
+					QChar last = !out.isEmpty() ? out.at(out.length()-1) : QChar();
+					bool ok = TRUE;
 					if(last.isSpace() && last != '\n')
 						ok = false;
 					if(ok)
@@ -377,9 +380,21 @@ QString TextUtil::linkify(const QString &in)
 				continue;
 
 			// find whitespace (or end)
+			QMap<QChar, int> brackets;
+			brackets['('] = brackets[')'] = brackets['['] = brackets[']'] = brackets['{'] = brackets['}'] = 0;
+			QMap<QChar, QChar> openingBracket;
+			openingBracket[')'] = '(';
+			openingBracket[']'] = '[';
+			openingBracket['}'] = '{';
 			for(x2 = n; x2 < (int)out.length(); ++x2) {
-				if(out.at(x2).isSpace() || out.at(x2) == '<')
+				if(out.at(x2).isSpace() || linkify_isOneOf(out.at(x2), "\"\'`<>")
+					|| linkify_pmatch(out, x2, "&quot;")  || linkify_pmatch(out, x2, "&apos;")
+					|| linkify_pmatch(out, x2, "&gt;") || linkify_pmatch(out, x2, "&lt;") ) {
 					break;
+				}
+				if(brackets.keys().contains(out.at(x2))) {
+					++brackets[out.at(x2)];
+				}
 			}
 			int len = x2-x1;
 			QString pre = resolveEntities(out.mid(x1, x2-x1));
@@ -389,6 +404,14 @@ QString TextUtil::linkify(const QString &in)
 			for(cutoff = pre.length()-1; cutoff >= 0; --cutoff) {
 				if(!linkify_isOneOf(pre.at(cutoff), "!?,.()[]{}<>\""))
 					break;
+				if(linkify_isOneOf(pre.at(cutoff), ")]}")
+					&& brackets[pre.at(cutoff)] - brackets[openingBracket[pre.at(cutoff)]] <= 0 ) {
+					break;	// in theory, there could be == above, but these are urls, not math ;)
+				}
+				if(brackets.keys().contains(pre.at(cutoff))) {
+					--brackets[pre.at(cutoff)];
+				}
+
 			}
 			++cutoff;
 			//++x2;
@@ -443,16 +466,6 @@ QString TextUtil::linkify(const QString &in)
 	}
 
 	return out;
-}
-
-
-QString TextUtil::linkifyClever(const QString & in)
-{
-	QString txt = in;
-	//                   1        23                             4
-	QRegExp r = QRegExp("(^|\\s|>)((http|https|ftp)://[^\\s!<>]*)(<|>|\\s|$|!)");
-	txt.replace(r, "\\1<a href=\"\\2\">\\2</a>\\4");
-	return txt;
 }
 
 // sickening

@@ -99,18 +99,20 @@ bool ContactListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& s
 		}
 	}
 	case ContactListModel::GroupType:
-		ContactListGroup::SpecialType specialGroupType = static_cast<ContactListGroup::SpecialType>(index.data(ContactListModel::SpecialGroupTypeRole).toInt());
-		if (specialGroupType != ContactListGroup::SpecialType_None) {
-			if (specialGroupType == ContactListGroup::SpecialType_Transports)
-				return showTransports();
-		}
+		{
+			ContactListGroup::SpecialType specialGroupType = static_cast<ContactListGroup::SpecialType>(index.data(ContactListModel::SpecialGroupTypeRole).toInt());
+			if (specialGroupType != ContactListGroup::SpecialType_None) {
+				if (specialGroupType == ContactListGroup::SpecialType_Transports)
+					return showTransports();
+			}
 
-		if (!showOffline()) {
-			ContactListGroup* group = dynamic_cast<ContactListGroup*>(item);
-			return group->haveOnlineContacts();
-		}
-		else {
-			return true;
+			if (!showOffline()) {
+				ContactListGroup* group = dynamic_cast<ContactListGroup*>(item);
+				return group->haveOnlineContacts();
+			}
+			else {
+				return true;
+			}
 		}
 	case ContactListModel::AccountType:
 		return true;

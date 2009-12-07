@@ -112,6 +112,7 @@ signals:
 	void clearMoods();
 	void showYapsiPreferences();
 	void doGetChatPreferences();
+	QString doGetChatAccounts();
 	void doStopAccountUpdates();
 	void doApplyPreferences(const QString& xml);
 	void doApplyImmediatePreferences(const QString& xml);
@@ -133,6 +134,7 @@ public slots:
 	void setImmediatePreferences(const QString& xml);
 	void setDND(bool isDND);
 	void setStatus(XMPP::Status::Type statusType);
+	void setCurrentlyVisibleStatus(XMPP::Status::Type statusType);
 	void doShowIgnoredToasters();
 	void incomingStanza(const QString& xml);
 	void showSuccessfullyConnectedToaster(PsiAccount* account);
@@ -182,6 +184,7 @@ private slots:
 	void doJDisconnect();
 	void doJSendRaw(const QString& xml);
 	void doJSetPresence(const QString& type);
+	void doJSetCanConnectConnections(bool canConnectConnections);
 
 	void doShowRoster(bool visible);
 	void doChangeMain(const QString& mainApp, const QRect& onlineRect);
@@ -206,6 +209,7 @@ private:
 	QString activeProfile_;
 	bool onlineAccountDnd_;
 	bool onlineAccountConnected_;
+	bool canConnectConnections_;
 	bool doStartActions_;
 	QTimer* queueChangedTimer_;
 	QDateTime queueChangedTimerStartTime_;

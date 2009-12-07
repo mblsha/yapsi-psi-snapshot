@@ -33,6 +33,9 @@ namespace XMPP {
 	class JT_YaRetrieveHistory;
 };
 
+#include "xmpp_jid.h"
+#include "xmpp_yadatetime.h"
+
 class YaUnreadMessagesManager : public QObject
 {
 	Q_OBJECT
@@ -42,19 +45,31 @@ public:
 
 	void eventRead(PsiEvent* event);
 
-public slots:
-	void checkUnread();
-	void secondsIdle(int seconds);
-
 private slots:
-	void checkUnreadFinished();
+	void messageReadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp);
+	void messageUnreadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp, const QString& body);
+	void accountCountChanged();
 
 private:
-	PsiCon* controller_;
-	QTimer* checkUnreadTimer_;
-	QDateTime lastCheckTime_;
-	int lastSecondsIdle_;
-	QPointer<XMPP::JT_YaRetrieveHistory> task_;
+	QPointer<PsiCon> controller_;
+
+	struct ReadMessage {
+		ReadMessage(const XMPP::Jid& _jid, const XMPP::YaDateTime& _timeStamp)
+			: jid(_jid)
+			, timeStamp(_timeStamp)
+		{}
+
+		bool operator==(const ReadMessage& other) const
+		{
+			return jid.compare(other.jid, false) &&
+			       timeStamp == other.timeStamp;
+		}
+
+		XMPP::Jid jid;
+		XMPP::YaDateTime timeStamp;
+	};
+	QList<ReadMessage> lastReadMessages;
+	void addReadMessage(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp);
 };
 
 #endif

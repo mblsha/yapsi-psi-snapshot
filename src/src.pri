@@ -19,6 +19,7 @@ include($$PWD/tools/zip/zip.pri)
 include($$PWD/tools/optionstree/optionstree.pri)
 include($$PWD/tools/globalshortcut/globalshortcut.pri)
 include($$PWD/tools/advwidget/advwidget.pri)
+include($$PWD/tools/yastuff/syntaxhighlighters/syntaxhighlighters.pri)
 include($$PWD/tools/spellchecker/spellchecker.pri)
 include($$PWD/tools/grepshortcutkeydlg/grepshortcutkeydlg.pri)
 include($$PWD/tools/atomicxmlfile/atomicxmlfile.pri)
@@ -132,8 +133,6 @@ HEADERS += \
 	$$PWD/contactview.h \
 	$$PWD/psiiconset.h \
 	$$PWD/applicationinfo.h \
-	$$PWD/pgpkeydlg.h \
-	$$PWD/pgputil.h \
 	$$PWD/pgptransaction.h \
 	$$PWD/userlist.h \
 	$$PWD/mainwin_p.h \
@@ -249,8 +248,6 @@ SOURCES += \
 	$$PWD/contactview.cpp \
 	$$PWD/psiiconset.cpp \
 	$$PWD/applicationinfo.cpp \
-	$$PWD/pgpkeydlg.cpp \
-	$$PWD/pgputil.cpp \
 	$$PWD/pgptransaction.cpp \
 	$$PWD/serverinfomanager.cpp \
 	$$PWD/userlist.cpp \
@@ -530,7 +527,6 @@ INTERFACES += \
 	$$PWD/profilemanage.ui \
 	$$PWD/profilenew.ui \
 	$$PWD/proxy.ui \
-	$$PWD/pgpkey.ui \
 	$$PWD/accountmanage.ui \
 	$$PWD/accountadd.ui \
 	$$PWD/accountreg.ui \
@@ -590,6 +586,23 @@ unix:!dbus {
 
 mac {
 	QMAKE_LFLAGS += -framework Carbon -framework IOKit
+}
+
+!yapsi {
+	CONFIG += pgputil
+}
+pgputil {
+	DEFINES += HAVE_PGPUTIL
+	HEADERS += \
+		$$PWD/pgputil.h \
+		$$PWD/pgpkeydlg.h
+
+	SOURCES += \
+		$$PWD/pgputil.cpp \
+		$$PWD/pgpkeydlg.cpp
+
+	INTERFACES += \
+		$$PWD/pgpkey.ui
 }
 
 INCLUDEPATH += $$PWD

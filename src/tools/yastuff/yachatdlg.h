@@ -96,8 +96,8 @@ private:
 	// reimplemented
 	QString colorString(bool local, SpooledType spooled) const;
 	void appendSysMsg(const QString &);
-	void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime);
-	void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime);
+	void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags);
+	void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags);
 	void appendMessageFields(const Message& m);
 	void nicksChanged();
 	ChatViewClass* chatView() const;

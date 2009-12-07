@@ -1106,7 +1106,7 @@ void EventQueue::extractChats(QList<PsiEvent*> *el, const Jid &j, bool compareRe
 		bool extract = false;
 		if(e->type() == PsiEvent::Message) {
 			MessageEvent *me = (MessageEvent *)e;
-			if(j.compare(me->from(), compareRes) && me->message().type() == "chat") {
+			if(j.compare(me->from(), compareRes) && me->message().type() == "chat") { // FIXME: refactor-refactor-refactor
 				extract = true;
 			}
 		}
@@ -1170,7 +1170,7 @@ void EventQueue::printContent() const
 {
 	foreach(EventItem *i, list_) {
 		PsiEvent *e = i->event();
-		printf("  %d: (%d) from=[%s] jid=[%s]\n", i->id(), e->type(), e->from().full().latin1(), e->jid().full().latin1());
+		printf("  %d: (%d) from=[%s] jid=[%s]\n", i->id(), e->type(), qPrintable(e->from().full()), qPrintable(e->jid().full()));
 	}
 }
 

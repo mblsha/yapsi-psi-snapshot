@@ -83,13 +83,13 @@ private:
 		result << Message(MessageNormal, "2009-05-09 03:10:37.540499", false, "trulyalyal");
 		result << Message(MessageNormal, "2009-05-09 03:14:02.240299", false, "bababam!");
 		result << Message(MessageNormal, "2009-05-09 03:18:05.537200", false, "novyiy den");
-		if (YaChatViewModel::canRelyOnTimestamps()) {
-			result << Message(MessageNormal, "2009-05-09 03:18:05.549300", false, "novyiy den");
-		}
+		// if (YaChatViewModel::canRelyOnTimestamps()) {
+		// 	result << Message(MessageNormal, "2009-05-09 03:18:05.549300", false, "novyiy den");
+		// }
 		result << Message(MessageNormal, "2009-05-09 03:18:08.240700", false, "novyiy dup!");
-		if (YaChatViewModel::canRelyOnTimestamps()) {
-			result << Message(MessageNormal, "2009-05-09 03:18:08.252899", false, "novyiy dup!");
-		}
+		// if (YaChatViewModel::canRelyOnTimestamps()) {
+		// 	result << Message(MessageNormal, "2009-05-09 03:18:08.252899", false, "novyiy dup!");
+		// }
 		result << Message(MessageNormal, "2009-05-09 03:22:07.470000", false, "Solnyishko!");
 		result << Message(MessageNormal, "2009-05-09 03:22:12.312700", false, "svetit i prihodit v nashdom");
 		// result << Message(MessageNormal, "2009-05-10 00:52:26.571700", false, "a segodnya tuchki");
@@ -170,7 +170,7 @@ private:
 			}
 
 			XMPP::YaDateTime yaDateTime = YaDateTime::fromYaIsoTime(m.time);
-			model.addMessage(spooled, yaDateTime, m.local, 0, QString(), XMPP::ReceiptNone, m.text, omitYaDateTime ? XMPP::YaDateTime() : yaDateTime);
+			model.addMessage(spooled, yaDateTime, m.local, 0, QString(), XMPP::ReceiptNone, m.text, omitYaDateTime ? XMPP::YaDateTime() : yaDateTime, YaChatViewModel::NoFlags);
 		}
 	}
 
@@ -254,8 +254,9 @@ private:
 				spooled = "MessageOfflineStorage";
 				break;
 			}
-			str += QString("Message(%1, \"%2\"), %3, \"%4\"")
+			str += QString("Message(%1, \"%2\" \"%3\"), %4, \"%5\"")
 			       .arg(spooled)
+			       .arg(item->data(YaChatViewModel::DateTimeRole).toDateTime().toString("yyyy-MM-dd HH:mm:ss"))
 			       .arg(time)
 			       .arg((!item->data(YaChatViewModel::IncomingRole).toBool()) ? "true" : "false")
 			       .arg(item->data(Qt::DisplayRole).toString());
@@ -349,7 +350,6 @@ private:
 		qStableSort(data.begin(), data.end(), messageSortAsc);
 		appendData(model, data, type, omitYaDateTime);
 		verifyData(model, testData(), omitYaDateTime);
-
 	}
 
 private slots:
@@ -416,6 +416,235 @@ private slots:
 		QList<Message> toVerify = testData();
 		toVerify += normalMessages;
 		verifyData(model, toVerify, true);
+	}
+
+	void addMessageHelper(YaChatViewModel& model, int spooledType, const QString& timeStamp, bool local, const QString& text, bool emote, const QString& id, const QString& yaTimeStamp, int flags = YaChatViewModel::NoFlags)
+	{
+		model.addMessage(static_cast<YaChatViewModel::SpooledType>(spooledType),
+		                 QDateTime::fromString(timeStamp, "yyyy-MM-dd HH:mm:ss"),
+		                 local, 0, QString(), XMPP::ReceiptNone,
+		                 text,
+		                 YaDateTime::fromYaIsoTime(yaTimeStamp),
+		                 flags);
+	}
+
+	void testNewData()
+	{
+		YaChatViewModel model(0);
+		addMessageHelper(model, 2 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 2 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:17" , true , "pyits" , false , "" , "2009-07-22 10:55:17.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:48:52" , false , "kuku" , false , "" , "2009-07-22 10:48:52.473400");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:59" , false , "r3" , false , "" , "2009-07-22 10:46:59.679100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:58" , false , "r2" , false , "" , "2009-07-22 10:46:58.952100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:58" , false , "r1" , false , "" , "2009-07-22 10:46:58.017200");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:56" , false , "p" , false , "" , "2009-07-22 10:46:56.785100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:55" , false , "r5" , false , "" , "2009-07-22 10:46:55.776300");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:54" , false , "r4" , false , "" , "2009-07-22 10:46:54.401300");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:52" , false , "r3" , false , "" , "2009-07-22 10:46:52.983000");
+		addMessageHelper(model, 2 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 2 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:55:17" , true , "pyits" , false , "" , "2009-07-22 10:55:17.000000");
+		addMessageHelper(model, 2 , "2009-07-22 14:48:52" , false , "kuku" , false , "" , "2009-07-22 10:48:52.473400");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:59" , false , "r3" , false , "" , "2009-07-22 10:46:59.679100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:58" , false , "r2" , false , "" , "2009-07-22 10:46:58.952100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:58" , false , "r1" , false , "" , "2009-07-22 10:46:58.017200");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:56" , false , "p" , false , "" , "2009-07-22 10:46:56.785100");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:55" , false , "r5" , false , "" , "2009-07-22 10:46:55.776300");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:54" , false , "r4" , false , "" , "2009-07-22 10:46:54.401300");
+		addMessageHelper(model, 2 , "2009-07-22 14:46:52" , false , "r3" , false , "" , "2009-07-22 10:46:52.983000");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:17" , true , "pyits" , false , "" , "2009-07-22 10:55:17.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:48:52" , false , "kuku" , false , "" , "2009-07-22 10:48:52.473400");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:59" , false , "r3" , false , "" , "2009-07-22 10:46:59.679100");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:58" , false , "r2" , false , "" , "2009-07-22 10:46:58.952100");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:58" , false , "r1" , false , "" , "2009-07-22 10:46:58.017200");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:56" , false , "p" , false , "" , "2009-07-22 10:46:56.785100");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:55" , false , "r5" , false , "" , "2009-07-22 10:46:55.776300");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:54" , false , "r4" , false , "" , "2009-07-22 10:46:54.401300");
+		addMessageHelper(model, 3 , "2009-07-22 14:46:52" , false , "r3" , false , "" , "2009-07-22 10:46:52.983000");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:48" , false , "pyisch" , false , "aacfa" , "2009-07-22 11:12:55.499650");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:54" , false , "1" , false , "aad3a" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:54" , false , "2" , false , "aad7a" , "2009-07-22 11:13:02.210862");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:55" , false , "3" , false , "aadba" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:56" , false , "pyisch" , false , "aadfa" , "2009-07-22 11:13:04.191383");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:58" , false , "4" , false , "aae3a" , "2009-07-22 11:13:05.644049");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:58" , false , "5" , false , "aae7a" , "2009-07-22 11:13:06.182916");
+		addMessageHelper(model, 0 , "2009-07-22 15:11:59" , false , "6" , false , "aaeba" , "2009-07-22 11:13:06.698027");
+		addMessageHelper(model, 0 , "2009-07-22 15:12:00" , false , "pyisch" , false , "aaefa" , "2009-07-22 11:13:08.168781");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:17" , true , "pyits" , false , "" , "2009-07-22 10:55:17.000000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+
+		addMessageHelper(model, 0 , "2009-07-22 15:12:05" , true , "hasch" , false , "aad1a" , ".000000");
+		// addMessageHelper(model, 0 , "2009-07-22 15:12:05" , true , "hasch" , false , "aad1a" , "2009-07-22 11:12:05.000000");
+
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700", 666);
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:08" , false , "pyisch" , false , "" , "2009-07-22 11:13:08.168700");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "6" , false , "" , "2009-07-22 11:13:06.698000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:06" , false , "5" , false , "" , "2009-07-22 11:13:06.182900");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:05" , false , "4" , false , "" , "2009-07-22 11:13:05.644000");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:04" , false , "pyisch" , false , "" , "2009-07-22 11:13:04.191299");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:03" , false , "3" , false , "" , "2009-07-22 11:13:03.266300");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:02" , false , "2" , false , "" , "2009-07-22 11:13:02.210799");
+		addMessageHelper(model, 3 , "2009-07-22 15:13:01" , false , "1" , false , "" , "2009-07-22 11:13:01.834300");
+		addMessageHelper(model, 3 , "2009-07-22 15:12:55" , false , "pyisch" , false , "" , "2009-07-22 11:12:55.499599");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:45" , false , "fyivdal" , false , "" , "2009-07-22 10:56:45.854899");
+		addMessageHelper(model, 3 , "2009-07-22 14:56:42" , false , "yiyiyi" , false , "" , "2009-07-22 10:56:42.421400");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:24" , true , "3" , false , "" , "2009-07-22 10:55:24.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "2" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:23" , true , "1" , false , "" , "2009-07-22 10:55:23.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:22" , true , "pyits" , false , "" , "2009-07-22 10:55:22.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "4" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:19" , true , "5" , false , "" , "2009-07-22 10:55:19.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "3" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "1" , false , "" , "2009-07-22 10:55:18.000000");
+		addMessageHelper(model, 3 , "2009-07-22 14:55:18" , true , "2" , false , "" , "2009-07-22 10:55:18.000000");
+		debugModel(model);
 	}
 };
 

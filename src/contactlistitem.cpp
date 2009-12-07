@@ -80,7 +80,12 @@ bool ContactListItem::compare(const ContactListItem* other) const
 	if (!left ^ !right) {
 		return !right;
 	}
-	return name() < other->name();
+	return comparisonName() < other->comparisonName();
+}
+
+QString ContactListItem::comparisonName() const
+{
+	return name();
 }
 
 bool ContactListItem::editing() const

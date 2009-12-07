@@ -31,6 +31,11 @@ using namespace QCA;
  */
 CertificateCollection CertificateHelpers::allCertificates(const QStringList& storeDirs)
 {
+#ifdef YAPSI
+	// ONLINE-1864
+	CertificateCollection certs;
+	return certs;
+#else
 	CertificateCollection certs(systemStore());
 	for (QStringList::ConstIterator s = storeDirs.begin(); s != storeDirs.end(); ++s) {
 		QDir store(*s);
@@ -85,6 +90,7 @@ CertificateCollection CertificateHelpers::allCertificates(const QStringList& sto
 		}
 	}
 	return certs;
+#endif
 }
 
 QString CertificateHelpers::validityToString(QCA::Validity v)

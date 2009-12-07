@@ -50,6 +50,7 @@ class YaInformer;
 class YaPreferences;
 class YaDayUse;
 class YaContactListModel;
+class YaDebugConsole;
 
 using namespace XMPP;
 
@@ -90,7 +91,9 @@ public slots:
 
 	void showNoFocus();
 
+	// reimplemented
 	void decorateButton(int);
+
 	void updateReadNext(PsiIcon *nextAnim, int nextAmount);
 
 	void optionsUpdate();
@@ -109,6 +112,8 @@ private slots:
 	virtual void statusSelected(XMPP::Status::Type);
 	virtual void statusSelectedManually(XMPP::Status::Type);
 	virtual void statusSelectedManuallyHelper(XMPP::Status::Type);
+
+	void statusSelectedHelper(XMPP::Status::Type, bool isManualStatus);
 
 	// reimplemented
 	virtual void clearMoods();
@@ -188,12 +193,14 @@ private:
 	QAction* optionsAction_;
 	QAction* aboutAction_;
 	QAction* quitAction_;
+	QAction* showDebugConsoleAction_;
 	QMenu* settingsMenu_;
 	StatusMenu* statusMenu_;
 	YaSettingsButtonExtraButton* settingsButton_;
 	// QTimer* updateFriendsFrameVisibilityTimer_;
 	Ui::MainWindow ui_;
 	QPointer<YaPreferences> preferences_;
+	QPointer<YaDebugConsole> debugConsole_;
 	int topMargin_;
 };
 

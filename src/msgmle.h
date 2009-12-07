@@ -24,6 +24,7 @@
 #include <QTextEdit>
 
 #include "psitextview.h"
+#include "spellcheckingtextedit.h"
 
 class ChatEdit;
 class QEvent;
@@ -61,7 +62,7 @@ private:
 	QWidget* dialog_;
 };
 
-class ChatEdit : public QTextEdit
+class ChatEdit : public BaseSpellCheckingTextEdit<QTextEdit>
 {
 	Q_OBJECT
 
@@ -75,21 +76,21 @@ public:
 	// reimplemented
 	QSize sizeHint() const;
 
-	static bool checkSpellingGloballyEnabled();
-	void setCheckSpelling(bool);
-
 #ifdef YAPSI
 	void setTypographyAction(QAction* typographyAction);
 	void setEmoticonsAction(QAction* emoticonsAction);
+	void setCheckSpellingAction(QAction* checkSpellingAction);
+	void setSendButtonEnabledAction(QAction* sendButtonEnabledAction);
 #endif
+
+	QWidgetList contextMenuWidgets() const;
+	void setContextMenuWidgets(QWidgetList contextMenuWidgets);
 
 public slots:
 	void clear();
 
 protected slots:
- 	void applySuggestion();
- 	void addToDictionary();
-	void optionsChanged();
+	void optionChanged(const QString& option);
 
 protected:
 	// override the tab/esc behavior
@@ -97,19 +98,20 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 	bool event(QEvent * event);
 	void contextMenuEvent(QContextMenuEvent *e);
+	bool eventFilter(QObject* o, QEvent* e);
 
 private:
 	QWidget	*dialog_;
 	QAction* sendAction_;
 	bool check_spelling_;
 	SpellHighlighter* spellhighlighter_;
-	QPoint last_click_;
-	int previous_position_;
+	QWidgetList contextMenuWidgets_;
+
 #ifdef YAPSI
-	QAction* copyAction_;
-	QAction* pasteAction_;
 	QAction* typographyAction_;
 	QAction* emoticonsAction_;
+	QAction* checkSpellingAction_;
+	QAction* sendButtonEnabledAction_;
 
 	void updateMargins();
 #endif

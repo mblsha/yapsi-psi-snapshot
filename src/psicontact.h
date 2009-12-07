@@ -73,6 +73,7 @@ public:
 #ifdef YAPSI
 	bool isYaInformer() const;
 	bool isYaJid();
+	bool isYandexTeamJid();
 	bool historyAvailable() const;
 	bool moodNotificationsEnabled() const;
 	void setMoodNotificationsEnabled(bool enabled);
@@ -88,6 +89,7 @@ public:
 	// reimplemented
 	virtual ContactListModel::Type type() const;
 	virtual const QString& name() const;
+	virtual QString comparisonName() const;
 	virtual void setName(const QString& name);
 	virtual ContactListItemMenu* contextMenu(ContactListModel* model);
 	virtual bool isEditable() const;
@@ -104,6 +106,7 @@ public:
 #ifdef YAPSI
 	XMPP::VCard::Gender gender() const;
 #endif
+	void rereadVCard();
 
 	bool groupOperationPermitted(const QString& oldGroupName, const QString& newGroupName) const;
 	virtual QStringList groups() const;

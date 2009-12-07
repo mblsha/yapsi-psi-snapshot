@@ -28,6 +28,7 @@
 
 #include "yaselfmood.h"
 #include "yarotation.h"
+#include "yavisualutil.h"
 
 static const int pixmapSize = 10;
 
@@ -92,8 +93,10 @@ QString YaSelfMoodButton::text() const
 		return QString();
 	if (action_->text().isEmpty() && !action_->property("emptyText").toString().isEmpty())
 		return action_->property("emptyText").toString();
-	if (isEmpty())
-		return tr("Choose a mood");
+	if (isEmpty()) {
+		// return tr("Choose a mood");
+		return "nn";
+	}
 	return action_->text().simplified();
 }
 
@@ -167,10 +170,22 @@ void YaSelfMoodButton::paintEvent(QPaintEvent*)
 	if (!doDraw)
 		return;
 
-	if (isEmpty())
-		p.setPen(Qt::gray);
-	p.drawText(textRect_.adjusted(0, -1, 0, 0), Qt::AlignVCenter | Qt::AlignLeft, p.fontMetrics().elidedText(text(), Qt::ElideRight, textRect_.width()));
-	// p.drawText(textRect_, Qt::AlignVCenter | Qt::AlignLeft, p.fontMetrics().elidedText(text(), Qt::ElideRight, textRect_.width()));
+	if (isEmpty()) {
+		// p.setPen(Qt::gray);
+		return;
+	}
+	// p.drawText(textRect_.adjusted(0, -1, 0, 0), Qt::AlignVCenter | Qt::AlignLeft, p.fontMetrics().elidedText(text(), Qt::ElideRight, textRect_.width()));
+	QRect rect = textRect_;
+#ifdef Q_WS_MAC
+	rect.adjust(0, -2, 0, -2);
+#else
+	rect.adjust(0, -1, 0, -1);
+#endif
+	p.drawText(rect, Qt::AlignVCenter | Qt::AlignLeft, text());
+
+	if (p.fontMetrics().width(text()) > textRect_.width()) {
+		Ya::VisualUtil::drawTextFadeOut(&p, textRect_, Ya::VisualUtil::blueBackgroundColor());
+	}
 }
 
 void YaSelfMoodButton::resizeEvent(QResizeEvent* event)

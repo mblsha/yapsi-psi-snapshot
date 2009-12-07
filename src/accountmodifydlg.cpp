@@ -22,7 +22,6 @@
 #include <QMessageBox>
 
 #include "accountmodifydlg.h"
-#include "pgputil.h"
 #include "psiaccount.h"
 #include "iconset.h"
 #include "psioptions.h"
@@ -31,8 +30,11 @@
 #include "proxy.h"
 #include "privacymanager.h"
 #include "privacydlg.h"
-#include "pgpkeydlg.h"
 #include "psicontactlist.h"
+#ifdef HAVE_PGPUTIL
+#include "pgpkeydlg.h"
+#include "pgputil.h"
+#endif
 
 AccountModifyDlg::AccountModifyDlg(PsiCon *_psi, QWidget *parent)
 :QDialog(parent)
@@ -147,10 +149,14 @@ void AccountModifyDlg::init()
 
 	key = acc.pgpSecretKey;
 	updateUserID();
+#ifdef HAVE_PGPUTIL
 	PGPUtil::instance().clearPGPAvailableCache();
 	if(PGPUtil::instance().pgpAvailable()) {
 		gb_pgp->setEnabled(true);
 	}
+#else
+	gb_pgp->setEnabled(false);
+#endif
 
 	pc = psi->proxy()->createProxyChooser(tab_connection);
 	replaceWidget(lb_proxychooser, pc);
@@ -421,6 +427,7 @@ void AccountModifyDlg::hostToggled(bool on)
 
 void AccountModifyDlg::chooseKey()
 {
+#ifdef HAVE_PGPUTIL
 	// Show the key dialog
 	QString id = (key.isNull() ? "" : key.keyId());
 	PGPKeyDlg *w = new PGPKeyDlg(PGPKeyDlg::Secret, id, this);
@@ -435,6 +442,7 @@ void AccountModifyDlg::chooseKey()
 		key = entry.pgpSecretKey();
 		updateUserID();
 	}
+#endif
 }
 
 void AccountModifyDlg::clearKey()

@@ -182,8 +182,8 @@ protected:
 	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt) = 0;
 	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt) = 0;
 #else
-	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime) = 0;
-	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime) = 0;
+	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags) = 0;
+	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags) = 0;
 #endif
 	virtual void appendMessageFields(const Message& m) = 0;
 	virtual void nicksChanged();

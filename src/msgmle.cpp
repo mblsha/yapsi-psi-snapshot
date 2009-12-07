@@ -58,6 +58,8 @@
 #include <QTextDocument>
 #endif
 
+static const QString spellCheckEnabledOptionPath = "options.ui.spell-check.enabled";
+
 //----------------------------------------------------------------------------
 // ChatView
 //----------------------------------------------------------------------------
@@ -201,16 +203,14 @@ QString ChatView::formatTimeStamp(const QDateTime &time)
 // ChatEdit
 //----------------------------------------------------------------------------
 ChatEdit::ChatEdit(QWidget *parent)
-	: QTextEdit(parent)
+	: BaseSpellCheckingTextEdit<QTextEdit>(parent)
 	, dialog_(0)
 	, sendAction_(0)
-	, check_spelling_(false)
-	, spellhighlighter_(0)
 #ifdef YAPSI
-	, copyAction_(0)
-	, pasteAction_(0)
 	, typographyAction_(0)
 	, emoticonsAction_(0)
+	, checkSpellingAction_(0)
+	, sendButtonEnabledAction_(0)
 #endif
 {
 	setWordWrapMode(QTextOption::WordWrap);
@@ -223,45 +223,29 @@ ChatEdit::ChatEdit(QWidget *parent)
 
 // FIXME
 #ifdef YAPSI
-	CombinedSyntaxHighlighter* hl = new CombinedSyntaxHighlighter(this);
-	new TypographyHighlighter(hl, this);
-	// new QuotationHighlighter(hl, this);
-	// new WikiHighlighter(hl, this);
-	if (PsiOptions::instance()->getOption("options.ui.spell-check.enabled").toBool()) {
-		new YaSpellHighlighter(hl, this);
-	}
+	new TypographyHighlighter(g()->syntaxHighlighter(), this);
+	// new QuotationHighlighter(g()->syntaxHighlighter(), this);
+	// new WikiHighlighter(g()->syntaxHighlighter(), this);
 #ifdef YAPSI_DEV
-	new CppHighlighter(hl, this);
+	new CppHighlighter(g()->syntaxHighlighter(), this);
 #endif
 #endif
 
-	previous_position_ = 0;
-#ifndef YAPSI
-	setCheckSpelling(checkSpellingGloballyEnabled());
-#endif
-	connect(PsiOptions::instance(),SIGNAL(optionChanged(const QString&)),SLOT(optionsChanged()));
-	optionsChanged();
+	connect(PsiOptions::instance(),SIGNAL(optionChanged(const QString&)),SLOT(optionChanged(const QString&)));
+	optionChanged(spellCheckEnabledOptionPath);
 
 #ifdef YAPSI
-	copyAction_ = new QAction(tr("&Copy"), this);
-	copyAction_->setShortcut(QKeySequence::Copy);
-	connect(copyAction_, SIGNAL(triggered()), SLOT(copy()));
-	pasteAction_ = new QAction(tr("&Paste"), this);
-	pasteAction_->setShortcut(QKeySequence::Paste);
-	connect(pasteAction_, SIGNAL(triggered()), SLOT(paste()));
-
 	updateMargins();
 #endif
 }
 
 ChatEdit::~ChatEdit()
 {
-	delete spellhighlighter_;
 }
 
 void ChatEdit::clear()
 {
-	QTextEdit::clear();
+	BaseSpellCheckingTextEdit<QTextEdit>::clear();
 #ifdef YAPSI
 	updateMargins();
 #endif
@@ -290,24 +274,6 @@ void ChatEdit::setSendAction(QAction* sendAction)
 QSize ChatEdit::sizeHint() const
 {
 	return minimumSizeHint();
-}
-
-bool ChatEdit::checkSpellingGloballyEnabled()
-{
-	return (SpellChecker::instance()->available() && PsiOptions::instance()->getOption("options.ui.spell-check.enabled").toBool());
-}
-
-void ChatEdit::setCheckSpelling(bool b)
-{
-	check_spelling_ = b;
-	if (check_spelling_) {
-		if (!spellhighlighter_)
-			spellhighlighter_ = new SpellHighlighter(document());
-	}
-	else {
-		delete spellhighlighter_;
-		spellhighlighter_ = 0;
-	}
 }
 
 bool ChatEdit::focusNextPrevChild(bool next)
@@ -357,137 +323,78 @@ void ChatEdit::keyPressEvent(QKeyEvent *e)
 #ifdef YAPSI
 	else if (e->key() == Qt::Key_Z && e->modifiers() == Qt::ControlModifier) {
 		// Work-around for disappearing margins when undo in empty ChatEdit is performed
-		QTextEdit::keyPressEvent(e);
+		BaseSpellCheckingTextEdit<QTextEdit>::keyPressEvent(e);
 		updateMargins();
 	}
 #endif
 	else
 	{
-		QTextEdit::keyPressEvent(e);
+		BaseSpellCheckingTextEdit<QTextEdit>::keyPressEvent(e);
 	}
 }
 
-/**
- * Work around Qt bug, that QTextEdit doesn't accept() the 
- * event, so it could result in another context menu popping
- * out after the first one.
- */
-void ChatEdit::contextMenuEvent(QContextMenuEvent *e) 
+QWidgetList ChatEdit::contextMenuWidgets() const
 {
-	last_click_ = e->pos();
-	if (check_spelling_ && textCursor().selectedText().isEmpty() && SpellChecker::instance()->available()) {
-		// Check if the word under the cursor is misspelled
-		QTextCursor tc = cursorForPosition(last_click_);
-		tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
-		tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-		QString selected_word = tc.selectedText();
-		if (!selected_word.isEmpty() && !SpellChecker::instance()->isCorrect(selected_word)) {
-			QList<QString> suggestions = SpellChecker::instance()->suggestions(selected_word);
-			if (!suggestions.isEmpty() || SpellChecker::instance()->writable()) {
-				QMenu spell_menu;
-				if (!suggestions.isEmpty()) {
-					foreach(QString suggestion, suggestions) {
-						QAction* act_suggestion = spell_menu.addAction(suggestion);
-						connect(act_suggestion,SIGNAL(triggered()),SLOT(applySuggestion()));
-					}
-					spell_menu.addSeparator();
-				}
-				if (SpellChecker::instance()->writable()) {
-					QAction* act_add = spell_menu.addAction(tr("Add to dictionary"));
-					connect(act_add,SIGNAL(triggered()),SLOT(addToDictionary()));
-				}
-				spell_menu.exec(QCursor::pos());
-				e->accept();
-				return;
-			}
+	return contextMenuWidgets_;
+}
+
+void ChatEdit::setContextMenuWidgets(QWidgetList contextMenuWidgets)
+{
+	foreach(QWidget* w, contextMenuWidgets_) {
+		w->removeEventFilter(this);
+	}
+
+	contextMenuWidgets_ = contextMenuWidgets;
+
+	foreach(QWidget* w, contextMenuWidgets_) {
+		w->installEventFilter(this);
+	}
+}
+
+bool ChatEdit::eventFilter(QObject* o, QEvent* e)
+{
+	if (e->type() == QEvent::ContextMenu) {
+		if (contextMenuWidgets_.contains(dynamic_cast<QWidget*>(o))) {
+			QContextMenuEvent* cme = static_cast<QContextMenuEvent*>(e);
+			contextMenuEvent(cme);
+			return true;
 		}
 	}
+	return BaseSpellCheckingTextEdit<QTextEdit>::eventFilter(o, e);
+}
 
-	Q_ASSERT(sendAction_);
-	QMenu menu;
-	sendAction_->setShortcuts(ShortcutManager::instance()->shortcuts("chat.send"));
-	menu.addAction(sendAction_);
-#ifndef YAPSI
-	menu.addSeparator();
-	QMenu *standardMenu = createStandardContextMenu();
-	foreach(QAction* action, standardMenu->actions()) {
-		menu.addAction(action);
-	}
-#else
-	copyAction_->setEnabled(textCursor().hasSelection());
-	menu.addAction(copyAction_);
-	menu.addAction(pasteAction_);
-	if (typographyAction_ && emoticonsAction_) {
-		menu.addSeparator();
-		menu.addAction(typographyAction_);
-		menu.addAction(emoticonsAction_);
-	}
-#endif
-	menu.exec(e->globalPos());
-#ifndef YAPSI
-	delete standardMenu;
-#endif
+void ChatEdit::contextMenuEvent(QContextMenuEvent *e) 
+{
 	e->accept();
-}
+	Q_ASSERT(sendAction_);
 
-/*!
- * \brief handles a click on a suggestion
- * \param the action is just the container which holds the suggestion.
- * 
- * This method is called by the framework whenever a user clicked on the child popupmenu
- * to select a suggestion for a missspelled word. It exchanges the missspelled word with the
- * suggestion which is the text of the QAction parameter.
- */
-void ChatEdit::applySuggestion()
-{
-	QAction* act_suggestion = (QAction*) sender();
-	int current_position = textCursor().position();
-	
-	// Replace the word
-	QTextCursor	tc = cursorForPosition(last_click_);
-	tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
-	tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-	int old_length = tc.position() - tc.anchor();
-	tc.insertText(act_suggestion->text());
-	tc.clearSelection();
+	QMenu* menu = g()->createContextMenu(e, false);
 
-	// Put the cursor where it belongs
-	int new_length = act_suggestion->text().length();
-	tc.setPosition(current_position - old_length + new_length);
-	setTextCursor(tc);
-}
+	sendAction_->setShortcuts(ShortcutManager::instance()->shortcuts("chat.send"));
+	menu->addSeparator();
+	menu->addAction(sendAction_);
 
-/*!
- * \brief handles a click on the add2dict action of the parent popupmenu
- * \param Never used bool parameter
- * 
- * The method sets the cursor to the last mouseclick position and looks for the word which is placed there.
- * This word is than added to the dictionary of aspell.
- */
-void ChatEdit::addToDictionary()
-{
-	QTextCursor	tc = cursorForPosition(last_click_);
-	int current_position = textCursor().position();
-
-	// Get the selected word
-	tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
-	tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
-	SpellChecker::instance()->add(tc.selectedText());
-	
-	// Put the cursor where it belongs
-	tc.clearSelection();
-	tc.setPosition(current_position);
-	setTextCursor(tc);
-}
-
-/**
- * \todo Make spellChecker the sibling of highlighters family and uncomment the line(s) below
- */
-void ChatEdit::optionsChanged()
-{
-#ifndef YAPSI
-	setCheckSpelling(checkSpellingGloballyEnabled());
+	menu->addAction(g()->copyAction());
+	menu->addAction(g()->pasteAction());
+#ifdef YAPSI
+	if (typographyAction_ && emoticonsAction_ && checkSpellingAction_ && sendButtonEnabledAction_) {
+		menu->addSeparator();
+		menu->addAction(typographyAction_);
+		menu->addAction(emoticonsAction_);
+		menu->addAction(checkSpellingAction_);
+		menu->addAction(sendButtonEnabledAction_);
+	}
 #endif
+
+	menu->exec(e->globalPos());
+	delete menu;
+}
+
+void ChatEdit::optionChanged(const QString& option)
+{
+	if (option == spellCheckEnabledOptionPath) {
+		setCheckSpelling(PsiOptions::instance()->getOption(spellCheckEnabledOptionPath).toBool());
+	}
 }
 
 #ifdef YAPSI
@@ -499,6 +406,16 @@ void ChatEdit::setTypographyAction(QAction* typographyAction)
 void ChatEdit::setEmoticonsAction(QAction* emoticonsAction)
 {
 	emoticonsAction_ = emoticonsAction;
+}
+
+void ChatEdit::setCheckSpellingAction(QAction* checkSpellingAction)
+{
+	checkSpellingAction_ = checkSpellingAction;
+}
+
+void ChatEdit::setSendButtonEnabledAction(QAction* sendButtonEnabledAction)
+{
+	sendButtonEnabledAction_ = sendButtonEnabledAction;
 }
 #endif
 

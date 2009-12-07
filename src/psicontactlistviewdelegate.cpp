@@ -51,10 +51,13 @@ int PsiContactListViewDelegate::avatarSize() const
 	return 18;
 }
 
-const QPixmap& PsiContactListViewDelegate::statusPixmap(const QModelIndex& index) const
+QPixmap PsiContactListViewDelegate::statusPixmap(const QModelIndex& index) const
 {
 	int s = statusType(index);
-	if (ContactListModel::indexType(index) == ContactListModel::ContactType) {
+	ContactListModel::Type type = ContactListModel::indexType(index);
+	if (type == ContactListModel::ContactType ||
+	    type == ContactListModel::AccountType)
+	{
 		if (index.data(ContactListModel::IsAlertingRole).toBool()) {
 			QVariant alertData = index.data(ContactListModel::AlertPictureRole);
 			QIcon alert;
@@ -66,7 +69,9 @@ const QPixmap& PsiContactListViewDelegate::statusPixmap(const QModelIndex& index
 
 			return alert.pixmap(100, 100);
 		}
+	}
 
+	if (type == ContactListModel::ContactType) {
 		if (!index.data(ContactListModel::PresenceErrorRole).toString().isEmpty())
 			s = STATUS_ERROR;
 		else if (index.data(ContactListModel::IsAgentRole).toBool())

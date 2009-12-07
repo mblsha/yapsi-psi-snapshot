@@ -30,16 +30,16 @@
 #include "xmpp_tasks.h"
 #include "globaleventqueue.h"
 
-static const int CHECK_UNREAD_INTERVAL = 60; // seconds
+#include "xmpp_yadatetime.h"
+
+static const int MAX_LAST_READ_MESSAGES = 100;
 
 YaUnreadMessagesManager::YaUnreadMessagesManager(PsiCon* parent)
 	: QObject(parent)
 	, controller_(parent)
-	, lastSecondsIdle_(-1)
 {
-	checkUnreadTimer_ = new QTimer(this);
-	checkUnreadTimer_->setSingleShot(true);
-	connect(checkUnreadTimer_, SIGNAL(timeout()), SLOT(checkUnread()));
+	connect(controller_->contactList(), SIGNAL(accountCountChanged()), SLOT(accountCountChanged()));
+	accountCountChanged();
 }
 
 YaUnreadMessagesManager::~YaUnreadMessagesManager()
@@ -53,132 +53,83 @@ void YaUnreadMessagesManager::eventRead(PsiEvent* event)
 		const XMPP::Message& m = me->message();
 		if (!m.yaMessageId().isEmpty()) {
 			Q_ASSERT(event->account());
-			if (event->account()) {
+			if (event->account() && event->account()->isYaAccount()) {
 				JT_YaMessageRead* task = new XMPP::JT_YaMessageRead(event->account()->client()->rootTask());
 				YaDateTime timeStamp = YaDateTime::fromYaTime_t(m.yaMessageId());
 				task->messageRead(m.from(), timeStamp);
+				addReadMessage(m.from(), timeStamp);
 				task->go(true);
 			}
 		}
 	}
 }
 
-void YaUnreadMessagesManager::checkUnread()
-{
-	checkUnreadTimer_->stop();
-
-	if (!lastCheckTime_.isNull()) {
-		if (lastCheckTime_.secsTo(QDateTime::currentDateTime()) < CHECK_UNREAD_INTERVAL) {
-			checkUnreadTimer_->setInterval((CHECK_UNREAD_INTERVAL - lastCheckTime_.secsTo(QDateTime::currentDateTime())) * 1000);
-			checkUnreadTimer_->start();
-			return;
-		}
-	}
-
-	lastCheckTime_ = QDateTime::currentDateTime();
-
-	PsiAccount* historyAccount = controller_->contactList()->yaServerHistoryAccount();
-	if (historyAccount && historyAccount->isAvailable()) {
-		if (task_)
-			delete task_;
-
-#if 0
-		task_ = new XMPP::JT_YaRetrieveHistory(historyAccount->client()->rootTask());
-		connect(task_, SIGNAL(finished()), this, SLOT(checkUnreadFinished()));
-		task_->checkUnread();
-		task_->go(true);
-#endif
-	}
-	else {
-		lastCheckTime_ = QDateTime();
-		checkUnreadTimer_->setInterval(10 * 1000);
-		checkUnreadTimer_->start();
-	}
-}
-
-struct YaMessageEventFound {
-	MessageEvent* event;
-	bool found;
-};
-
-void YaUnreadMessagesManager::checkUnreadFinished()
+void YaUnreadMessagesManager::messageUnreadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp, const QString& body)
 {
 	PsiAccount* historyAccount = controller_->contactList()->yaServerHistoryAccount();
 	Q_ASSERT(historyAccount);
 	if (!historyAccount)
 		return;
 
-	QList<YaMessageEventFound> messages;
+	ReadMessage readMessage(jid, timeStamp);
+	if (lastReadMessages.contains(readMessage)) {
+		qWarning("YaUnreadMessagesManager::messageUnreadPush: already read %s,%s,%s", qPrintable(jid.full()), qPrintable(timeStamp.toYaIsoTime()), qPrintable(body));
+		return;
+	}
+
+	XMPP::Message m;
+	m.setFrom(jid);
+	m.setBody(body);
+	m.setTimeStamp(timeStamp);
+	m.setYaMessageId(timeStamp.toYaTime_t());
+
+	historyAccount->client_messageReceived(m);
+}
+
+void YaUnreadMessagesManager::accountCountChanged()
+{
+	foreach(PsiAccount* account, controller_->contactList()->accounts()) {
+		disconnect(account, SIGNAL(messageReadPush(const XMPP::Jid&, const XMPP::YaDateTime&)), this, SLOT(messageReadPush(const XMPP::Jid&, const XMPP::YaDateTime&)));
+		connect(account,    SIGNAL(messageReadPush(const XMPP::Jid&, const XMPP::YaDateTime&)), this, SLOT(messageReadPush(const XMPP::Jid&, const XMPP::YaDateTime&)));
+
+		disconnect(account, SIGNAL(messageUnreadPush(const XMPP::Jid&, const XMPP::YaDateTime&, const QString&)), this, SLOT(messageUnreadPush(const XMPP::Jid&, const XMPP::YaDateTime&, const QString&)));
+		connect(account,    SIGNAL(messageUnreadPush(const XMPP::Jid&, const XMPP::YaDateTime&, const QString&)), this, SLOT(messageUnreadPush(const XMPP::Jid&, const XMPP::YaDateTime&, const QString&)));
+	}
+}
+
+void YaUnreadMessagesManager::messageReadPush(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp)
+{
+	PsiAccount* account = static_cast<PsiAccount*>(sender());
+	if (account != controller_->contactList()->yaServerHistoryAccount())
+		return;
+
+	addReadMessage(jid, timeStamp);
 
 	foreach(int id, GlobalEventQueue::instance()->ids()) {
 		PsiEvent* event = GlobalEventQueue::instance()->peek(id);
 		Q_ASSERT(event);
 		if (event->type() == PsiEvent::Message) {
-			YaMessageEventFound m;
-			m.event = static_cast<MessageEvent*>(event);
-			m.found = false;
-			messages << m;
-		}
-	}
-
-	XMPP::JT_YaRetrieveHistory* task = static_cast<XMPP::JT_YaRetrieveHistory*>(sender());
-	if (task) {
-		if (task->success()) {
-			foreach(XMPP::JT_YaRetrieveHistory::Chat chat, task->messages()) {
-				// Q_ASSERT(!chat.originLocal);
-				if (chat.originLocal) {
-					qWarning("local message: '%s'", qPrintable(chat.body));
-					continue;
-				}
-
-				bool found = false;
-				QMutableListIterator<YaMessageEventFound> it(messages);
-				while (it.hasNext()) {
-					YaMessageEventFound mef = it.next();
-					Q_ASSERT(!mef.event->originLocal());
-					YaDateTime timeStamp = YaDateTime::fromYaTime_t(mef.event->message().yaMessageId());
-					if (chat.jid.compare(mef.event->message().from(), false) &&
-					    chat.body == mef.event->message().body() &&
-					    chat.timeStamp == timeStamp)
-					{
-						found = true;
-						mef.found = true;
-						it.setValue(mef);
-						break;
-					}
-				}
-
-				if (!found) {
-					XMPP::Message m;
-					m.setFrom(chat.jid);
-					m.setBody(chat.body);
-					m.setTimeStamp(chat.timeStamp);
-					m.setYaMessageId(chat.timeStamp.toYaTime_t());
-
-					historyAccount->client_messageReceived(m);
-				}
-			}
-
-			QMutableListIterator<YaMessageEventFound> it(messages);
-			while (it.hasNext()) {
-				YaMessageEventFound mef = it.next();
-				if (mef.found || !mef.event)
-					continue;
-
-				mef.event->account()->eventQueue()->dequeue(mef.event);
-				delete mef.event;
-				mef.event = 0;
-				it.setValue(mef);
+			MessageEvent* me = static_cast<MessageEvent*>(event);
+			YaDateTime event_timeStamp = YaDateTime::fromYaTime_t(me->message().yaMessageId());
+			if (jid.compare(me->message().from(), false) &&
+			    timeStamp == event_timeStamp)
+			{
+				me->account()->eventQueue()->dequeue(me);
+				delete me;
 			}
 		}
 	}
+
 }
 
-void YaUnreadMessagesManager::secondsIdle(int seconds)
+void YaUnreadMessagesManager::addReadMessage(const XMPP::Jid& jid, const XMPP::YaDateTime& timeStamp)
 {
-	if (!seconds || seconds < lastSecondsIdle_) {
-		checkUnread();
+	ReadMessage readMessage(jid, timeStamp);
+	if (!lastReadMessages.contains(readMessage)) {
+		lastReadMessages.append(readMessage);
 	}
 
-	lastSecondsIdle_ = seconds;
+	while (lastReadMessages.count() > MAX_LAST_READ_MESSAGES) {
+		lastReadMessages.takeFirst();
+	}
 }

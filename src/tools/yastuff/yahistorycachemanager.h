@@ -32,6 +32,7 @@ class PsiCon;
 
 #include "xmpp_jid.h"
 #include "xmpp_yadatetime.h"
+#include "xmpp_tasks.h"
 
 class YaHistoryCacheManager : public QObject
 {
@@ -62,6 +63,7 @@ public:
 private slots:
 	void writeToDisk();
 	void getMessages();
+	void checkForDeadTasks();
 	void load();
 	void save();
 
@@ -78,9 +80,11 @@ private:
 		PsiAccount* account;
 		XMPP::Jid jid;
 		QPointer<QObject> receiver;
+		QPointer<XMPP::JT_YaRetrieveHistory> task;
 		const char* slot;
 		bool started;
 		bool finished;
+		QDateTime startTime;
 
 		bool operator==(const GetMessagesRequest& other) const
 		{
@@ -94,6 +98,7 @@ private:
 	PsiCon* controller_;
 	QTimer* writeToDiskTimer_;
 	QTimer* getMessagesTimer_;
+	QTimer* checkForDeadTasksTimer_;
 	QHash<QString, QList<YaHistoryCacheManager::Message> > cache_;
 	QHash<QString, XMPP::YaDateTime> cacheTimes_;
 	QList<GetMessagesRequest> getMessagesRequests_;

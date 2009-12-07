@@ -2063,9 +2063,10 @@ void JT_YaRetrieveHistory::retrieve(const XMPP::Jid& contact, int messageCount, 
 	startTime_ = startTime;
 }
 
-void JT_YaRetrieveHistory::checkUnread()
+void JT_YaRetrieveHistory::checkUnread(YaDateTime startTime)
 {
 	checkUnread_ = true;
+	startTime_ = startTime;
 }
 
 void JT_YaRetrieveHistory::onGo()
@@ -2168,9 +2169,17 @@ void JT_YaMessageRead::messageRead(const XMPP::Jid& contact, const YaDateTime& t
 	timeStamp_ = timeStamp;
 }
 
+void JT_YaMessageRead::setTo(const XMPP::Jid& to)
+{
+	to_ = to;
+}
+
 void JT_YaMessageRead::onGo()
 {
-	QDomElement iq = createIQ(doc(), "set", "history.ya.ru", id());
+	QDomElement iq = createIQ(doc(),
+	                          "set",
+	                          to_.isNull() ? "history.ya.ru" : to_.full(),
+	                          id());
 	QDomElement query = doc()->createElement("read");
 	query.setAttribute("xmlns", "yandex:history:read");
 	query.setAttribute("with", contact_.full());
@@ -2178,6 +2187,9 @@ void JT_YaMessageRead::onGo()
 	iq.appendChild(query);
 
 	send(iq);
+
+	// we won't be getting a reply, so self-destruct is the only option
+	setSuccess(true);
 }
 
 bool JT_YaMessageRead::take(const QDomElement& x)
@@ -2196,7 +2208,7 @@ bool JT_YaMessageRead::take(const QDomElement& x)
 }
 
 //----------------------------------------------------------------------------
-// JT_YaMessageRead
+// JT_YaMoodSwitch
 //----------------------------------------------------------------------------
 JT_YaMoodSwitch::JT_YaMoodSwitch(Task* parent)
 	: Task(parent)

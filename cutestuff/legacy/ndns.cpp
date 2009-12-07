@@ -77,19 +77,11 @@
 // CS_NAMESPACE_BEGIN
 
 //! \if _hide_doc_
-class NDnsWorkerEvent : public QCustomEvent
-{
-public:
-	enum Type { WorkerEvent = QEvent::User + 100 };
-	NDnsWorkerEvent(NDnsWorker *);
-
-	NDnsWorker *worker;
-};
-
 class NDnsWorker : public QThread
 {
 public:
 	NDnsWorker(QObject *, const Q3CString &);
+	~NDnsWorker();
 
 	bool success;
 	bool cancelled;
@@ -191,6 +183,7 @@ void NDnsManager::resolve(NDns *self, const QString &name)
 	Item *i = new Item;
 	i->ndns = self;
 	i->worker = new NDnsWorker(this, name.utf8());
+	connect(i->worker, SIGNAL(finished()), SLOT(workerFinished()));
 	d->list.append(i);
 
 	i->worker->start();
@@ -222,31 +215,30 @@ bool NDnsManager::isBusy(const NDns *self) const
 	return (i ? true: false);
 }
 
-bool NDnsManager::event(QEvent *e)
+void NDnsManager::workerFinished()
 {
-	if((int)e->type() == (int)NDnsWorkerEvent::WorkerEvent) {
-		NDnsWorkerEvent *we = static_cast<NDnsWorkerEvent*>(e);
-		we->worker->wait(); // ensure that the thread is terminated
+	NDnsWorker* worker = dynamic_cast<NDnsWorker*>(sender());
+	Q_ASSERT(worker);
+	if (!worker)
+		return;
+	worker->wait(); // ensure that the thread is terminated
 
-		Item *i = d->find(we->worker);
-		if(!i) {
-			// should NOT happen
-			return true;
-		}
+	Item *i = d->find(worker);
+	if(i) {
 		QHostAddress addr = i->worker->addr;
 		QPointer<NDns> ndns = i->ndns;
-		delete i->worker;
 		d->list.removeRef(i);
 
 		// nuke manager if no longer needed (code that follows MUST BE SAFE!)
 		tryDestroy();
 
 		// requestor still around?
-		if(ndns)
+		if(ndns) {
 			ndns->finished(addr);
-		return true;
+		}
 	}
-	return false;
+
+	worker->deleteLater();
 }
 
 void NDnsManager::tryDestroy()
@@ -350,15 +342,6 @@ void NDns::finished(const QHostAddress &a)
 }
 
 //----------------------------------------------------------------------------
-// NDnsWorkerEvent
-//----------------------------------------------------------------------------
-NDnsWorkerEvent::NDnsWorkerEvent(NDnsWorker *p)
-:QCustomEvent(WorkerEvent)
-{
-	worker = p;
-}
-
-//----------------------------------------------------------------------------
 // NDnsWorker
 //----------------------------------------------------------------------------
 NDnsWorker::NDnsWorker(QObject *_par, const Q3CString &_host)
@@ -366,6 +349,10 @@ NDnsWorker::NDnsWorker(QObject *_par, const Q3CString &_host)
 {
 	success = cancelled = false;
 	host = _host.copy(); // do we need this to avoid sharing across threads?
+}
+
+NDnsWorker::~NDnsWorker()
+{
 }
 
 void NDnsWorker::run()
@@ -395,15 +382,12 @@ void NDnsWorker::run()
 	// FIXME: not ipv6 clean, currently.
 	if(!h || h->h_addrtype != AF_INET) {
 		success = false;
-		QCoreApplication::postEvent(parent(), new NDnsWorkerEvent(this));
 		return;
 	}
 
 	in_addr a = *((struct in_addr *)h->h_addr_list[0]);
 	addr.setAddress(ntohl(a.s_addr));
 	success = true;
-
-	QCoreApplication::postEvent(parent(), new NDnsWorkerEvent(this));
 }
 
 // CS_NAMESPACE_END

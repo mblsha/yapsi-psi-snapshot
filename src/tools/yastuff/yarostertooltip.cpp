@@ -178,6 +178,10 @@ bool YaRosterToolTip::preventShow()
 {
 	if (!mouseOverRect()) {
 		hide();
+		// ONLINE-2261: We need to process events in order for YaContactListView
+		// to update its Qt::WA_UnderMouse attribute
+		QCoreApplication::instance()->processEvents();
+		emit toolTipHidden(0, 0);
 		return true;
 	}
 	return false;

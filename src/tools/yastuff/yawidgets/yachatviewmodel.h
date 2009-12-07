@@ -41,6 +41,11 @@ public:
 
 	static bool canRelyOnTimestamps();
 
+	enum YaMessageFlagType {
+		NoFlags = 0,
+		OutgoingMessage
+	};
+
 	enum {
 		TypeRole         = Qt::UserRole + 0,
 		DelegateDataRole = Qt::UserRole + 1,
@@ -60,7 +65,8 @@ public:
 #ifdef YAPSI
 		SpamRole             = Qt::UserRole + 12, // int, 0 for not spam, >0 for marked as spam
 #endif
-		YaDateTimeRole       = Qt::UserRole + 13 // YaDateTime
+		YaDateTimeRole       = Qt::UserRole + 13, // YaDateTime
+		YaFlagsRole          = Qt::UserRole + 14  // YaMessageFlagType
 
 		// Type = DateHeader
 		// DateTimeRole is reused here
@@ -111,8 +117,8 @@ public:
 	void addEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt);
 	void addMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt);
 #else
-	void addEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime);
-	void addMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime);
+	void addEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags);
+	void addMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags);
 #endif
 	// void addMessage(bool incoming, const QString& msg);
 
@@ -168,13 +174,14 @@ private:
 	bool shouldMergeWith(const QDateTime& time, bool emote, bool local, YaChatViewModel::SpooledType spooled) const;
 	void updateMergeRole(int indexToUpdate, int indexPrev);
 	bool sameDateTime(const XMPP::YaDateTime& ydt1, const QDateTime& dt1, const XMPP::YaDateTime& ydt2, const QDateTime& dt2) const;
+	bool processSpooledItem(QStandardItem* i1, QStandardItem* i2) const;
 	bool sameItem(QStandardItem* i1, QStandardItem* i2) const;
 	bool isNext(QStandardItem* i1, QStandardItem* i2) const;
 	bool isPrev(QStandardItem* i1, QStandardItem* i2) const;
 #ifndef YAPSI
 	void addMessageHelper(YaChatViewModel::SpooledType spooled, const QDateTime& time, bool local, QString txt, bool emote);
 #else
-	void addMessageHelper(YaChatViewModel::SpooledType spooled, const QDateTime& time, bool local, QString txt, bool emote, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, const XMPP::YaDateTime& yaTime);
+	void addMessageHelper(YaChatViewModel::SpooledType spooled, const QDateTime& time, bool local, QString txt, bool emote, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, const XMPP::YaDateTime& yaTime, int yaFlags);
 #endif
 	void addDateHeader(int index, const QDateTime& time, const XMPP::YaDateTime& yaTime) const;
 	void addDateHeader(const QDateTime& time, const XMPP::YaDateTime& yatime);
@@ -199,6 +206,7 @@ private:
 	QStandardItem* dummyHeader_;
 	QList<YaChatViewModelNotice*> notices_;
 	QHash<QString, QStandardItem*> ids_;
+	QHash<XMPP::YaDateTime, bool> timeStamps_;
 	XMPP::Jid jid_;
 	XMPP::VCard::Gender userGender_;
 	bool historyReceived_;

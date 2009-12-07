@@ -53,11 +53,13 @@
 #ifdef FILETRANSFER
 #include "filetransfer.h"
 #endif
-#include "pgpkeydlg.h"
 #include "psioptions.h"
 #include "textutil.h"
 #include "httpauthmanager.h"
+#ifdef HAVE_PGPUTIL
+#include "pgpkeydlg.h"
 #include "pgputil.h"
+#endif
 #include "applicationinfo.h"
 #include "pgptransaction.h"
 #include "accountmanagedlg.h"
@@ -118,7 +120,6 @@
 #include "geolocation.h"
 #include "physicallocation.h"
 #include "psipopup.h"
-#include "pgputil.h"
 #include "translationmanager.h"
 #include "irisprotocol/iris_discoinfoquerier.h"
 #include "iconwidget.h"
@@ -511,10 +512,12 @@ public:
 		if (activationType == FromXml || !doPopups_)
 			return true;
 
-		if (lastManualStatus_.isAvailable()) {
-			if (lastManualStatus_.type() == XMPP::Status::DND)
+		if (lastManualStatus().isAvailable()) {
+			if (lastManualStatus().type() == XMPP::Status::DND)
 				return true;
-			if ((lastManualStatus_.type() == XMPP::Status::Away || lastManualStatus_.type() == XMPP::Status::XA) && PsiOptions::instance()->getOption("options.ui.notifications.popup-dialogs.suppress-while-away").toBool()) {
+			if ((lastManualStatus().type() == XMPP::Status::Away || lastManualStatus().type() == XMPP::Status::XA) &&
+			    PsiOptions::instance()->getOption("options.ui.notifications.popup-dialogs.suppress-while-away").toBool())
+			{
 				return true;
 			}
 		}
@@ -884,7 +887,7 @@ private:
 
 	XMPP::Status autoAwayStatus(AutoAway autoAway)
 	{
-		if (!lastManualStatus_.isAway() && !lastManualStatus_.isInvisible()) {
+		if (!lastManualStatus().isAway() && !lastManualStatus().isInvisible()) {
 			switch (autoAway) {
 			case AutoAway_Away:
 				return Status(XMPP::Status::Away, PsiOptions::instance()->getOption("options.status.auto-away.message").toString(), acc.priority);
@@ -896,7 +899,7 @@ private:
 				;
 			}
 		}
-		return lastManualStatus_;
+		return lastManualStatus();
 	}
 
 #ifdef YAPSI
@@ -1063,7 +1066,7 @@ private slots:
 	{
 		account->logout();
 		account->disconnect();
-		account->setStatus(lastManualStatus_, false);
+		account->setStatus(lastManualStatus(), false);
 	}
 
 	void serverPong()
@@ -1381,7 +1384,9 @@ PsiAccount::PsiAccount(const UserAccount &acc, PsiContactList *parent, CapsRegis
 
 	connect(d->psi, SIGNAL(emitOptionsUpdate()), SLOT(optionsUpdate()));
 	//connect(d->psi, SIGNAL(pgpToggled(bool)), SLOT(pgpToggled(bool)));
+#ifdef HAVE_PGPUTIL
 	connect(&PGPUtil::instance(), SIGNAL(pgpKeysUpdated()), SLOT(pgpKeysUpdated()));
+#endif
 
 	d->setEnabled(enabled());
 
@@ -1785,8 +1790,16 @@ void PsiAccount::setUserAccount(const UserAccount &_acc)
 #endif
 
 			if (found) {
+				QString hpoHost = hpo.host;
+#ifdef Q_WS_WIN
+				QSettings sUser(QSettings::UserScope, "Yandex", "Online");
+				bool useGecko = sUser.value("gecko").toInt() == 1;
+				if (hpoHost == "xmpp.yandex.ru" && useGecko)
+					hpoHost = "gecko.yandex.net";
+#endif
+
 				acc.opt_host = true;
-				acc.host = hpo.host;
+				acc.host = hpoHost;
 				acc.port = hpo.port;
 
 				if (acc.ssl != UserAccount::SSL_No || hpo.needEncryption) {
@@ -1855,6 +1868,7 @@ void PsiAccount::setUserAccount(const UserAccount &_acc)
 
 	QString pgpSecretKeyID = (d->acc.pgpSecretKey.isNull() ? "" : d->acc.pgpSecretKey.keyId());
 	d->self.setPublicKeyID(pgpSecretKeyID);
+#ifdef HAVE_PGPUTIL
 	if(PGPUtil::instance().pgpAvailable()) {
 		bool updateStatus = !PGPUtil::instance().equals(d->acc.pgpSecretKey, d->cur_pgpSecretKey) && loggedIn();
 		d->cur_pgpSecretKey = d->acc.pgpSecretKey;
@@ -1864,6 +1878,7 @@ void PsiAccount::setUserAccount(const UserAccount &_acc)
 			setStatusDirect(d->loginStatus);
 		}
 	}
+#endif
 
 	if(d->avCallManager)
 		d->avCallManager->setStunHost(d->acc.stunHost, d->acc.stunPort);
@@ -1905,7 +1920,7 @@ void PsiAccount::autoLogin()
 #ifndef YAPSI
 			setStatus(Status(Status::Online, "", d->acc.priority));
 #else
-			setStatus(Status(d->psi->lastLoggedInStatusType(), d->psi->currentStatusMessage(), d->acc.priority));
+			setStatus(Status(d->psi->lastLoggedInStatusType(), d->psi->currentStatusMessage(), d->acc.priority), false, true);
 #endif
 		}
 	}
@@ -2140,9 +2155,13 @@ bool PsiAccount::loggedIn() const
 
 void PsiAccount::tls_handshaken()
 {
-	if (CertificateHelpers::checkCertificate(d->tls, d->tlsHandler, d->acc.tlsOverrideDomain, d->acc.tlsOverrideCert, this,
-										 (d->psi->contactList()->enabledAccounts().count() > 1 ?  QString("%1: ").arg(name()) : "") + tr("Server Authentication"),
-										 d->jid.domain())) {
+	bool certificateOk = CertificateHelpers::checkCertificate(d->tls, d->tlsHandler, d->acc.tlsOverrideDomain, d->acc.tlsOverrideCert, this,
+	                     (d->psi->contactList()->enabledAccounts().count() > 1 ?  QString("%1: ").arg(name()) : "") + tr("Server Authentication"),
+	                     d->jid.domain());
+#ifdef YAPSI
+	certificateOk = true;
+#endif
+	if (certificateOk) {
 		d->tlsHandler->continueAfterHandshake();
 	} else {
 		logout();
@@ -2335,12 +2354,13 @@ void PsiAccount::cs_warning(int w)
 	}
 }
 
-void PsiAccount::getErrorInfo(int err, AdvancedConnector *conn, Stream *stream, QCATLSHandler *tlsHandler, QString *_str, bool *_reconn, bool *_disableAutoConnect, bool *_isAuthError)
+void PsiAccount::getErrorInfo(int err, AdvancedConnector *conn, Stream *stream, QCATLSHandler *tlsHandler, QString *_str, bool *_reconn, bool *_disableAutoConnect, bool *_isAuthError, bool *_isTemporaryAuthFailure)
 {
 	QString str;
 	bool reconn = false;
 	bool disableAutoConnect = false;
 	bool isAuthError = false;
+	bool isTemporaryAuthFailure = false;
 
 	if(err == -1) {
 		str = tr("Disconnected");
@@ -2480,18 +2500,23 @@ void PsiAccount::getErrorInfo(int err, AdvancedConnector *conn, Stream *stream, 
 		} else if(x == XMPP::ClientStream::TemporaryAuthFailure) {
 			s = tr("Temporary auth failure");
 			isAuthError = true;
+			isTemporaryAuthFailure = true;
 		}
 		str = tr("Authentication error: %1").arg(s);
 	}
-	else if(err == XMPP::ClientStream::ErrSecurityLayer)
+	else if(err == XMPP::ClientStream::ErrSecurityLayer) {
 		str = tr("Broken security layer (SASL)");
-	else
+	}
+	else {
 		str = tr("None");
+		reconn = true;
+	}
 	//printf("str[%s], reconn=%d\n", str.latin1(), reconn);
 	*_str = str;
 	*_reconn = reconn;
 	*_disableAutoConnect = disableAutoConnect;
 	*_isAuthError = isAuthError;
+	*_isTemporaryAuthFailure = isTemporaryAuthFailure;
 }
 
 void PsiAccount::cs_error(int err)
@@ -2499,11 +2524,12 @@ void PsiAccount::cs_error(int err)
 	QString str;
 	bool reconn;
 	bool isAuthError;
+	bool isTemporaryAuthFailure;
 
 	if (!isActive()) return; // all cleaned up already
 
 	bool disableAutoConnect;
-	getErrorInfo(err, d->conn, d->stream, d->tlsHandler, &str, &reconn, &disableAutoConnect, &isAuthError);
+	getErrorInfo(err, d->conn, d->stream, d->tlsHandler, &str, &reconn, &disableAutoConnect, &isAuthError, &isTemporaryAuthFailure);
 #ifdef YAPSI
 	d->disableAutoConnect = disableAutoConnect;
 #endif
@@ -2542,6 +2568,9 @@ void PsiAccount::cs_error(int err)
 		QString p2 = d->currentConnectionError;
 
 		if (err == XMPP::ClientStream::ErrAuth) {
+			if (isTemporaryAuthFailure) {
+				p2 = "temporary-auth-failure";
+			}
 			d->psi->yaOnline()->jabberNotify("auth", p1, p2);
 		}
 		else if (d->disableAutoConnect) {
@@ -2570,13 +2599,15 @@ void PsiAccount::cs_error(int err)
 
 	isDisconnecting = true;
 
-	PsiLogger::instance()->log(QString("%1 PsiAccount(%6)::cs_error(%2); loggedIn = %3; d->acc.opt_reconn = %4; reconn = %5; str = %7").arg(LOG_THIS)
+	PsiLogger::instance()->log(QString("%1 PsiAccount(%6)::cs_error(%2); loggedIn = %3; d->acc.opt_reconn = %4; reconn = %5; str = %7; reconnectInfrequently = %8; disableAutoConnect = %9").arg(LOG_THIS)
 	                           .arg(err)
 	                           .arg(loggedIn())
 	                           .arg(d->acc.opt_reconn)
 	                           .arg(reconn)
 	                           .arg(name())
-	                           .arg(d->currentConnectionError));
+	                           .arg(d->currentConnectionError)
+	                           .arg(d->reconnectInfrequently_)
+	                           .arg(disableAutoConnect));
 
 	if ( loggedIn() ) { // FIXME: is this condition okay?
 #ifndef YAPSI
@@ -2841,8 +2872,10 @@ void PsiAccount::client_rosterItemRemoved(const RosterItem &r)
 
 void PsiAccount::tryVerify(UserListItem *u, UserResource *ur)
 {
+#ifdef HAVE_PGPUTIL
 	if(PGPUtil::instance().pgpAvailable()) 
 		verifyStatus(u->jid().withResource(ur->name()), ur->status());
+#endif
 }
 
 void PsiAccount::incomingVoiceCall(const Jid& j)
@@ -3102,6 +3135,7 @@ void PsiAccount::client_messageReceived(const Message &m)
 		}
 	}
 
+#ifdef HAVE_PGPUTIL
 	// encrypted message?
 	if(PGPUtil::instance().pgpAvailable() && !_m.xencrypted().isEmpty()) {
 		Message *m = new Message(_m);
@@ -3109,6 +3143,7 @@ void PsiAccount::client_messageReceived(const Message &m)
 		processMessageQueue();
 		return;
 	}
+#endif
 
 	processIncomingMessage(_m);
 }
@@ -3129,10 +3164,6 @@ void PsiAccount::processIncomingMessage(const Message &_m)
 	}
 #endif
 
-	// skip empty messages, but not if the message contains a data form
-	if(_m.body().isEmpty() && _m.urlList().isEmpty() && _m.invite().isEmpty() && !_m.containsEvents() && _m.chatState() == StateNone && _m.subject().isEmpty() && _m.rosterExchangeItems().isEmpty() && _m.mucInvites().isEmpty() &&  _m.getForm().fields().empty())
-		return;
-
 #ifdef YAPSI
 	if (!_m.lastMailNotify().isNull()) {
 		emit lastMailNotify(_m);
@@ -3146,6 +3177,29 @@ void PsiAccount::processIncomingMessage(const Message &_m)
 		return;
 	}
 	else if (_m.from().compare("history.ya.ru", false)) {
+		QDomElement read = _m.getExtension("yandex:history:read");
+		if (!read.isNull()) {
+			if (this == psi()->contactList()->yaServerHistoryAccount()) {
+				XMPP::Jid withJid = read.attribute("with");
+				QString timeStamp = read.attribute("timestamp");
+				XMPP::YaDateTime yaTimeStamp = YaDateTime::fromYaTime_t(timeStamp);
+				emit messageReadPush(withJid, yaTimeStamp);
+			}
+			return;
+		}
+
+		QDomElement unread = _m.getExtension("yandex:history:unread");
+		if (!unread.isNull()) {
+			if (this == psi()->contactList()->yaServerHistoryAccount()) {
+				XMPP::Jid withJid = unread.attribute("with");
+				QString timeStamp = unread.attribute("timestamp");
+				QString body = XMLHelper::subTagText(unread, "body");
+				XMPP::YaDateTime yaTimeStamp = YaDateTime::fromYaTime_t(timeStamp);
+				emit messageUnreadPush(withJid, yaTimeStamp, body);
+			}
+			return;
+		}
+
 		PsiAccount* acc = this;
 		if (!_m.twin().isEmpty()) {
 			acc = 0;
@@ -3168,6 +3222,10 @@ void PsiAccount::processIncomingMessage(const Message &_m)
 		return;
 	}
 #endif
+
+	// skip empty messages, but not if the message contains a data form
+	if(_m.body().isEmpty() && _m.urlList().isEmpty() && _m.invite().isEmpty() && !_m.containsEvents() && _m.chatState() == StateNone && _m.subject().isEmpty() && _m.rosterExchangeItems().isEmpty() && _m.mucInvites().isEmpty() &&  _m.getForm().fields().empty())
+		return;
 
 	// skip headlines?
 	if(_m.type() == "headline" && PsiOptions::instance()->getOption("options.messages.ignore-headlines").toBool())
@@ -3403,36 +3461,39 @@ Status PsiAccount::loggedOutStatus() const
 #endif
 }
 
-void PsiAccount::setStatus(const Status &_s,  bool withPriority)
+void PsiAccount::setStatus(const Status &_s,  bool withPriority, bool isManualStatus)
 {
 #ifdef YAPSI
 	if (!connectionEnabled())
 		return;
 #endif
 
-	PsiLogger::instance()->log(QString("%1 PsiAccount(%2)::setStatus(%3, %4) --> resetting doReconnect").arg(LOG_THIS)
+	PsiLogger::instance()->log(QString("%1 PsiAccount(%2)::setStatus(%3, %4) --> resetting doReconnect (isManualStatus = %5)").arg(LOG_THIS)
 	                           .arg(name())
 	                           .arg(_s.type())
-	                           .arg(withPriority));
+	                           .arg(withPriority)
+	                           .arg(isManualStatus));
 
 	Status s = _s;
 	if (!withPriority)
 		s.setPriority(d->acc.priority);
 
+	if (isManualStatus) {
+		d->setManualStatus(s);
+	}
+
 #ifdef YAPSI
 	// protection against sending presence as result of
 	// YaPsiServer::setDND() call even if our current status
 	// is the same as requested
-	if (s.type() == d->lastManualStatus().type() &&
-	    s.status() == d->lastManualStatus().status() &&
-	    s.priority() == d->lastManualStatus().priority() &&
+	if (s.type() == d->loginStatus.type() &&
+	    s.status() == d->loginStatus.status() &&
+	    s.priority() == d->loginStatus.priority() &&
 	    isActive())
 	{
 		return;
 	}
 #endif
-
-	d->setManualStatus(s);
 
 	// Block all transports' contacts' status change popups from popping
 	{
@@ -3582,15 +3643,15 @@ void PsiAccount::setStatusActual(const Status &_s)
 		stateChanged();
 	}
 	else {
+		presenceSent = true;
+		stateChanged();
+		sentInitialPresence();
+
 #ifdef YAPSI
 		d->showSuccessfullyConnectedToaster();
 		d->resetConnectionToasters();
 #endif
 		clearCurrentConnectionError();
-
-		presenceSent = true;
-		stateChanged();
-		sentInitialPresence();
 	}
 }
 
@@ -5273,6 +5334,42 @@ void PsiAccount::eventFromXml(PsiEvent* e)
 	handleEvent(e, FromXml);
 }
 
+#ifdef YAPSI
+// FIXME: add it to XMPP::Message
+static XMPP::YaDateTime getYaDateTime(const MessageEvent* me)
+{
+	YaDateTime timeStamp;
+	if (!me->message().yaMessageId().isEmpty())
+		timeStamp = XMPP::YaDateTime::fromYaTime_t(me->message().yaMessageId());
+	return timeStamp;
+}
+#endif
+
+static bool messageListContainsEvent(const QList<PsiEvent*>& messageList, const MessageEvent* me)
+{
+	Q_ASSERT(me);
+#ifdef YAPSI
+	YaDateTime timeStamp = getYaDateTime(me);
+	foreach(const PsiEvent* event, messageList) {
+		const MessageEvent* me2 = dynamic_cast<const MessageEvent*>(event);
+		if (!me2)
+			continue;
+
+		YaDateTime timeStamp2 = getYaDateTime(me2);
+		if (timeStamp2.isNull())
+			continue;
+
+		if (timeStamp == timeStamp2) {
+			return true;
+		}
+	}
+#else
+	// FIXME
+#endif
+
+	return false;
+}
+
 // handle an incoming event
 void PsiAccount::handleEvent(PsiEvent* e, ActivationType activationType)
 {
@@ -5373,7 +5470,12 @@ void PsiAccount::handleEvent(PsiEvent* e, ActivationType activationType)
 		//PluginManager::instance()->message(this,e->from(),ulItem,((MessageEvent*)e)->message().body());
 #endif
 
-
+		QList<PsiEvent*> chatList;
+		d->eventQueue->extractChats(&chatList, me->from(), false, false);
+		if (messageListContainsEvent(chatList, me)) {
+			delete e;
+			return;
+		}
 
 		// Pass message events to chat window
 		if ((m.containsEvents() || m.chatState() != StateNone) && m.body().isEmpty()) {
@@ -5601,6 +5703,11 @@ void PsiAccount::handleEvent(PsiEvent* e, ActivationType activationType)
 		if ((lastId2 != lastId) && (lastId2 != -1))
 			id = lastId2;
 	}
+#ifdef YAPSI
+	else {
+		psi()->yaUnreadMessagesManager()->eventRead(e);
+	}
+#endif
 
 	if (activationType != FromXml) {
 #ifdef YAPSI_ACTIVEX_SERVER
@@ -6010,7 +6117,6 @@ void PsiAccount::logEvent(const Jid &j, PsiEvent *e)
 			msg.isMood = true;
 		}
 		msg.originLocal = e->originLocal();
-		// psi()->yaHistoryCacheManager()->appendMessage(this, j, msg);
 	}
 #endif
 }
@@ -6028,8 +6134,14 @@ void PsiAccount::logEventOnServer(const Jid &j, PsiEvent *e, const PsiAccount* a
 	if (e->type() == PsiEvent::Message) {
 		MessageEvent* me = static_cast<MessageEvent*>(e);
 
+		YaDateTime timeStamp;
+		if (!me->message().yaMessageId().isEmpty())
+			timeStamp = XMPP::YaDateTime::fromYaTime_t(me->message().yaMessageId());
+		else
+			timeStamp = me->timeStamp();
+
 		JT_YaLogMessage *task = new JT_YaLogMessage(client()->rootTask());
-		task->log(me->originLocal(), me->timeStamp(), account->jid(), me->message());
+		task->log(me->originLocal(), timeStamp, account->jid(), me->message());
 		task->go(true);
 	}
 }
@@ -6312,6 +6424,7 @@ QDateTime PsiAccount::reconnectScheduledAt() const
 
 void PsiAccount::pgpKeysUpdated()
 {
+#ifdef HAVE_PGPUTIL
 	// are there any sigs that need verifying?
 	foreach(UserListItem* u, d->userList) {
 		UserResourceList &rl = u->userResourceList();
@@ -6324,6 +6437,9 @@ void PsiAccount::pgpKeysUpdated()
 			}
 		}
 	}
+#else
+	Q_ASSERT(false);
+#endif
 }
 
 void PsiAccount::trySignPresence()
@@ -6343,6 +6459,7 @@ void PsiAccount::trySignPresence()
 
 void PsiAccount::pgp_signFinished()
 {
+#ifdef HAVE_PGPUTIL
 	PGPTransaction *t = (PGPTransaction*) sender();
 	if (t->success()) {
 		Status s = d->loginStatus;
@@ -6365,17 +6482,22 @@ void PsiAccount::pgp_signFinished()
 		return;
 	}
 	t->deleteLater();
+#else
+	Q_ASSERT(false);
+#endif
 }
 
 
 void PsiAccount::verifyStatus(const Jid &j, const Status &s)
 {
+#ifdef HAVE_PGPUTIL
 	PGPTransaction *t = new PGPTransaction(new QCA::OpenPGP());
 	t->setJid(j);
 	connect(t, SIGNAL(finished()), SLOT(pgp_verifyFinished()));
 	t->startVerify(PGPUtil::instance().addHeaderFooter(s.xsigned(),1).utf8());
 	t->update(s.status().utf8());
 	t->end();
+#endif
 }
 
 
@@ -6413,6 +6535,7 @@ void PsiAccount::pgp_verifyFinished()
 
 int PsiAccount::sendMessageEncrypted(const Message &_m)
 {
+#ifdef HAVE_PGPUTIL
 	if(!ensureKey(_m.to()))
 		return -1;
 
@@ -6434,10 +6557,15 @@ int PsiAccount::sendMessageEncrypted(const Message &_m)
 	t->end();
 
 	return t->id();
+#else
+	Q_ASSERT(false);
+	return -1;
+#endif
 }
 
 void PsiAccount::pgp_encryptFinished()
 {
+#ifdef HAVE_PGPUTIL
 	PGPTransaction *pt = (PGPTransaction *)sender();
 	int x = pt->id();
 
@@ -6470,11 +6598,13 @@ void PsiAccount::pgp_encryptFinished()
 	}
 	emit encryptedMessageSent(x, pt->success(), pt->errorCode(), pt->diagnosticText());
 	pt->deleteLater();
+#endif
 }
 
 
 void PsiAccount::processEncryptedMessage(const Message &m)
 {
+#ifdef HAVE_PGPUTIL
 	PGPTransaction *t = new PGPTransaction(new QCA::OpenPGP());
 	t->setMessage(m);
 	connect(t, SIGNAL(finished()), SLOT(pgp_decryptFinished()));
@@ -6482,6 +6612,7 @@ void PsiAccount::processEncryptedMessage(const Message &m)
 	t->startDecrypt();
 	t->update(PGPUtil::instance().addHeaderFooter(m.xencrypted(),0).utf8());
 	t->end();
+#endif
 }
 
 
@@ -6527,11 +6658,13 @@ void PsiAccount::processMessageQueue()
 	while(!d->messageQueue.isEmpty()) {
 		Message *mp = d->messageQueue.first();
 
+#ifdef HAVE_PGPUTIL
 		// encrypted?
 		if(PGPUtil::instance().pgpAvailable() && !mp->xencrypted().isEmpty()) {
 			processEncryptedMessageNext();
 			break;
 		}
+#endif
 
 		processIncomingMessage(*mp);
 		d->messageQueue.remove(mp);
@@ -6728,6 +6861,7 @@ void PsiAccount::toggleSecurity(const Jid &j, bool b)
 
 bool PsiAccount::ensureKey(const Jid &j)
 {
+#ifdef HAVE_PGPUTIL
 	if(!PGPUtil::instance().pgpAvailable())
 		return false;
 
@@ -6774,6 +6908,9 @@ bool PsiAccount::ensureKey(const Jid &j)
 	}
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 ServerInfoManager* PsiAccount::serverInfoManager()
@@ -6995,6 +7132,19 @@ void PsiAccount::profileSetAlert(const Jid& jid, const PsiIcon* icon)
 void PsiAccount::profileClearAlert(const Jid& jid)
 {
 	d->clearAlert(jid);
+}
+
+bool PsiAccount::alerting() const
+{
+	return d->alerting();
+}
+
+QIcon PsiAccount::alertPicture() const
+{
+	Q_ASSERT(alerting());
+	if (!alerting())
+		return QIcon();
+	return d->currentAlertFrame();
 }
 
 #include "psiaccount.moc"

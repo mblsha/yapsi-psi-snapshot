@@ -457,7 +457,7 @@ namespace XMPP
 		};
 
 		void retrieve(const XMPP::Jid& contact, int messageCount, YaDateTime startTime = YaDateTime());
-		void checkUnread();
+		void checkUnread(YaDateTime startTime = YaDateTime());
 
 		const XMPP::Jid& contact() const;
 		const QList<Chat>& messages() const;
@@ -481,11 +481,13 @@ namespace XMPP
 		~JT_YaMessageRead();
 
 		void messageRead(const XMPP::Jid& contact, const YaDateTime& timeStamp);
+		void setTo(const XMPP::Jid& to);
 
 		void onGo();
 		bool take(const QDomElement &);
 
 	private:
+		XMPP::Jid to_;
 		XMPP::Jid contact_;
 		YaDateTime timeStamp_;
 	};

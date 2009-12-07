@@ -1,7 +1,7 @@
 /*
- * macspellchecker.cpp
- *
- * Copyright (C) 2006  Remko Troncon
+ * macspellchecker.mm
+ * Copyright (C) 2006-2009  Remko Troncon, Yandex LLC (Michail Pishchagin)
+ * based on http://doc.trolltech.com/solutions/4/qtspellcheckingtextedit/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,28 @@
 
 #include <Cocoa/Cocoa.h>
 
+#include <QStringList>
+
 #include "macspellchecker.h"
+#include "privateqt_mac.h"
+
+#ifdef __LP64__
+# define TAG_TYPE NSInteger
+#else
+# define TAG_TYPE int
+#endif
+
+//----------------------------------------------------------------------------
+// QtTextRange
+//----------------------------------------------------------------------------
+
+QtTextRange::QtTextRange(const NSRange &nsrange)
+	: index(nsrange.location), length(nsrange.length)
+{ }
+
+//----------------------------------------------------------------------------
+// MacSpellChecker
+//----------------------------------------------------------------------------
 
 MacSpellChecker::MacSpellChecker()
 {
@@ -36,31 +57,34 @@ MacSpellChecker::~MacSpellChecker()
 {
 }
 
-bool MacSpellChecker::isCorrect(const QString& word)
+bool MacSpellChecker::isSpeltCorrectly(const QString& word, SyntaxHighlighter* highlighter)
 {
-	NSString* ns_word = [NSString stringWithUTF8String: word.toUtf8().data()];
-	NSRange range = {0,0};
-	range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:ns_word startingAt:0];
-	return (range.length == 0);
+	return spellingErrorIndexes(word, highlighter, -1, 0, 1).isEmpty();
 }
 
 QList<QString> MacSpellChecker::suggestions(const QString& word)
 {
-	QList<QString> s;
+	NSArray* const array = [[NSSpellChecker sharedSpellChecker] guessesForWord : (NSString *)QtCFString::toCFStringRef(word)];
 
-	NSString* ns_word = [NSString stringWithUTF8String: word.toUtf8().data()];
-	NSArray* ns_suggestions = [[NSSpellChecker sharedSpellChecker] guessesForWord:ns_word];
-	for(unsigned int i = 0; i < [ns_suggestions count]; i++) {
-		s += QString::fromUtf8([[ns_suggestions objectAtIndex:i] UTF8String]);
+	QStringList result;
+	if (array) {
+		for (unsigned int i = 0; i < [array count]; ++i)
+			result.append(QtCFString::toQString((CFStringRef)[array objectAtIndex: i]));
 	}
 
-	return s;
+	return result;
 }
 
-bool MacSpellChecker::add(const QString& word)
+bool MacSpellChecker::learnSpelling(const QString& word)
 {
-	Q_UNUSED(word);
-	return false;
+	[[NSSpellChecker sharedSpellChecker] learnWord: (NSString *)QtCFString::toCFStringRef(word)];
+}
+
+void MacSpellChecker::ignoreSpelling(const QString &word, SyntaxHighlighter* highlighter)
+{
+	[[NSSpellChecker sharedSpellChecker]
+	ignoreWord : (NSString *)QtCFString::toCFStringRef(word)
+	inSpellDocumentWithTag : reinterpret_cast<TAG_TYPE>(highlighter)];
 }
 
 bool MacSpellChecker::available() const
@@ -71,4 +95,36 @@ bool MacSpellChecker::available() const
 bool MacSpellChecker::writable() const
 {
 	return false;
+}
+
+QList<QtTextRange> MacSpellChecker::spellingErrorIndexes(const QString& text, SyntaxHighlighter* highlighter, int cursorPositionInCurrentBlock, bool* needRehighlight, int blockCount)
+{
+	Q_UNUSED(blockCount);
+
+	const QtCFString string(text);
+	const int textLenght = text.length();
+
+	int index = 0;
+	QList<QtTextRange> ranges;
+	while (index < textLenght) {
+		const QtTextRange range = [[NSSpellChecker sharedSpellChecker]
+		                          checkSpellingOfString: (NSString *)(CFStringRef)string
+		                          startingAt: index
+		                          language: nil
+		                          wrap : false
+		                          inSpellDocumentWithTag : reinterpret_cast<TAG_TYPE>(highlighter)
+		                          wordCount : nil];
+		const int rangeEnd = range.index + range.length;
+		index = rangeEnd;
+		if (range.index != INT_MAX) {
+			if (needRehighlight) {
+				*needRehighlight = true;
+			}
+			if (cursorPositionInCurrentBlock >= range.index && (cursorPositionInCurrentBlock <= range.index + range.length)) {
+				continue;
+			}
+			ranges.append(range);
+		}
+	}
+	return ranges;
 }

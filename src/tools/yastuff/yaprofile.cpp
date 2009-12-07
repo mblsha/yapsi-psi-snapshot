@@ -41,6 +41,7 @@ using namespace XMPP;
 
 /** \todo Make this configurable */
 static const QString S_URL_TEMPLATE = "http://%1.ya.ru/index_profile.xml?yasoft=online";
+static const QString S_YANDEX_TEAM_URL_TEMPLATE = "http://staff.yandex.ru/%1?yasoft=online";
 static const QString S_PHOTOS_URL_TEMPLATE = "http://fotki.yandex.ru/users/%1/?yasoft=online";
 static const QString S_SELF_NICK_TEMPLATE = "<span style='color: red;'>%2</span><span style='color: black;'>%3</span><!--%1-->";
 static const QString S_NICK_TEMPLATE = "<a href='%1'><span style='color: red;'>%2</span><span style='color: black;'>%3</span>";
@@ -174,7 +175,9 @@ bool YaProfile::isOk() const
 
 void YaProfile::browse() const
 {
-	DesktopUtil::openYaUrl(S_URL_TEMPLATE.arg(username()));
+	QString str = jid_.domain() == "yandex-team.ru" ?
+	              S_YANDEX_TEAM_URL_TEMPLATE : S_URL_TEMPLATE;
+	DesktopUtil::openYaUrl(str.arg(username()));
 }
 
 void YaProfile::browsePhotos() const

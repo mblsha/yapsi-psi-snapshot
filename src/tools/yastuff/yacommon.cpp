@@ -215,10 +215,10 @@ QString Ya::nickFromVCard(const XMPP::Jid& jid, const XMPP::VCard* vcard)
 	QString nick = jid.user();
 	if (vcard) {
 		if (!vcard->nickName().isEmpty()) {
-			nick = Ya::ljUtf8Hack(jid, vcard->nickName());
+			nick = vcard->nickName();
 		}
 		else if (!vcard->fullName().isEmpty()) {
-			nick = Ya::ljUtf8Hack(jid, vcard->fullName());
+			nick = vcard->fullName();
 		}
 	}
 	return nick;
@@ -240,6 +240,11 @@ bool Ya::isYaInformer(PsiEvent* event)
 bool Ya::isYaJid(const XMPP::Jid& jid)
 {
 	return jid.host() == "ya.ru";
+}
+
+bool Ya::isYandexTeamJid(const XMPP::Jid& jid)
+{
+	return jid.host() == "yandex-team.ru";
 }
 
 bool Ya::historyAvailable(PsiAccount* account, const XMPP::Jid& jid)
@@ -489,71 +494,9 @@ static QList<Ya::SpooledMessage> messagesFor(const PsiAccount* me, XMPP::Jid int
 	return result;
 }
 
-const QString Ya::history(const PsiAccount* me, const XMPP::Jid& interlocutor)
-{
-	QString result;
-	QTextStream stream(&result, QIODevice::WriteOnly);
-
-	QString us = me->nick();
-	UserListItem *u = me->findFirstRelevant(interlocutor);
-	QString them = JIDUtil::nickOrJid(u->name(), u->jid().full());
-
-	QDateTime lastDateTime;
-	QString lastSpeaker = QString();
-	foreach(SpooledMessage message, messagesFor(me, interlocutor)) {
-		QString speaker = message.originLocal ? us : them;
-		bool merge = (lastSpeaker == speaker) &&
-		             (lastDateTime.secsTo(message.timeStamp) < 5 * 60);
-
-		if (lastDateTime.isNull() || lastDateTime.date().daysTo(message.timeStamp.date()) != 0) {
-			merge = false;
-			stream
-			<< "<div class=\"date-\">"
-			<< Ya::DateFormatter::instance()->dateAndWeekday(message.timeStamp.date())
-			<< "</div>";
-		}
-
-		lastSpeaker = speaker;
-		lastDateTime = message.timeStamp;
-
-		QString msg;
-		if (message.isMood) {
-			msg = message.mood;
-		}
-		else {
-			msg = message.message.body();
-		}
-
-		msg = TextUtil::plain2rich(msg);
-		msg = TextUtil::linkify(msg);
-		msg = TextUtil::emoticonifyForHtml(msg);
-
-		if (message.isMood) {
-			stream << (Ya::formatStanza(
-			               true,
-			               colorString(false, speaker == us),
-			               message.timeStamp.toString("hh:mm"),
-			               speaker,
-			               QObject::tr("has changed mood to: %1").arg(msg)
-			           ));
-		}
-		else {
-			stream << (Ya::formatStanza(
-			               !merge,
-			               colorString(false, speaker == us),
-			               message.timeStamp.toString("hh:mm"),
-			               speaker,
-			               msg
-			           ));
-		}
-	}
-
-	return result;
-}
-
 const void Ya::showHistory(const PsiAccount* me, const XMPP::Jid& interlocutor)
 {
-	const QString baseHistoryUrl = "http://mail.yandex.ru/history";
+	const QString baseHistoryUrl = "http://mail.yandex.ru/history?yasoft=online";
 	if (!me) {
 		Q_ASSERT(interlocutor.isNull());
 		DesktopUtil::openYaUrl(baseHistoryUrl);
@@ -564,59 +507,6 @@ const void Ya::showHistory(const PsiAccount* me, const XMPP::Jid& interlocutor)
 	DesktopUtil::openYaUrl(QString("%1#%2")
 	                       .arg(baseHistoryUrl)
 	                       .arg(interlocutor.bare()));
-#if 0
-	Q_ASSERT(me);
-	QFile file(QDir::tempPath() + "/" + STR_YAPSI_HISTORY.arg(interlocutor.user().toLower()).arg(interlocutor.host().toLower()));
-	if (file.open(QFile::WriteOnly)) {
-		QTextStream out(&file);
-		out.setCodec("UTF-8");
-
-		out << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" << endl;
-		out << "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"ru\">" << endl;
-		out << "<head>" << endl;
-		out << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" << endl;
-		out << "<title>" << QCoreApplication::instance()->translate("Ya", "%1: Chat History").arg(TextUtil::escape(interlocutor.bare())) << "</title>" << endl;
-		out << "<meta name=\"Generator\" content=\"YaChat :: " << YAPSI_VERSION << "." << YAPSI_REVISION << "\" />" << endl;
-		out << "<meta name=\"Keywords\" content=\"" << TextUtil::escape(me->name()) << "," << TextUtil::escape(interlocutor.full()) << "\" />" << endl;
-		out << "<meta name=\"Description\" content=\"" << TextUtil::escape(me->name()) << "," << TextUtil::escape(interlocutor.full()) << "\" />" << endl;
-
-		out << "<style>" << endl;
-		out << "body { background: #777777 }" << endl;
-		out << ".chat-qool { background: #ffffff; padding: 2px; }" << endl;
-		out << ".chat-qool .line- { margin:  0; padding: 0 5px; }" << endl;
-		out << ".chat-qool .hr- { border-top: 1px solid #e5e5e5; padding-top:5px; }" << endl;
-		out << ".chat-qool .hr2-  { border-top: 1px solid #e5e5e5; }" << endl;
-		out << ".chat-qool .time- { float:right; font: 70% Verdana, Arial; color: #999999; margin-top:2px; }" << endl;
-		out << ".chat-qool .author- { font: bold 80% Arial; color: #000000; text-decoration:underline; }" << endl;
-		out << ".chat-qool .author- b { color: #ff0000; text-decoration:underline; }" << endl;
-		out << ".chat-qool .date- { color: #999999; font: 110% Arial; padding: 5px 5px 5px; }" << endl;
-
-		QFont chatFont;
-		chatFont.fromString(PsiOptions::instance()->getOption("options.ui.look.font.chat").toString());
-		out << QString(".chat-qool .text-  { font:%1pt %2; line-height:1.3em; color: #000000; margin: .5em 0 .5em 1.5em; }")
-		.arg(chatFont.pointSize())
-		.arg(chatFont.family()) << endl;
-		out << "</style>" << endl;
-
-		out << "</head>" << endl;
-		out << "<body>" << endl;
-		out << "<table><tr><td width=\"550px\">" << endl;
-		out << "<div class=\"chat chat-qool\">" << endl;
-		QString h = Ya::history(me, interlocutor);
-		out << (h.isEmpty() ? S_HISTORY_IS_EMPTY : h);
-		out << "</div>" << endl;
-		out << "</table>" << endl;
-		out << "</body>" << endl;
-		out << "</html>" << endl;
-
-		QString url = file.fileName();
-#ifdef Q_WS_MAC
-		url = "file://" + url;
-#endif
-
-		DesktopUtil::openUrl(url);
-	}
-#endif
 }
 
 QString Ya::limitText(const QString& text, int limit)
@@ -636,10 +526,15 @@ QString Ya::messageNotifierText(const QString& messageText)
 	return messageText;
 }
 
+static QRegExp yandexHostnameRegExp()
+{
+	return QRegExp("@((narod|yandex|ya)\\.(ru|ua)|yandex\\.(com|kz|by))$");
+}
+
 QString Ya::yaRuAliasing(const QString& jid)
 {
 	QString tmp = jid;
-	tmp.replace(QRegExp("@((narod|yandex|ya)\\.(ru|ua)|yandex\\.com)$"), "@ya.ru");
+	tmp.replace(yandexHostnameRegExp(), "@ya.ru");
 
 	XMPP::Jid j(tmp);
 	if (isYaJid(j)) {
@@ -655,7 +550,7 @@ QString Ya::yaRuAliasing(const QString& jid)
 QString Ya::stripYaRuHostname(const QString& jid)
 {
 	QString tmp = jid;
-	tmp.replace(QRegExp("@((narod|yandex|ya)\\.(ru|ua)|yandex\\.com)$"), "");
+	tmp.replace(yandexHostnameRegExp(), "");
 	return tmp;
 }
 
@@ -677,38 +572,6 @@ PsiContact* Ya::findContact(PsiCon* controller, const QString& jid)
 const QString Ya::colorString(bool local, bool spooled)
 {
 	return spooled ? SPOOLED : local ? MESAYS : HESAYS;
-}
-
-const QString Ya::formatStanza(bool needOpeningTitle, QString color, QString timestr, QString who, QString txt)
-{
-	QString result;
-	QTextStream stream(&result, QIODevice::WriteOnly);
-	if (who.isEmpty()) { // system message
-		stream
-			<< "<hr>"
-			<< "<span style='margin: 0; padding: 0; color: "
-			<< TIMESTAMP
-			<< "; font-size: smaller;'>"
-			<< timestr
-			<< ": "
-			<< txt
-			<< "</span><br>" << endl;
-	} else {
-		if (needOpeningTitle) {
-			stream
-			<< "<div class=\"line- hr- hr2-\">"
-			<< "<div class=\"time-\">"
-			<< timestr
-			<< "</div>"
-			<< "<div class=\"author-\">"
-			<< "<b>" << who.left(1) << "</b>" << who.mid(1)
-			<< "</div>"
-			<< "</div>";
-		}
-		txt = TextUtil::linkifyClever(txt);
-		stream << "<div class=\"text-\">" << txt << "</div>" << endl;
-	}
-	return result;
 }
 
 QString Ya::createUniqueName(QString baseName, QStringList existingNames)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="ru">
 <defaultcodec></defaultcodec>
 <context>
@@ -155,6 +155,13 @@ This may mean you are already running another instance of Psi. You may experienc
     </message>
 </context>
 <context>
+    <name>YaChatSendButton</name>
+    <message>
+        <source>Send</source>
+        <translation type="unfinished">Отправить</translation>
+    </message>
+</context>
+<context>
     <name>ChatDlg</name>
     <message>
         <location filename="../src/chatdlg.cpp" line="185"/>
@@ -283,6 +290,25 @@ Reason: %1.</source>
     </message>
     <message>
         <location filename="../src/msgmle.cpp" line="258"/>
+        <source>&amp;Paste</source>
+        <translation type="unfinished">&amp;Вставить</translation>
+    </message>
+</context>
+<context>
+    <name>GSpellCheckingTextEdit</name>
+    <message>
+        <source>Learn spelling</source>
+        <translation>Добавить в словарь</translation>
+    </message>
+    <message>
+        <source>No Guesses Found</source>
+        <translation>нет предложений</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished">&amp;Копировать</translation>
+    </message>
+    <message>
         <source>&amp;Paste</source>
         <translation type="unfinished">&amp;Вставить</translation>
     </message>
@@ -1295,7 +1321,7 @@ Do you want to log out ?</source>
     <message>
         <location filename="../src/psiaccount.cpp" line="2172"/>
         <source>Temporary auth failure</source>
-        <translation>временная ошибка сервера. Попробуйте подключиться еще раз.</translation>
+        <translation>Вы несколько раз неверно ввели логин и пароль. Повторите попытку через час.</translation>
     </message>
     <message>
         <location filename="../src/psiaccount.cpp" line="2173"/>
@@ -3621,6 +3647,14 @@ Reason: %1.</source>
         <source>Enable emoticons</source>
         <translation type="unfinished">Показывать смайлики</translation>
     </message>
+    <message>
+        <source>Check spelling</source>
+        <translation type="unfinished">Проверка орфографии</translation>
+    </message>
+    <message>
+        <source>Show 'Send' button</source>
+        <translation type="unfinished">Показывать кнопку «Отправить»</translation>
+    </message>
 </context>
 <context>
     <name>YaChatSeparatorExtra</name>
@@ -4580,6 +4614,10 @@ p, li { white-space: pre-wrap; }
         <source>Add a contact</source>
         <translation>Добавить контакт</translation>
     </message>
+    <message>
+        <source>Add a contact (%1)</source>
+        <translation>Добавить контакт (%1)</translation>
+    </message>
 </context>
 <context>
     <name>YaRosterTipLabel</name>
@@ -4811,6 +4849,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../src/tools/yastuff/yawidgets/newselfavatar/yaselfmood.cpp" line="431"/>
         <source>This mood will be published on Ya.ru and all your contacts will be able to see it.</source>
         <translation type="unfinished">Это настроение будет опубликовано на Я.ру и его смогут видеть все ваши собеседники.</translation>
+    </message>
+    <message>
+        <source>Changing mood</source>
+        <translation type="unfinished">Смена настроения</translation>
+    </message>
+    <message>
+        <source>You can't change mood while being 'away'.</source>
+        <translation type="unfinished">Нельзя изменить настроение, когда вы находитесь в режиме «Нет на месте».</translation>
     </message>
 </context>
 <context>

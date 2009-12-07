@@ -29,18 +29,22 @@
 #include "psioptions.h"
 
 typedef enum YaChatSendButton_Background {
-	YCSB_Idle = 0,
+	YCSB_Disabled = 0,
+	YCSB_Idle,
 	YCSB_Hover,
 	YCSB_Pressed
 };
 
+static const int LEFT_MARGIN = 13;
+static const int RIGHT_MARGIN = 9;
+
 static QPixmap buttonBackground(YaChatSendButton_Background type)
 {
-	QPixmap pix[3];
+	QPixmap pix[4];
 
 	if (type == YCSB_Idle) {
 		if (pix[0].isNull()) {
-			pix[0] = QPixmap(":images/chat/send_button/send_idle.png");
+			pix[0] = QPixmap(":images/chat/send_button/send.png");
 		}
 		Q_ASSERT(!pix[0].isNull());
 		return pix[0];
@@ -62,18 +66,16 @@ static QPixmap buttonBackground(YaChatSendButton_Background type)
 		return pix[2];
 	}
 
+	if (type == YCSB_Disabled) {
+		if (pix[3].isNull()) {
+			pix[3] = QPixmap(":images/chat/send_button/send_disabled.png");
+		}
+		Q_ASSERT(!pix[3].isNull());
+		return pix[3];
+	}
+
 	Q_ASSERT(false);
 	return QPixmap();
-}
-
-static QPixmap buttonGlyph()
-{
-	static QPixmap pix;
-	if (pix.isNull()) {
-		pix = QPixmap(":images/chat/send_button/send_glyph.png");
-	}
-	Q_ASSERT(!pix.isNull());
-	return pix;
 }
 
 //----------------------------------------------------------------------------
@@ -94,19 +96,33 @@ YaChatSendButton::~YaChatSendButton()
 {
 }
 
+QString YaChatSendButton::buttonText() const
+{
+	return tr("Send");
+}
+
 void YaChatSendButton::paintEvent(QPaintEvent*)
 {
 	QPainter p(this);
 
-	YaChatSendButton_Background type = YCSB_Idle;
+	YaChatSendButton_Background type = YCSB_Disabled;
 	if (underMouse() && isEnabled())
 		type = YCSB_Hover;
 	if (isDown())
 		type = YCSB_Pressed;
 
-	p.drawPixmap(rect(), buttonBackground(type));
-	QPixmap pix = buttonGlyph();
-	p.drawPixmap((width() - pix.width()) / 2, (isDown() ? 2 : 0) + (height() - pix.height()) / 2, pix);
+	QPixmap pix = buttonBackground(type);
+	p.drawPixmap(0, 0, pix);
+
+	QImage img = pix.toImage();
+	QRect tileRect(rect());
+	tileRect.setLeft(pix.width());
+	p.drawTiledPixmap(tileRect, QPixmap::fromImage( img.copy(img.width()-1, 0, 1, img.height()) ));
+
+	p.setPen(type != YCSB_Disabled ? Qt::white : QColor("#BEBEBE"));
+	int topMargin = isDown() ? 1 : 0;
+	QRect textRect(rect().adjusted(LEFT_MARGIN, topMargin, 0, topMargin));
+	p.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, buttonText());
 }
 
 void YaChatSendButton::setAction(QAction* action)
@@ -139,7 +155,9 @@ void YaChatSendButton::updatePosition()
 
 QSize YaChatSendButton::minimumSizeHint() const
 {
-	return QSize(14, 5);
+	QSize sh = buttonBackground(YCSB_Idle).size();
+	sh.setWidth(LEFT_MARGIN + fontMetrics().width(buttonText()) + RIGHT_MARGIN);
+	return sh;
 }
 
 QSize YaChatSendButton::sizeHint() const

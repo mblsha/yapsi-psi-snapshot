@@ -36,7 +36,9 @@
 #include "psicon.h"
 #include "avatars.h"
 #include "userlist.h"
+#ifdef HAVE_PGPUTIL
 #include "pgputil.h"
+#endif
 
 #ifdef YAPSI
 #include "yaprofile.h"
@@ -510,9 +512,11 @@ private slots:
 		if (!PsiOptions::instance()->getOption("options.ui.menu.contact.custom-picture").toBool()) {
 			pictureMenu_->setVisible(false);
 		}
+#ifdef HAVE_PGPUTIL
 		gpgAssignKeyAction_->setVisible(PGPUtil::instance().pgpAvailable() && PsiOptions::instance()->getOption("options.ui.menu.contact.custom-pgp-key").toBool() && contact_->userListItem().publicKeyID().isEmpty());
 		gpgUnassignKeyAction_->setVisible(PGPUtil::instance().pgpAvailable() && PsiOptions::instance()->getOption("options.ui.menu.contact.custom-pgp-key").toBool() && !contact_->userListItem().publicKeyID().isEmpty());
-#endif
+#endif // HAVE_PGPUTIL
+#endif // YAPSI
 	}
 
 #ifdef YAPSI

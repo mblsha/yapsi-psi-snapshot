@@ -242,8 +242,9 @@ void MiniClient::cs_error(int err)
 	bool reconn;
 	bool disableAutoConnect;
 	bool isAuthError;
+	bool isTemporaryAuthFailure;
 
-	PsiAccount::getErrorInfo(err, conn, stream, tlsHandler, &str, &reconn, &disableAutoConnect, &isAuthError);
+	PsiAccount::getErrorInfo(err, conn, stream, tlsHandler, &str, &reconn, &disableAutoConnect, &isAuthError, &isTemporaryAuthFailure);
 	close();
 
 	QMessageBox::critical(0, tr("Server Error"), tr("There was an error communicating with the Jabber server.\nDetails: %1").arg(str));

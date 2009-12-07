@@ -85,56 +85,19 @@
 #include "psicontact.h"
 #include "avatars.h"
 #include "chatdlg.h"
+#include "yadebugconsole.h"
 
 #include "mainwin_p.h"
 
 static const QString lastLoggedInStatusTypeOptionPath = "options.ya.last-logged-in-status-type";
 // static const QString tinyContactsOptionPath = "options.ya.main-window.contact-list.tiny-contacts";
 static const QString alwaysOnTopOptionPath = "options.ya.main-window.always-on-top";
+static const QString showDefaultMoodOptionPath = "options.ya.moods.show-default-mood";
+static const QString DEFAULT_MOOD_TEXT = QString::fromUtf8("Работает Я.Онлайн: online.yandex.ru");
 
 const static int MAX_NOTIFIER_WIDTH = 5;
 
 using namespace XMPP;
-
-class YaMacTrayMenu : public QMenu
-{
-	Q_OBJECT
-public:
-	YaMacTrayMenu(QWidget* parent)
-		: QMenu(parent)
-		, moodMenu_(0)
-		, contactListAction_(0)
-	{
-		connect(this, SIGNAL(aboutToShow()), SLOT(aboutToShow()));
-	}
-
-	void setMoodMenu(QMenu* moodMenu)
-	{
-		moodMenu_ = moodMenu;
-	}
-
-	void setContactListAction(QAction* contactListAction)
-	{
-		contactListAction_ = contactListAction;
-	}
-
-private slots:
-	void aboutToShow()
-	{
-		Q_ASSERT(moodMenu_);
-		Q_ASSERT(contactListAction_);
-		clear();
-		foreach(QAction* action, moodMenu_->actions()) {
-			addAction(action);
-		}
-		addSeparator();
-		addAction(contactListAction_);
-	}
-
-private:
-	QMenu* moodMenu_;
-	QAction* contactListAction_;
-};
 
 class YaLogo : public QWidget
 {
@@ -171,69 +134,6 @@ private:
 	QSize size_;
 };
 
-#ifdef YAPSI_ACTIVEX_SERVER
-// clone of YaSettingsButtonExtraButton
-class YaSidebarButton : public QToolButton
-{
-	Q_OBJECT
-public:
-	YaSidebarButton(QWidget* parent)
-		: QToolButton(parent)
-	{
-		Q_ASSERT(dynamic_cast<QBoxLayout*>(parent->layout()));
-
-		setCursor(Qt::PointingHandCursor);
-
-		QVBoxLayout* vbox = new QVBoxLayout(0);
-		vbox->addWidget(this);
-
-		QBoxLayout* parentLayout = dynamic_cast<QBoxLayout*>(parent->layout());
-		Q_ASSERT(parentLayout);
-		// parentLayout->setSpacing(5);
-		parentLayout->insertLayout(0, vbox);
-
-		// copied from YaWindowExtraButton
-		normalPixmap_   = QPixmap(QString(":/images/window/sidebar_normal.png"));
-		hoveredPixmap_  = QPixmap(QString(":/images/window/sidebar_hovered.png"));
-		QSize size(9, 17);
-		setFocusPolicy(Qt::NoFocus);
-		setFixedSize(size);
-		setIconSize(size);
-
-		setToolTip(tr("Sidebar"));
-		PsiToolTip::install(this);
-
-		setAttribute(Qt::WA_Hover, true);
-	}
-
-	bool isTopRight()
-	{
-		return geometry().right() == parentWidget()->rect().right();
-	}
-
-	// reimplemented
-	void paintEvent(QPaintEvent*)
-	{
-		QPainter p(this);
-		drawGear(&p, testAttribute(Qt::WA_UnderMouse) || isDown() ? hoveredPixmap_ : normalPixmap_);
-	}
-
-private:
-	QPixmap normalPixmap_;
-	QPixmap hoveredPixmap_;
-
-	int yOffset() const
-	{
-		return 0;
-	}
-
-	void drawGear(QPainter* p, const QPixmap& pix)
-	{
-		p->drawPixmap((width() - pix.width()) / 2, yOffset(), pix);
-	}
-};
-#endif
-
 YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	: YaOnlineMainWin(psi, 0, (_onTop ? Qt::WStyle_StaysOnTop : Qt::Widget) | (_asTool ? Qt::WStyle_Tool : Qt::Widget))
 	, psi_(psi)
@@ -243,7 +143,6 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 #endif
 	, tray_(0)
 	, accountAction_(0)
-	, preferences_(0)
 {
 	YaIPC::connect(this, SLOT(ipcMessage(const QString&)));
 
@@ -334,6 +233,9 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	addContactAction_->setEnabled(ui_.roster->haveAvailableAccounts());
 	connect(ui_.roster, SIGNAL(availableAccountsChanged(bool)), addContactAction_, SLOT(setEnabled(bool)));
 	connect(addContactAction_, SIGNAL(triggered()), ui_.roster, SLOT(addContact()), Qt::QueuedConnection);
+	addContactAction_->setShortcuts(ShortcutManager::instance()->shortcuts("appwide.add-contact"));
+	addContactAction_->setShortcutContext(Qt::ApplicationShortcut);
+	//ShortcutManager::connect("appwide.add-contact", addContactAction_, SLOT(trigger())); // doesn't work on windows
 
 	groupchatAction_ = new QAction(tr("Join Groupchat..."), this);
 	YaBoldMenu::ensureActionBoldText(groupchatAction_);
@@ -417,22 +319,9 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	settingsButton_->setMenu(settingsMenu_);
 #endif
 
-#ifdef YAPSI_ACTIVEX_SERVER
-	// YaSidebarButton* sidebarButton = new YaSidebarButton(extra());
-	// connect(sidebarButton, SIGNAL(clicked()), psi_->yaOnline(), SLOT(showSidebar()));
-#endif
-
 #ifndef YAPSI_ACTIVEX_SERVER
 	tray_ = YaTrayIcon::instance(psi_);
 	tray_->updateIcon();
-// #ifdef Q_WS_MAC
-// 	YaMacTrayMenu* macTrayMenu = new YaMacTrayMenu(this);
-// 	QAction* contactListAction = new QAction(tr("Contact List..."), this);
-// 	macTrayMenu->setContactListAction(contactListAction);
-// 	connect(contactListAction, SIGNAL(triggered()), SLOT(dockActivated()));
-// 	macTrayMenu->setMoodMenu(ui_.selfMood->menu());
-// 	tray_->setContextMenu(macTrayMenu);
-// #else
 	QMenu* trayMenu = new YaBoldMenu(this);
 	trayMenu->setSeparatorsCollapsible(true);
 
@@ -445,7 +334,6 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	trayMenu->addAction(quitAction_);
 
 	tray_->setContextMenu(trayMenu);
-// #endif
 #ifndef Q_WS_MAC
 	connect(tray_, SIGNAL(clicked()), SLOT(trayClicked()));
 	connect(tray_, SIGNAL(doubleClicked()), SLOT(trayDoubleClicked()));
@@ -500,6 +388,15 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	// updateFriendsFrameVisibilityTimer_->setSingleShot(true);
 	// connect(updateFriendsFrameVisibilityTimer_, SIGNAL(timeout()), SLOT(updateFriendsFrameVisibility()));
 
+	debugConsole_ = new YaDebugConsole(psi_);
+	debugConsole_->hide();
+
+	showDebugConsoleAction_ = new QAction("Show Debug Console", this);
+	connect(showDebugConsoleAction_, SIGNAL(triggered()), debugConsole_, SLOT(activate()));
+	showDebugConsoleAction_->setShortcut(QKeySequence("Ctrl+Alt+Shift+D"));
+	showDebugConsoleAction_->setShortcutContext(Qt::ApplicationShortcut);
+	addAction(showDebugConsoleAction_);
+
 	createMenuBar();
 
 	setMinimizeEnabled(false);
@@ -514,7 +411,7 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 YaMainWin::~YaMainWin()
 {
 	delete preferences_;
-	preferences_ = 0;
+	delete debugConsole_;
 
 	PsiPopup::deleteAll();
 }
@@ -561,9 +458,6 @@ XMPP::Status::Type YaMainWin::statusType() const
 
 QString YaMainWin::statusMessage() const
 {
-	if (ui_.selfMood->statusText().isEmpty()) {
-		const_cast<YaMainWin*>(this)->moodChanged();
-	}
 	return ui_.selfMood->statusText();
 }
 
@@ -824,10 +718,7 @@ void YaMainWin::statusSelected()
 	statusSelected(ui_.selfMood->statusType());
 }
 
-/**
- * Generic call when status was changed.
- */
-void YaMainWin::statusSelected(XMPP::Status::Type statusType)
+void YaMainWin::statusSelectedHelper(XMPP::Status::Type statusType, bool _isManualStatus)
 {
 	if (statusType != XMPP::Status::Offline) {
 #ifdef YAPSI_ACTIVEX_SERVER
@@ -843,7 +734,17 @@ void YaMainWin::statusSelected(XMPP::Status::Type statusType)
 		}
 	}
 
-	psi_->setStatusFromDialog(makeStatus(statusType, ui_.selfMood->statusText()), false);
+	bool isManualStatus = _isManualStatus || statusType == lastLoggedInStatusType();
+	QString mood = ui_.selfMood->statusText();
+	psi_->setStatusFromDialog(makeStatus(statusType, mood), false, isManualStatus);
+}
+
+/**
+ * Generic call when status was changed.
+ */
+void YaMainWin::statusSelected(XMPP::Status::Type statusType)
+{
+	statusSelectedHelper(statusType, false);
 }
 
 /**
@@ -851,6 +752,11 @@ void YaMainWin::statusSelected(XMPP::Status::Type statusType)
  */
 void YaMainWin::statusSelectedManually(XMPP::Status::Type statusType)
 {
+	QString mood = statusMessage();
+	if (mood != DEFAULT_MOOD_TEXT) {
+		PsiOptions::instance()->setOption(showDefaultMoodOptionPath, false);
+	}
+
 	statusSelectedManuallyHelper(statusType);
 	YaOnlineMainWin::statusSelectedManually(statusType);
 }
@@ -861,7 +767,7 @@ void YaMainWin::statusSelectedManually(XMPP::Status::Type statusType)
  */
 void YaMainWin::statusSelectedManuallyHelper(XMPP::Status::Type statusType)
 {
-	statusSelected(statusType);
+	statusSelectedHelper(statusType, true);
 
 	if (statusType != XMPP::Status::Offline) {
 		PsiOptions::instance()->setOption(lastLoggedInStatusTypeOptionPath, statusType);
@@ -901,8 +807,10 @@ XMPP::Status::Type YaMainWin::lastLoggedInStatusType() const
 	return status;
 }
 
-void YaMainWin::decorateButton(int)
+void YaMainWin::decorateButton(int value)
 {
+	YaOnlineMainWin::decorateButton(value);
+
 	dndEnabledAction_->setChecked(statusType() == XMPP::Status::DND);
 	ui_.selfMood->setStatusType(statusType());
 	statusMenu_->setStatus(statusType());
@@ -920,10 +828,15 @@ void YaMainWin::resetLastManualStatusSafeGuard()
 void YaMainWin::moodChanged()
 {
 	PsiAccount* account = static_cast<PsiAccount*>(sender());
+	QString mood = account->mood();
+	if (!mood.isEmpty()) {
+		PsiOptions::instance()->setOption(showDefaultMoodOptionPath, false);
+	}
+
 	if (account == this->account()) {
-		QString mood = account->mood();
-		if (mood.isEmpty())
-			mood = QString::fromUtf8("Работает Я.Онлайн: online.yandex.ru");
+		if (mood.isEmpty() && PsiOptions::instance()->getOption(showDefaultMoodOptionPath).toBool()) {
+			mood = DEFAULT_MOOD_TEXT;
+		}
 		ui_.selfMood->setStatusText(mood);
 	}
 }
@@ -1148,6 +1061,9 @@ void YaMainWin::vcardChanged(const Jid& jid)
 	if (psi_ && psi_->contactList() && psi_->contactList()->accountsLoaded()) {
 		PsiAccount* acc = psi_->contactList()->yaServerHistoryAccount();
 		if (acc && acc->jid().compare(jid, false)) {
+			// selfContact's vcardChanged() slot could be triggered later than
+			// YaMainWin's, so we're manually invalidating its cache
+			acc->selfContact()->rereadVCard();
 			ui_.selfMood->setGender(acc->selfContact()->gender());
 #ifdef YAPSI_ACTIVEX_SERVER
 			psi_->yaOnline()->setSelfInfo(acc->selfContact());

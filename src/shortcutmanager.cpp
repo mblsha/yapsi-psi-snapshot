@@ -76,7 +76,7 @@ QList<QKeySequence> ShortcutManager::shortcuts(const QString& name)
 {
 	return readShortcutsFromOptions(name, PsiOptions::instance());
 }
- 
+
 /**
  * \brief read the QVariantList associated with the keyname "name" in given PsiOptions
  * \param name, the shortcut name e.g. "misc.sendmessage" which is in the options xml then
@@ -91,7 +91,9 @@ QList<QKeySequence> ShortcutManager::readShortcutsFromOptions(const QString& nam
 	QString type = variant.typeName();
 	if (type == "QVariantList") {
 		foreach(QVariant variant, variant.toList()) {
-			list += variant.value<QKeySequence>();
+			QKeySequence k = variant.value<QKeySequence>();
+			if (!k.isEmpty() && !list.contains(k))
+				list += k;
 		}
 	}
 	else {
@@ -109,7 +111,7 @@ QList<QKeySequence> ShortcutManager::readShortcutsFromOptions(const QString& nam
  * \param path, the shortcut name e.g. "misc.sendmessage" which is in the options xml then
  *        mirrored as options.shortcuts.misc.sendmessage 
  * \param parent, the widget to which the new QAction should be connected to
- * \param slot, the SLOT() of the parent which should be triggerd if the KeySequence is activated
+ * \param slot, the SLOT() of the parent which should be triggered if the KeySequence is activated
  */
 void ShortcutManager::connect(const QString& path, QObject* parent, const char* slot)
 {
@@ -117,10 +119,7 @@ void ShortcutManager::connect(const QString& path, QObject* parent, const char* 
 		return;
 
 	if (!path.startsWith("global.")) {
-		QList<QKeySequence> shortcuts;
-		foreach(QKeySequence sequence, ShortcutManager::instance()->shortcuts(path))
-			if (!sequence.isEmpty())
-				shortcuts << sequence;
+		QList<QKeySequence> shortcuts = ShortcutManager::instance()->shortcuts(path);
 
 		if (!shortcuts.isEmpty()) {
 			bool appWide = path.startsWith("appwide.");
@@ -141,4 +140,3 @@ void ShortcutManager::connect(const QString& path, QObject* parent, const char* 
 		}
 	}
 }
-

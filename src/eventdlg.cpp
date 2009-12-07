@@ -56,7 +56,6 @@
 #include "msgmle.h"
 #include "accountscombobox.h"
 #include "common.h"
-#include "pgputil.h"
 #include "xmpp_htmlelement.h"
 #include "userlist.h"
 #include "iconwidget.h"
@@ -74,6 +73,9 @@
 #include "accountlabel.h"
 #include "xdata_widget.h"
 #include "desktoputil.h"
+#ifdef HAVE_PGPUTIL
+#include "pgputil.h"
+#endif
 
 static QString findJid(const QString &s, int x, int *p1, int *p2)
 {
@@ -2107,6 +2109,7 @@ void EventDlg::trySendEncryptedNext()
 
 void EventDlg::encryptedMessageSent(int x, bool b, int e, const QString &dtext)
 {
+#ifdef HAVE_PGPUTIL
 	if(d->transid == -1)
 		return;
 	if(d->transid != x)
@@ -2137,6 +2140,9 @@ void EventDlg::encryptedMessageSent(int x, bool b, int e, const QString &dtext)
 	d->le_to->setEnabled(true);
 	d->mle->setEnabled(true);
 	d->mle->setFocus();
+#else
+	Q_ASSERT(false);
+#endif
 }
 
 #include "eventdlg.moc"

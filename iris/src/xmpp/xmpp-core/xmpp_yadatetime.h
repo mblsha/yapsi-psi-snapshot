@@ -32,6 +32,8 @@ namespace XMPP {
 		YaDateTime(const QDateTime& dateTime);
 		YaDateTime(const YaDateTime& dateTime);
 
+		bool isNull() const;
+
 		int microsec() const;
 		void setMiscosec(int microsec);
 
@@ -51,9 +53,13 @@ namespace XMPP {
 
 	private:
 		int microsec_;
+
+		static int getMicrosec(const QString& str);
 	};
 
 }; // namespace XMPP
+
+uint qHash(const XMPP::YaDateTime& yaDateTime);
 
 #include <QMetaType>
 

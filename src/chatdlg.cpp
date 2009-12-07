@@ -59,7 +59,6 @@
 #include "fancylabel.h"
 #include "msgmle.h"
 #include "iconselect.h"
-#include "pgputil.h"
 #include "psicon.h"
 #include "iconlabel.h"
 #include "capsmanager.h"
@@ -75,6 +74,9 @@
 #include "psicontact.h"
 #include "mcmdmanager.h"
 #include "psilogger.h"
+#ifdef HAVE_PGPUTIL
+#include "pgputil.h"
+#endif
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -83,6 +85,7 @@
 #ifdef YAPSI
 #include "yachatdlg.h"
 #include "yacommon.h"
+#include "yachatviewmodel.h"
 #else
 #include "psichatdlg.h"
 #endif
@@ -95,6 +98,7 @@ ChatDlg* ChatDlg::create(const Jid& jid, PsiAccount* account, TabManager* tabMan
 	ChatDlg* chat = new PsiChatDlg(jid, account, tabManager);
 #endif
 	chat->init();
+	chat->setJid(jid);
 #ifdef YAPSI
 	chat->restoreLastMessages();
 #endif
@@ -292,6 +296,7 @@ bool ChatDlg::readyToHide()
 #endif
 	keepOpen_ = false; // tabdlg calls readyToHide twice on tabdlg close, only display message once.
 
+#ifndef YAPSI
 	// destroy the dialog if delChats is dcClose
 	if (PsiOptions::instance()->getOption("options.ui.chat.delete-contents-after").toString() == "instant") {
 		setAttribute(Qt::WA_DeleteOnClose);
@@ -304,6 +309,7 @@ bool ChatDlg::readyToHide()
 			setSelfDestruct(60 * 24);
 		}
 	}
+#endif
 
 	// Reset 'contact is composing' & cancel own composing event
 	resetComposing();
@@ -647,6 +653,10 @@ void ChatDlg::setWarnSendFalse()
 
 void ChatDlg::setSelfDestruct(int minutes)
 {
+#ifdef YAPSI
+	return;
+#endif
+
 	if (minutes <= 0) {
 		if (selfDestruct_) {
 			delete selfDestruct_;
@@ -746,6 +756,9 @@ void ChatDlg::doSend()
 	m.setType("chat");
 	m.setBody(chatEdit()->text());
 	m.setTimeStamp(QDateTime::currentDateTime());
+#ifdef YAPSI
+	m.setYaFlags(YaChatViewModel::OutgoingMessage);
+#endif
 	if (isEncryptionEnabled()) {
 		m.setWasEncrypted(true);
 	}
@@ -805,6 +818,7 @@ void ChatDlg::doneSend(const XMPP::Message& m)
 
 void ChatDlg::encryptedMessageSent(int x, bool b, int e, const QString &dtext)
 {
+#ifdef HAVE_PGPUTIL
 	if (transid_ == -1 || transid_ != x) {
 		return;
 	}
@@ -817,6 +831,9 @@ void ChatDlg::encryptedMessageSent(int x, bool b, int e, const QString &dtext)
 	}
 	chatEdit()->setEnabled(true);
 	chatEdit()->setFocus();
+#else
+	Q_ASSERT(false);
+#endif
 }
 
 void ChatDlg::incomingMessage(const Message &m)
@@ -929,9 +946,9 @@ void ChatDlg::appendMessage(const Message &m, bool local)
 	                                   ChatDlg::Spooled_None;
 #ifdef YAPSI
 	if (isEmoteMessage(m))
-		appendEmoteMessage(spooledType, m.timeStamp(), local, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()));
+		appendEmoteMessage(spooledType, m.timeStamp(), local, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()), m.yaFlags());
 	else
-		appendNormalMessage(spooledType, m.timeStamp(), local, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()));
+		appendNormalMessage(spooledType, m.timeStamp(), local, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()), m.yaFlags());
 #else
 	if (isEmoteMessage(m))
 		appendEmoteMessage(spooledType, m.timeStamp(), local, txt);

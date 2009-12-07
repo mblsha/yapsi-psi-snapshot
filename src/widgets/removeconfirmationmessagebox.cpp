@@ -51,7 +51,7 @@ RemoveConfirmationMessageBoxManager* RemoveConfirmationMessageBoxManager::instan
 	return instance_;
 }
 
-void RemoveConfirmationMessageBoxManager::processData(const QString& id, const QList<DataCallback> callbacks, const QString& title, const QString& informativeText, QWidget* parent, const QStringList& actionNames)
+void RemoveConfirmationMessageBoxManager::processData(const QString& id, const QList<DataCallback> callbacks, const QString& title, const QString& informativeText, QWidget* parent, const QStringList& actionNames, QMessageBox::Icon icon)
 {
 	Data data;
 	data.onlineId = ++onlineId_;
@@ -61,6 +61,7 @@ void RemoveConfirmationMessageBoxManager::processData(const QString& id, const Q
 	data.informativeText = informativeText;
 	data.buttons = actionNames;
 	data.parent = parent;
+	data.icon = icon;
 
 	// FIXME: duplicates mustn't be allowed
 	foreach(Data d, data_) {
@@ -87,8 +88,18 @@ void RemoveConfirmationMessageBoxManager::processData(const QString& id, const Q
 	                                       RemoveConfirmationMessageBox::tr("Ya.Online"),
 	                                       RemoveConfirmationMessageBox::processInformativeText(data.informativeText),
 	                                       data.buttons,
-	                                       QMessageBox::Warning);
+	                                       data.icon);
 #endif
+}
+
+void RemoveConfirmationMessageBoxManager::showInformation(const QString& id, const QString& title, const QString& informativeText, QWidget* parent)
+{
+	QStringList buttons;
+	buttons << RemoveConfirmationMessageBox::tr("OK");
+
+	QList<DataCallback> callbacks;
+
+	processData(id, callbacks, title, informativeText, parent, buttons, QMessageBox::Information);
 }
 
 void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj, const char* slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& destructiveActionName)
@@ -103,7 +114,7 @@ void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, 
 	QList<DataCallback> callbacks;
 	callbacks << DataCallback(obj, slot);
 
-	processData(id, callbacks, title, informativeText, parent, buttons);
+	processData(id, callbacks, title, informativeText, parent, buttons, QMessageBox::Warning);
 }
 
 void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, QObject* obj1, const char* action1slot, QObject* obj2, const char* action2slot, const QString& title, const QString& informativeText, QWidget* parent, const QString& action1name, const QString& action2name)
@@ -117,7 +128,7 @@ void RemoveConfirmationMessageBoxManager::removeConfirmation(const QString& id, 
 	callbacks << DataCallback(obj1, action1slot);
 	callbacks << DataCallback(obj2, action2slot);
 
-	processData(id, callbacks, title, informativeText, parent, buttons);
+	processData(id, callbacks, title, informativeText, parent, buttons, QMessageBox::Warning);
 }
 
 void RemoveConfirmationMessageBoxManager::update()
@@ -126,15 +137,21 @@ void RemoveConfirmationMessageBoxManager::update()
 	while (!data_.isEmpty()) {
 		Data data = data_.takeFirst();
 
-		Q_ASSERT(data.buttons.count() >= 2 && data.buttons.count() <= 3);
+		Q_ASSERT(data.buttons.count() >= 1 && data.buttons.count() <= 3);
 		RemoveConfirmationMessageBox msgBox(data.title, data.informativeText, data.parent);
+		msgBox.setIcon(data.icon);
 
 		QStringList buttons = data.buttons;
-		buttons.takeLast(); // Cancel
-		Q_ASSERT(!buttons.isEmpty());
-		msgBox.setDestructiveActionName(buttons.takeFirst());
-		if (!buttons.isEmpty()) {
-			msgBox.setComplimentaryActionName(buttons.takeFirst());
+		if (data.icon == QMessageBox::Warning) {
+			buttons.takeLast(); // Cancel
+			Q_ASSERT(!buttons.isEmpty());
+			msgBox.setDestructiveActionName(buttons.takeFirst());
+			if (!buttons.isEmpty()) {
+				msgBox.setComplimentaryActionName(buttons.takeFirst());
+			}
+		}
+		else {
+			msgBox.setInfoActionName(buttons.takeFirst());
 		}
 
 		msgBox.doExec();
@@ -201,101 +218,12 @@ RemoveConfirmationMessageBoxManager::~RemoveConfirmationMessageBoxManager()
 //----------------------------------------------------------------------------
 // RemoveConfirmationMessageBox
 //----------------------------------------------------------------------------
-
-#ifdef Q_WS_WIN
-// #define USE_WINDOWS_NATIVE_MSGBOX
-#endif
-
-#ifdef USE_WINDOWS_NATIVE_MSGBOX
-#include <windows.h>
-
-static QString okButtonCaption;
-static QString cancelButtonCaption;
-static bool activated;
-
-// hook technique from http://www.catch22.net/tuts/msgbox.asp
-static HHOOK hMsgBoxHook;
-
-static int textWidth(HWND button, const QString& text)
-{
-	RECT textRect;
-	textRect.left = textRect.top = textRect.right = textRect.bottom = 0;
-	DrawText(GetDC(button), text.utf16(), text.length(), &textRect, DT_CALCRECT);
-	return textRect.right - textRect.left;
-}
-
-LRESULT CALLBACK CBTProc(INT nCode, WPARAM wParam, LPARAM lParam)
-{
-	if (nCode == HCBT_ACTIVATE) {
-		if (activated)
-			return 0;
-		activated = true;
-		HWND hChildWnd = (HWND)wParam;
-
-		HWND okButton = GetDlgItem(hChildWnd, IDOK);
-		HWND cancelButton = GetDlgItem(hChildWnd, IDCANCEL);
-		Q_ASSERT(okButton);
-		Q_ASSERT(cancelButton);
-
-		SetDlgItemText(hChildWnd, IDOK, okButtonCaption.utf16());
-		SetDlgItemText(hChildWnd, IDCANCEL, cancelButtonCaption.utf16());
-
-		RECT parentRect, okRect, cancelRect;
-		GetWindowRect(GetParent(okButton), &parentRect);
-		GetWindowRect(okButton, &okRect);
-		GetWindowRect(cancelButton, &cancelRect);
-
-		int parentWidth = parentRect.right - parentRect.left;
-
-		int minMargin = 14;
-		int spacing = cancelRect.left - okRect.right;
-
-		int buttonWidth = qMax(::textWidth(okButton, okButtonCaption), ::textWidth(cancelButton, cancelButtonCaption));
-		int maxButtonWidth = (parentWidth - minMargin*2 - spacing) / 2;
-		buttonWidth = qMin(buttonWidth, maxButtonWidth);
-
-		WINDOWPLACEMENT wp;
-		GetWindowPlacement(okButton, &wp);
-		wp.rcNormalPosition.left  = (parentWidth / 2) - (spacing / 2) - buttonWidth - 3;
-		wp.rcNormalPosition.right = wp.rcNormalPosition.left + buttonWidth;
-		SetWindowPlacement(okButton, &wp);
-
-		GetWindowPlacement(cancelButton, &wp);
-		wp.rcNormalPosition.left  = (parentWidth / 2) + (spacing / 2) - 3;
-		wp.rcNormalPosition.right = wp.rcNormalPosition.left + buttonWidth;
-		SetWindowPlacement(cancelButton, &wp);
-	}
-	else {
-		CallNextHookEx(hMsgBoxHook, nCode, wParam, lParam);
-	}
-	return 0;
-}
-
-int MsgBoxEx(HWND hwnd, LPCTSTR szText, LPCTSTR szCaption, UINT uType)
-{
-	int retval;
-
-	activated = false;
-	hMsgBoxHook = SetWindowsHookEx(
-	                  WH_CBT,
-	                  CBTProc,
-	                  NULL,
-	                  GetCurrentThreadId()
-	              );
-
-	retval = MessageBox(hwnd, szText, szCaption, uType);
-
-	UnhookWindowsHookEx(hMsgBoxHook);
-
-	return retval;
-}
-#endif
-
 RemoveConfirmationMessageBox::RemoveConfirmationMessageBox(const QString& title, const QString& informativeText, QWidget* parent)
 	: QMessageBox()
 	, removeButton_(0)
 	, complimentaryButton_(0)
 	, cancelButton_(0)
+	, infoButton_(0)
 {
 #ifdef YAPSI
 	setStyle(YaStyle::defaultStyle());
@@ -325,6 +253,7 @@ void RemoveConfirmationMessageBox::setDestructiveActionName(const QString& destr
 {
 	Q_ASSERT(!removeButton_);
 	Q_ASSERT(!cancelButton_);
+	Q_ASSERT(!infoButton_);
 	removeButton_ = addButton(destructiveAction, QMessageBox::AcceptRole /*QMessageBox::DestructiveRole*/);
 	cancelButton_ = addButton(QMessageBox::Cancel);
 	setDefaultButton(removeButton_);
@@ -334,8 +263,18 @@ void RemoveConfirmationMessageBox::setComplimentaryActionName(const QString& com
 {
 	Q_ASSERT(removeButton_);
 	Q_ASSERT(cancelButton_);
+	Q_ASSERT(!infoButton_);
 	Q_ASSERT(!complimentaryButton_);
 	complimentaryButton_ = addButton(complimentaryAction, QMessageBox::AcceptRole);
+}
+
+void RemoveConfirmationMessageBox::setInfoActionName(const QString& infoAction)
+{
+	Q_ASSERT(!removeButton_);
+	Q_ASSERT(!cancelButton_);
+	Q_ASSERT(!infoButton_);
+	infoButton_ = addButton(infoAction, QMessageBox::AcceptRole);
+	setDefaultButton(infoButton_);
 }
 
 QString RemoveConfirmationMessageBox::processInformativeText(const QString& informativeText)
@@ -350,33 +289,18 @@ QString RemoveConfirmationMessageBox::processInformativeText(const QString& info
 
 void RemoveConfirmationMessageBox::doExec()
 {
-	if (!removeButton_) {
+	if (!removeButton_ && !infoButton_) {
 		setDestructiveActionName(tr("Delete"));
 	}
 
 	setText(processInformativeText(informativeText()));
 	setInformativeText(QString());
 
-#ifdef USE_WINDOWS_NATIVE_MSGBOX
-	okButtonCaption = removeButton_->text();
-	cancelButtonCaption = cancelButton_->text();
-
-	int msgboxID = MsgBoxEx(
-	                   NULL,
-	                   text.utf16(),
-	                   windowTitle().utf16(),
-	                   MB_ICONWARNING | MB_OKCANCEL | MB_APPLMODAL
-	               );
-
-	return msgboxID == IDOK;
-#else
-	Q_ASSERT(removeButton_);
-	Q_ASSERT(cancelButton_);
+	Q_ASSERT((removeButton_ && cancelButton_) || infoButton_);
 #ifdef YAPSI
 	YaStyle::makeMeNativeLooking(this);
 #endif
 	exec();
-#endif
 }
 
 bool RemoveConfirmationMessageBox::removeAction() const
@@ -387,4 +311,9 @@ bool RemoveConfirmationMessageBox::removeAction() const
 bool RemoveConfirmationMessageBox::complimentaryAction() const
 {
 	return clickedButton() == complimentaryButton_;
+}
+
+bool RemoveConfirmationMessageBox::infoAction() const
+{
+	return clickedButton() == infoButton_;
 }

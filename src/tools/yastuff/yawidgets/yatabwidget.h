@@ -26,6 +26,16 @@
 class QMenu;
 class YaWindowTheme;
 
+#define USE_YAMULTILINETABBAR
+
+#ifdef USE_YAMULTILINETABBAR
+class YaMultiLineTabBar;
+typedef YaMultiLineTabBar YaTabBarBaseClass;
+#else
+class YaTabBar;
+typedef YaTabBar YaTabBarBaseClass;
+#endif
+
 class YaTabWidget : public QTabWidget
 {
 	Q_OBJECT
@@ -59,9 +69,14 @@ public slots:
 	void aboutToShow(int index);
 
 protected:
+	YaTabBarBaseClass* yaTabBar() const;
+	void setDrawTabNumbersHelper(QKeyEvent* event);
+
 	// reimplemented
 	void paintEvent(QPaintEvent*);
 	void resizeEvent(QResizeEvent*);
+	void keyPressEvent(QKeyEvent* event);
+	void keyReleaseEvent(QKeyEvent* event);
 	void tabInserted(int);
 	void tabRemoved(int);
 

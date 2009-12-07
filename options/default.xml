@@ -186,6 +186,7 @@
 			</show-deprecated>
 			<spell-check comment="Options related to the spell checker">
 				<enabled comment="Whether the spell checker is enabled" type="bool">true</enabled>
+				<custom-dictionary type="QStringList"></custom-dictionary>
 			</spell-check>
 			<systemtray comment="Options related to the system tray">
 				<use-old comment="Use the old system tray code (deprecated)" type="bool">false</use-old>
@@ -328,8 +329,8 @@
 				</previous-tab>
 				<find type="QKeySequence" comment="Find text">Ctrl+F</find>
 				<send type="QVariantList" comment="Sends the message">
-					<item type="QKeySequence">Ctrl+Return</item>
-					<item type="QKeySequence">Ctrl+Enter</item>
+					<item type="QKeySequence">Enter</item>
+					<item type="QKeySequence">Return</item>
 				</send>
 				<clear type="QKeySequence" comment="Clear the text"/>
 				<quick-command type="QKeySequence" comment="Change to quick command mode">Ctrl+7</quick-command>
@@ -362,6 +363,7 @@
 			</common>
 			<appwide comment="Shortcuts available from any window within the application">
 				<filter-contacts type="QKeySequence" comment="Enable contact filtering mode">F3</filter-contacts>
+				<add-contact type="QKeySequence" comment="Enable add contact mode">Ctrl+N</add-contact>
 				<status-online type="QKeySequence" comment="Set online status"></status-online>
 				<status-dnd type="QKeySequence" comment="Set do not disturb status"></status-dnd>
 				<status-offline type="QKeySequence" comment="Set offline status"></status-offline>
@@ -494,6 +496,9 @@
 				<last-opened-tabs type="QString" comment="List of contacts you've chatted with last time">
 				</last-opened-tabs>
 				<editor-height type="int" comment="Minimum number of lines visible in editor area">1</editor-height>
+				<send-button>
+					<enabled type="bool" comment="Enable 'Send' button">true</enabled>
+				</send-button>
 			</chat-window>
 			<main-window>
 				<always-on-top type="bool">false</always-on-top>
@@ -529,6 +534,7 @@
 			</popups>
 			<moods>
 				<show-yaru-warning type="bool" comment="Show the tooltip first time user tries to edit a mood">true</show-yaru-warning>
+				<show-default-mood type="bool" comment="Show the default mood when there's no mood set">true</show-default-mood>
 				<all type="QVariantList" comment="User-specified moods">
 				</all>
 				<current type="QString" comment="Currently chosen mood"></current>

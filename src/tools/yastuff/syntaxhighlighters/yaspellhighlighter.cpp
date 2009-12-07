@@ -49,32 +49,20 @@ bool YaSpellHighlighter::highlightBlock(const QString& text)
 {
 	rehighlightTimer_->stop();
 	needRehighlight_ = previousBlockState() != -1;
-	int cursorPosition = cursorPositionInCurrentBlock();
 
-	// Underline 
 	QTextCharFormat tcf;
-	tcf.setUnderlineColor(QBrush(QColor(255,0,0)));
+	tcf.setUnderlineColor(QColor(Qt::red));
 	tcf.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 
-	// Match words (minimally)
-	static QRegExp expression("\\b\\w+\\b");
-	static QRegExp number("^\\d+$");
-
-	// Iterate through all words
-	int index = text.indexOf(expression);
-	while (index >= 0) {
-		int length = expression.matchedLength();
-		if (expression.cap().indexOf(number) >= 0) {
-			// skipping numbers
-		}
-		else if (cursorPosition >= index && (cursorPosition <= index + length)) {
-			needRehighlight_ = true;
-		}
-		else {
-			if (!SpellChecker::instance()->isCorrect(expression.cap()))
-				setFormat(index, length, tcf);
-		}
-		index = text.indexOf(expression, index + length);
+	foreach(QtTextRange spellingErrorIndex,
+	        SpellChecker::instance()->spellingErrorIndexes(text,
+	                this,
+	                cursorPositionInCurrentBlock(),
+	                &needRehighlight_,
+	                textEdit()->document()->blockCount()))
+	{
+		needRehighlight_ = true;
+		setFormat(spellingErrorIndex.index, spellingErrorIndex.length, tcf);
 	}
 
 	setCurrentBlockState(needRehighlight_ ? 0 : -1);

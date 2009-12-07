@@ -115,21 +115,23 @@
 
 		<file>images/envelope_overlay.png</file>
 		<file>images/chat_windowicon.png</file>
+		<file>images/chat_windowicon32.png</file>
 
 		<file>images/chat/fader.png</file>
 		<file>images/chat/button.png</file>
 		<file>images/chat/button_pressed.png</file>
 		<file>images/chat/button_pressed_background.png</file>
 		<file>images/chat/emoticon_overlay.png</file>
+		<file>images/chat/emoticon_overlay_hover.png</file>
 		<file>images/chat/emoticon_background.png</file>
 		<file>images/chat/tooltip_area.png</file>
 		<file>images/chat/typo_disabled.png</file>
 		<file>images/chat/typo_disabled_hover.png</file>
 		<file>images/chat/typo_enabled.png</file>
 		<file>images/chat/typo_enabled_hover.png</file>
-		<file>images/chat/send_button/send_glyph.png</file>
+		<file>images/chat/send_button/send.png</file>
+		<file>images/chat/send_button/send_disabled.png</file>
 		<file>images/chat/send_button/send_hover.png</file>
-		<file>images/chat/send_button/send_idle.png</file>
 		<file>images/chat/send_button/send_pressed.png</file>
 		<file>images/chat/composing/keyboard.png</file>
 		<file>images/chat/composing/keys0001.png</file>

@@ -29,9 +29,9 @@
 #include "atomicxmlfile.h"
 #include "xmpp_xmlcommon.h"
 #include "psicontactlist.h"
-#include "xmpp_tasks.h"
 
 static const int MAX_MESSAGES = 20;
+static const int CHECK_FOR_DEAD_TASKS_TIMEOUT = 60;
 
 YaHistoryCacheManager::YaHistoryCacheManager(PsiCon* parent)
 	: QObject(parent)
@@ -46,6 +46,12 @@ YaHistoryCacheManager::YaHistoryCacheManager(PsiCon* parent)
 	getMessagesTimer_->setSingleShot(false);
 	getMessagesTimer_->setInterval(3 * 1000);
 	connect(getMessagesTimer_, SIGNAL(timeout()), SLOT(getMessages()));
+
+	checkForDeadTasksTimer_ = new QTimer(this);
+	checkForDeadTasksTimer_->setSingleShot(false);
+	checkForDeadTasksTimer_->setInterval(60 * 1000);
+	connect(checkForDeadTasksTimer_, SIGNAL(timeout()), SLOT(checkForDeadTasks()));
+	checkForDeadTasksTimer_->start();
 
 	load();
 }
@@ -250,10 +256,11 @@ void YaHistoryCacheManager::getMessages()
 				}
 
 				request.started = true;
-				JT_YaRetrieveHistory* task = new JT_YaRetrieveHistory(historyAccount->client()->rootTask());
-				connect(task, SIGNAL(finished()), this, SLOT(retrieveHistoryFinished()));
-				task->retrieve(request.jid, MAX_MESSAGES, cacheTimes_[getHashKey(request.account, request.jid)]);
-				task->go(true);
+				request.startTime = QDateTime::currentDateTime();
+				request.task = new JT_YaRetrieveHistory(historyAccount->client()->rootTask());
+				connect(request.task, SIGNAL(finished()), this, SLOT(retrieveHistoryFinished()));
+				request.task->retrieve(request.jid, MAX_MESSAGES, cacheTimes_[getHashKey(request.account, request.jid)]);
+				request.task->go(true);
 			}
 			it.setValue(request);
 		}
@@ -265,6 +272,38 @@ void YaHistoryCacheManager::getMessages()
 		if (request.finished) {
 			it.remove();
 		}
+	}
+}
+
+void YaHistoryCacheManager::checkForDeadTasks()
+{
+	bool doGetMessages = false;
+
+	QMutableListIterator<GetMessagesRequest> it(getMessagesRequests_);
+	while (it.hasNext()) {
+		GetMessagesRequest request = it.next();
+		if (request.started) {
+			Q_ASSERT(!request.finished);
+
+			int timeout = qAbs(QDateTime::currentDateTime().secsTo(request.startTime));
+			if (timeout > CHECK_FOR_DEAD_TASKS_TIMEOUT) {
+				qWarning("YaHistoryCacheManager::checkForDeadTasks(): '%s' timeout '%s'",
+				         qPrintable(request.jid.full()),
+				         qPrintable(request.startTime.toString(Qt::ISODate)));
+
+				request.started = false;
+				request.startTime = QDateTime();
+				delete request.task;
+				request.task = 0;
+
+				doGetMessages = true;
+				it.setValue(request);
+			}
+		}
+	}
+
+	if (doGetMessages) {
+		getMessages();
 	}
 }
 

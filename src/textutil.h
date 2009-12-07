@@ -15,7 +15,6 @@ namespace TextUtil
 	QString rich2plain(const QString &);
 	QString resolveEntities(const QString &);
 	QString linkify(const QString &);
-	QString linkifyClever(const QString &);
 	QString legacyFormat(const QString &);
 	QString emoticonify(const QString &in);
 #ifdef YAPSI

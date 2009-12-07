@@ -39,6 +39,7 @@ public:
 	virtual const QString& displayName() const;
 	virtual const QString& name() const = 0;
 	virtual void setName(const QString& name) = 0;
+	virtual QString comparisonName() const;
 
 	virtual bool isEditable() const;
 	virtual bool isDragEnabled() const;

@@ -46,6 +46,8 @@ private slots:
 protected:
 	// reimplemented
 	void paintEvent(QPaintEvent*);
+
+	QString buttonText() const;
 };
 
 #endif

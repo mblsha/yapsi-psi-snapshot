@@ -26,6 +26,7 @@ PSI_DIR=..
 EXECUTABLE_NAME=yachat
 NAME=YaChat
 VOLUME_NAME=Я.Онлайн
+VOLUME_NAME2=Я.
 
 APPFILE_NAME=Я.Онлайн.app
 FILES=$(APPFILE_NAME)
@@ -169,7 +170,8 @@ $(MASTER_DMG): $(WC_DMG) $(DISK_FILES)
 	done
 	#rm -f "$@"
 	#hdiutil create -srcfolder "$(WC_DIR)" -format UDZO -imagekey zlib-level=9 "$@" -volname "$(NAME) $(VERSION)" -scrub -quiet
-	diskutil eject `diskutil list | ./normalize.rb | grep "$(VOLUME_NAME)" | grep "Apple_HFS" | awk '{print $$6}'`
+	#diskutil eject `diskutil list | ./normalize.rb | grep "$(VOLUME_NAME)" | grep "Apple_HFS" | awk '{print $$6}'`
+	diskutil eject `diskutil list | grep "$(VOLUME_NAME2)" | grep "Apple_HFS" | awk '{print $$6}'`
 	rm -f "$(MASTER_DMG)"
 	hdiutil convert "$(WC_DMG)" -quiet -format UDZO -imagekey zlib-level=9 -o "$@"
 	rm -rf $(WC_DIR)

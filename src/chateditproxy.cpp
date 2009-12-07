@@ -101,7 +101,7 @@ void ChatEditProxy::updateLayout()
 
 		moveData(newEdit, textEdit_);
 
-		newEdit->setCheckSpelling(ChatEdit::checkSpellingGloballyEnabled());
+		newEdit->setCheckSpelling(PsiOptions::instance()->getOption("options.ui.spell-check.enabled").toBool());
 	}
 
 	delete textEdit_;

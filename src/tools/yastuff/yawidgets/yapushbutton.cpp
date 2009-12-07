@@ -42,6 +42,8 @@ void YaPushButton::init()
 
 	setMinimumWidth(minimumSizeHint().width());
 	setFixedHeight(minimumSizeHint().height());
+
+	setCursor(Qt::PointingHandCursor);
 }
 
 void YaPushButton::updateButtonStyle()

@@ -41,6 +41,7 @@ public:
 	QStringList groups() const;
 	void setGroups(QStringList groups);
 	void remove();
+	QString comparisonName() const;
 
 	static QString defaultGroupName();
 

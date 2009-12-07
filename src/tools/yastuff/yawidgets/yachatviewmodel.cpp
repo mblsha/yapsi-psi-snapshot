@@ -441,14 +441,14 @@ void YaChatViewModel::addMessage(SpooledType spooled, const QDateTime& time, boo
 // 	addMessage(YaChatViewModel::Spooled_None, QDateTime::currentDateTime(), !incoming, 0, QString(), XMPP::ReceiptNone, msg, yaTime);
 // }
 
-void YaChatViewModel::addEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime)
+void YaChatViewModel::addEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags)
 {
-	addMessageHelper(spooled, time, local, txt, true, spamFlag, id, messageReceipt, yaTime);
+	addMessageHelper(spooled, time, local, txt, true, spamFlag, id, messageReceipt, yaTime, yaFlags);
 }
 
-void YaChatViewModel::addMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime)
+void YaChatViewModel::addMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags)
 {
-	addMessageHelper(spooled, time, local, txt, false, spamFlag, id, messageReceipt, yaTime);
+	addMessageHelper(spooled, time, local, txt, false, spamFlag, id, messageReceipt, yaTime, yaFlags);
 }
 #endif
 
@@ -458,7 +458,7 @@ bool YaChatViewModel::sameDateTime(const XMPP::YaDateTime& ydt1, const QDateTime
 		return true;
 	}
 
-	static int maxSecsDifference = 30 * 60;
+	static int maxSecsDifference = 30 * 60; // 30 minutes
 	bool result;
 	if (!ydt1.isNull() && !ydt2.isNull()) {
 		if (canRelyOnTimestamps()) {
@@ -508,12 +508,32 @@ bool YaChatViewModel::isPrev(QStandardItem* i1, QStandardItem* i2) const
 	return i1->data(DateTimeRole).toDateTime() < i2->data(DateTimeRole).toDateTime();
 }
 
+bool YaChatViewModel::processSpooledItem(QStandardItem* i1, QStandardItem* i2) const
+{
+	if (sameItem(i1, i2)) {
+		if (static_cast<YaMessageFlagType>(i1->data(YaFlagsRole).toInt()) == OutgoingMessage) {
+			i1->setData(i2->data(YaDateTimeRole), YaDateTimeRole);
+			i1->setData(NoFlags, YaFlagsRole);
+		}
+
+		delete i2;
+		return true;
+	}
+
+	return false;
+}
+
 bool YaChatViewModel::sameItem(QStandardItem* i1, QStandardItem* i2) const
 {
 	bool sameDateTime = this->sameDateTime(i1->data(YaDateTimeRole).value<XMPP::YaDateTime>(),
 	                                       i1->data(DateTimeRole).toDateTime(),
 	                                       i2->data(YaDateTimeRole).value<XMPP::YaDateTime>(),
 	                                       i2->data(DateTimeRole).toDateTime());
+
+	Q_ASSERT(static_cast<YaMessageFlagType>(i2->data(YaFlagsRole).toInt()) != OutgoingMessage);
+	if (static_cast<YaMessageFlagType>(i1->data(YaFlagsRole).toInt()) == OutgoingMessage) {
+		sameDateTime = true;
+	}
 
 	return (sameDateTime &&
 	        i1->data(Qt::DisplayRole) == i2->data(Qt::DisplayRole) &&
@@ -525,7 +545,7 @@ bool YaChatViewModel::sameItem(QStandardItem* i1, QStandardItem* i2) const
 #ifndef YAPSI
 void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& time, bool local, QString _txt, bool emote)
 #else
-void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& time, bool local, QString _txt, bool emote, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, const XMPP::YaDateTime& yaTime)
+void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& time, bool local, QString _txt, bool emote, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, const XMPP::YaDateTime& yaTime, int yaFlags)
 #endif
 {
 	if (_txt.isEmpty()) {
@@ -533,11 +553,14 @@ void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& tim
 		return;
 	}
 
-#ifndef NO_TEXTUTIL
-	QString txt = TextUtil::linkifyClever(_txt);
-#else
+	if (!local) {
+		if (!yaTime.isNull() && timeStamps_.contains(yaTime)) {
+			// qWarning("YaChatViewModel::addMessageHelper(): duplicate incoming message: '%s' '%s' '%s'", qPrintable(yaTime.toYaIsoTime()), qPrintable(jid().full()), qPrintable(_txt));
+			return;
+		}
+	}
+
 	QString txt = _txt;
-#endif
 	QStandardItem* item = new QStandardItem(txt);
 	item->setData(QVariant(Message), TypeRole);
 	item->setData(QVariant(!Qt::mightBeRichText(txt)), MessagePlainTextRole);
@@ -547,6 +570,7 @@ void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& tim
 	item->setData(QVariant(spooled), SpooledRole);
 	item->setData(QVariant(emote), EmoteRole);
 	item->setData(QVariant(id), IdRole);
+	item->setData(QVariant(yaFlags), YaFlagsRole);
 	{
 		QVariant tmp;
 		tmp.setValue(yaTime);
@@ -583,8 +607,7 @@ void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& tim
 					dateHeaderRow = row;
 				}
 
-				if (sameItem(i, item)) {
-					delete item;
+				if (processSpooledItem(i, item)) {
 					return;
 				}
 
@@ -644,8 +667,7 @@ void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& tim
 					break;
 				}
 
-				if (sameItem(i, item)) {
-					delete item;
+				if (processSpooledItem(i, item)) {
 					return;
 				}
 
@@ -698,6 +720,10 @@ void YaChatViewModel::addMessageHelper(SpooledType spooled, const QDateTime& tim
 #endif
 	item->setData(QVariant(deliveryConfirmation), DeliveryConfirmationRole);
 
+	if (!yaTime.isNull()) {
+		timeStamps_[yaTime] = true;
+	}
+
 	messageCount_++;
 	invisibleRootItem()->insertRow(newMessageRow, item);
 	updateMergeRole(newMessageRow, newMessageRow - 1);
@@ -712,6 +738,11 @@ void YaChatViewModel::doRowsAboutToBeRemoved(const QModelIndex& parent, int star
 		QString id = index(i, 0, parent).data(IdRole).toString();
 		if (!id.isEmpty()) {
 			ids_.remove(id);
+		}
+
+		XMPP::YaDateTime ydt = index(i, 0, parent).data(YaDateTimeRole).value<XMPP::YaDateTime>();
+		if (!ydt.isNull()) {
+			timeStamps_.remove(ydt);
 		}
 	}
 }

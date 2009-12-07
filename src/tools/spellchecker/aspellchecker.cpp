@@ -65,8 +65,9 @@ ASpellChecker::~ASpellChecker()
 	}
 }
 
-bool ASpellChecker::isCorrect(const QString& word)
+bool ASpellChecker::isSpeltCorrectly(const QString& word, SyntaxHighlighter* highlighter)
 {
+	Q_UNUSED(highlighter);
 	if(speller_) {
 		int correct = aspell_speller_check(speller_, word.toUtf8().constData(), -1);
 		return (correct != 0);
@@ -89,7 +90,7 @@ QList<QString> ASpellChecker::suggestions(const QString& word)
 	return words;
 }
 
-bool ASpellChecker::add(const QString& word)
+bool ASpellChecker::learnSpelling(const QString& word)
 {
 	bool result = false;
 	if (config_ && speller_) {

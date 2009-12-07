@@ -69,3 +69,8 @@ const QDateTime& LastActivityTask::time() const
 {
 	return last_time_;
 }
+
+const XMPP::Jid LastActivityTask::jid() const
+{
+	return jid_;
+}

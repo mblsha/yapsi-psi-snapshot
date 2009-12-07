@@ -27,20 +27,17 @@
 #include <QApplication>
 #include <QVariant>
 #include <QAction>
+#include <QKeyEvent>
 
 #ifndef WIDGET_PLUGIN
 #include "tabbablewidget.h"
 #include "yavisualutil.h"
 #endif
 
-#define USE_YAMULTILINETABBAR
-
 #ifdef USE_YAMULTILINETABBAR
 #include "yamultilinetabbar.h"
-typedef YaMultiLineTabBar YaTabBarBaseClass;
 #else
 #include "yatabbar.h"
-typedef YaTabBar YaTabBarBaseClass;
 #endif
 
 #ifdef YAPSI_ACTIVEX_SERVER
@@ -200,6 +197,29 @@ YaTabWidget::YaTabWidget(QWidget* parent)
 
 YaTabWidget::~YaTabWidget()
 {
+}
+
+YaTabBarBaseClass* YaTabWidget::yaTabBar() const
+{
+	return static_cast<YaTabBarBaseClass*>(tabBar());
+}
+
+void YaTabWidget::setDrawTabNumbersHelper(QKeyEvent* event)
+{
+	// ONLINE-2737
+	// yaTabBar()->setDrawTabNumbers(event->modifiers().testFlag(Qt::ControlModifier));
+}
+
+void YaTabWidget::keyPressEvent(QKeyEvent* event)
+{
+	QTabWidget::keyPressEvent(event);
+	setDrawTabNumbersHelper(event);
+}
+
+void YaTabWidget::keyReleaseEvent(QKeyEvent* event)
+{
+	QTabWidget::keyReleaseEvent(event);
+	setDrawTabNumbersHelper(event);
 }
 
 const YaWindowTheme& YaTabWidget::theme() const

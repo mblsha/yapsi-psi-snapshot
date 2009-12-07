@@ -30,7 +30,6 @@
 #include "psiaccount.h"
 #include "common.h"
 #include "xmpp_tasks.h"
-#include "pgputil.h"
 #include "proxy.h"
 #include "miniclient.h"
 #include "accountadddlg.h"

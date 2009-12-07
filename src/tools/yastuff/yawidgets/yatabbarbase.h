@@ -50,6 +50,9 @@ public:
 	bool layoutUpdatesEnabled();
 	void setLayoutUpdatesEnabled(bool enabled);
 
+	bool drawTabNumbers() const;
+	void setDrawTabNumbers(bool drawTabNumbers);
+
 signals:
 	void aboutToShow(int index);
 	void closeTab(int index);
@@ -111,6 +114,7 @@ private:
 	bool layoutUpdatesEnabled_;
 	QTimeLine* timeLine_;
 	QPoint pressedPosition_;
+	bool drawTabNumbers_;
 
 	// caches
 	QSize cachedIconSize_;

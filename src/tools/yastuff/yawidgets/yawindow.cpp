@@ -423,6 +423,7 @@ void YaWindowBase::initCurrentOperation(const QPoint& mousePos)
 	isInInteractiveMode_ = currentOperation_ != None;
 	updateCursor();
 
+	mousePressGlobalPosition_ = mousePos;
 	mousePressPosition_ = mapToParent(mousePos);
 	oldGeometry_ = geometry();
 }
@@ -515,7 +516,9 @@ void YaWindowBase::mouseMoveEvent(QMouseEvent* e, QPoint pos)
 
 	if (e->buttons() & Qt::LeftButton && isInInteractiveMode_) {
 		e->accept();
-		setNewGeometry(mapToParent(pos));
+		if (interactiveOperationEnabled()) {
+			setNewGeometry(mapToParent(pos));
+		}
 		return;
 	}
 
@@ -778,18 +781,18 @@ QRegion YaWindowBase::getRegion(Operation operation) const
 	rightBorder = rightBorder.subtracted(bottomRightCorner);
 
 #ifndef Q_WS_MAC
-#if 0
-	if (operation == LeftResize)
-		return leftBorder;
-	if (operation == TopResize)
-		return topBorder;
-	if (operation == TopLeftResize)
-		return topLeftBorder;
-	if (operation == TopRightResize)
-		return topRightBorder;
-	if (operation == BottomLeftResize)
-		return bottomLeftCorner;
-#endif
+	if (enableTopLeftBorderResize()) {
+		if (operation == LeftResize)
+			return leftBorder;
+		if (operation == TopResize)
+			return topBorder;
+		if (operation == TopLeftResize)
+			return topLeftBorder;
+		if (operation == TopRightResize)
+			return topRightBorder;
+		if (operation == BottomLeftResize)
+			return bottomLeftCorner;
+	}
 	if (operation == BottomResize)
 		return bottomBorder;
 	if (operation == RightResize)
@@ -801,6 +804,11 @@ QRegion YaWindowBase::getRegion(Operation operation) const
 		return fullRegion;
 
 	return QRegion();
+}
+
+bool YaWindowBase::enableTopLeftBorderResize() const
+{
+	return true;
 }
 
 void YaWindowBase::updateCursor()
@@ -853,10 +861,12 @@ void YaWindowBase::repaintBackground()
 	// update() doesn't repaint all the background on Windows in all cases
 	repaint();
 
+#if 0 // ONLINE-2359
 	// make YaRosterTabButton repaint correctly
 	foreach(QWidget* w, findChildren<QWidget*>()) {
 		w->repaint();
 	}
+#endif
 }
 
 bool YaWindowBase::minimizeEnabled() const
@@ -1136,9 +1146,24 @@ void YaWindowBase::interactiveOperationFinished()
 {
 }
 
+bool YaWindowBase::interactiveOperationEnabled() const
+{
+	return true;
+}
+
+QPoint YaWindowBase::mousePressGlobalPosition() const
+{
+	return mousePressGlobalPosition_;
+}
+
 QPoint YaWindowBase::mousePressPosition() const
 {
 	return mousePressPosition_;
+}
+
+bool YaWindowBase::isInInteractiveMode() const
+{
+	return isInInteractiveMode_;
 }
 
 //----------------------------------------------------------------------------

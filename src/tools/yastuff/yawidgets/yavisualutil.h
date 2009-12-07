@@ -43,10 +43,11 @@ class VisualUtil : public QObject
 {
 	Q_OBJECT
 public:
-	static QString contactGender(XMPP::VCard::Gender gender);
+	static QString contactGenderString(XMPP::VCard::Gender gender);
 	static QString scaledAvatarPath(PsiAccount* account, const XMPP::Jid& jid, int toasterAvatarSize = 50);
 	static QString contactName(PsiAccount* account, const XMPP::Jid& jid);
-	static QString contactGender(PsiAccount* account, const XMPP::Jid& jid);
+	static XMPP::VCard::Gender contactGender(PsiAccount* account, const XMPP::Jid& jid);
+	static QString contactGenderString(PsiAccount* account, const XMPP::Jid& jid);
 	static QString contactAgeLocation(PsiAccount* account, const XMPP::Jid& jid, bool* stubTextWasUsed);
 
 	enum RosterStyle {
@@ -127,6 +128,7 @@ public:
 	static const QPixmap& messageOverlayPixmap();
 	static QPixmap createOverlayPixmap(const QPixmap& base, const QPixmap& overlay);
 	static QPixmap dashBackgroundPixmap();
+	static QList<QPixmap> closeTabButtonPixmaps();
 
 private:
 	static bool contactIsAvailale(XMPP::Status::Type status);

@@ -36,10 +36,22 @@ public:
 	bool chatButton() const;
 	void setChatButton(bool chatButton);
 
+private slots:
+	void closeButtonAnimation();
+
+protected:
+	// reimplemented
+	void paintEvent(QPaintEvent* e);
+	void enterEvent(QEvent* event);
+	void leaveEvent(QEvent* event);
+
 private:
 	bool chatButton_;
 	bool isSmall_;
 	QPixmap normal_;
+	int closeFrame_;
+	QList<QPixmap> closePixmaps_;
+	QTimer* closeButtonAnimationTimer_;
 };
 
 #endif

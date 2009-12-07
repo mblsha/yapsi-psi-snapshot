@@ -41,8 +41,8 @@ public:
 	ASpellChecker();
 	~ASpellChecker();
 	virtual QList<QString> suggestions(const QString&);
-	virtual bool isCorrect(const QString&);
-	virtual bool add(const QString&);
+	virtual bool isSpeltCorrectly(const QString&, SyntaxHighlighter* highlighter);
+	virtual bool learnSpelling(const QString&);
 	virtual bool available() const;
 	virtual bool writable() const;
 

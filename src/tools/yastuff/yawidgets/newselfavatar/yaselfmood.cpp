@@ -52,6 +52,7 @@
 #include "psicontactlist.h"
 #include "psiaccount.h"
 #include "yawindow.h"
+#include "yaremoveconfirmationmessagebox.h"
 
 static const QString statusMessagesOptionPath = "options.ya.moods.all";
 static const QString showYaruWarningOptionPath = "options.ya.moods.show-yaru-warning";
@@ -241,11 +242,13 @@ YaSelfMoodExtra::YaSelfMoodExtra(QWidget* parent, YaSelfMood* placeholderParent)
 	lineEdit_->setFocusPolicy(Qt::ClickFocus);
 	lineEdit_->setUndoRedoEnabled(true);
 
+#if 0
 	CombinedSyntaxHighlighter* hl = new CombinedSyntaxHighlighter(lineEdit_);
 	new TypographyHighlighter(hl, lineEdit_);
 	if (PsiOptions::instance()->getOption("options.ui.spell-check.enabled").toBool()) {
 		new YaSpellHighlighter(hl, lineEdit_);
 	}
+#endif
 
 	createMenu();
 
@@ -475,6 +478,17 @@ void YaSelfMoodExtra::setState(State state)
 	if (state_ == state)
 		return;
 
+	if (state == NormalToEditing || state == Editing) {
+		if (statusType_ == XMPP::Status::Away ||
+		    statusType_ == XMPP::Status::XA)
+		{
+			YaRemoveConfirmationMessageBoxManager::instance()->showInformation("YaSelfMoodExtra_cant_change_mood_while_away",
+			        tr("Changing mood"), tr("You can't change mood while being 'away'."),
+			        window());
+			return;
+		}
+	}
+
 	state_ = state;
 	stopAnimation();
 
@@ -496,6 +510,9 @@ void YaSelfMoodExtra::setState(State state)
 	case NormalToEditing:
 		setExpandedState();
 		drawEmpty = false;
+
+		// ONLINE-876
+		lineEdit_->selectAll();
 		break;
 	default:
 		;
@@ -514,7 +531,8 @@ void YaSelfMoodExtra::updateLineEdit()
 	bool updatesEnabled = this->updatesEnabled();
 	setUpdatesEnabled(false);
 
-	bool lineEditShouldBeVisible = moodIsEditable() && (!lineEdit_->toPlainText().isEmpty() || state_ == Editing);
+	// bool lineEditShouldBeVisible = moodIsEditable() && (!lineEdit_->toPlainText().isEmpty() || state_ == Editing);
+	bool lineEditShouldBeVisible = state_ != Normal;
 	lineEdit_->setVisible(lineEditShouldBeVisible);
 	currentActionButton_->setVisible(!lineEditShouldBeVisible);
 
@@ -878,10 +896,11 @@ void YaSelfMoodExtra::setStatusTextUserAction(const QString& _statusText)
 	emit resetLastManualStatusSafeGuard();
 
 	QString statusText = _statusText.trimmed();
-	if (statusText.isEmpty() && !currentAction_->text().isEmpty()) {
-		setStatusText(currentAction_->text().trimmed());
-		return;
-	}
+	// ONLINE-876
+	// if (statusText.isEmpty() && !currentAction_->text().isEmpty()) {
+	// 	setStatusText(currentAction_->text().trimmed());
+	// 	return;
+	// }
 
 	setStatusText(statusText);
 }
@@ -947,8 +966,8 @@ void YaSelfMoodExtra::setStatusType(XMPP::Status::Type type)
 
 void YaSelfMoodExtra::setStatusTypeManual(XMPP::Status::Type type)
 {
-	setStatusType(type);
 	emit statusChangedManually(type);
+	setStatusType(type);
 }
 
 XMPP::VCard::Gender YaSelfMoodExtra::gender() const
@@ -1229,7 +1248,7 @@ bool YaSelfMoodExtra::editingBackground() const
 	//                // !statusButton_->underMouse() &&
 	//                moodIsEditable())
 	//               || state_ != Normal;
-	bool result = (state_ != Normal) || (lineEdit_->toPlainText().isEmpty() && moodIsEditable());
+	bool result = (state_ != Normal); // || (lineEdit_->toPlainText().isEmpty() && moodIsEditable());
 
 	if (result != editingBackground_) {
 		QTimer::singleShot(0, (QObject*)this, SLOT(update()));

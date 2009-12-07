@@ -5,7 +5,6 @@ DEPENDPATH += $$PWD
 # DEFINES += YAPSI_NO_STYLESHEETS
 # DEFINES += YAPSI_STRESSTEST_ACCOUNTS
 
-include($$PWD/syntaxhighlighters/syntaxhighlighters.pri)
 include($$PWD/../slickwidgets/slickwidgets.pri)
 include($$PWD/../smoothscrollbar/smoothscrollbar.pri)
 include($$PWD/../animationhelpers/animationhelpers.pri)
@@ -70,7 +69,8 @@ HEADERS += \
 	$$PWD/delayedvariable.h \
 	$$PWD/yahistorycachemanager.h \
 	$$PWD/yaunreadmessagesmanager.h \
-	$$PWD/yaexception.h
+	$$PWD/yaexception.h \
+	$$PWD/yadebugconsole.h
 
 SOURCES += \
 	$$PWD/yaprofile.cpp \
@@ -104,7 +104,8 @@ SOURCES += \
 	$$PWD/delayedvariablebase.cpp \
 	$$PWD/yahistorycachemanager.cpp \
 	$$PWD/yaunreadmessagesmanager.cpp \
-	$$PWD/yaexception.cpp
+	$$PWD/yaexception.cpp \
+	$$PWD/yadebugconsole.cpp
 
 RESOURCES += \
 	$$PWD/yastuff.qrc \
@@ -117,7 +118,8 @@ INTERFACES += \
 	$$PWD/yarostertiplabel.ui \
 	$$PWD/yaabout.ui \
 	$$PWD/yapreferences.ui \
-	$$PWD/yalicense.ui
+	$$PWD/yalicense.ui \
+	$$PWD/yadebugconsole.ui
 
 HEADERS -= \
 	$$PWD/../../accountmodifydlg.h

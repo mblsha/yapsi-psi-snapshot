@@ -90,3 +90,8 @@ void FakeGroupContact::remove()
 {
 	deleteLater();
 }
+
+QString FakeGroupContact::comparisonName() const
+{
+	return name();
+}

@@ -31,6 +31,23 @@
 #include <QList>
 #include <QString>
 
+class SyntaxHighlighter;
+
+#ifdef Q_WS_MAC
+#include "privateqt_mac.h"
+#endif
+
+struct QtTextRange
+{
+#ifdef Q_WS_MAC
+	QtTextRange(const NSRange &nsrange);
+#endif
+	QtTextRange(int index, int length);
+	bool operator==(const QtTextRange &other) const;
+	int index;
+	int length;
+};
+
 class SpellChecker : public QObject
 {
 public:
@@ -38,12 +55,16 @@ public:
 	virtual bool available() const;
 	virtual bool writable() const;
 	virtual QList<QString> suggestions(const QString&);
-	virtual bool isCorrect(const QString&);
-	virtual bool add(const QString&);
+	virtual bool isSpeltCorrectly(const QString&, SyntaxHighlighter* highlighter);
+	virtual void ignoreSpelling(const QString &word, SyntaxHighlighter* highlighter);
+	virtual bool learnSpelling(const QString&);
+	virtual QList<QtTextRange> spellingErrorIndexes(const QString& text, SyntaxHighlighter* highlighter, int cursorPositionInCurrentBlock, bool* needRehighlight, int blockCount);
 
 protected:
 	SpellChecker();
 	virtual ~SpellChecker();
+
+	QList<QtTextRange> splitTextIntoWords(const QString& text, bool* needRehighlight, int cursorPositionInCurrentBlock) const;
 
 private:
 	static SpellChecker* instance_;

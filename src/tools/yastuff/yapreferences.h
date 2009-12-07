@@ -73,6 +73,7 @@ private slots:
 	void changeChatFontFamily(const QFont &);
 	void changeChatFontSize(const QString &);
 	void getChatPreferences();
+	QString getChatAccounts();
 	void showLocalHistory();
 
 protected slots:

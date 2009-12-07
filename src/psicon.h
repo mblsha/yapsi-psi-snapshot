@@ -160,7 +160,7 @@ signals:
 	void restoringSavedChatsChanged();
 
 public slots:
-	void setGlobalStatus(const Status &, bool withPriority = false);
+	void setGlobalStatus(const Status &, bool withPriority = false, bool isManualStatus = false);
 	void doToolbars();
 	void checkAccountsEmpty();
 
@@ -180,7 +180,7 @@ public slots:
 	void slotApplyOptions();
 	void queueChanged();
 	void recvNextEvent();
-	void setStatusFromDialog(const XMPP::Status &, bool withPriority);
+	void setStatusFromDialog(const XMPP::Status &, bool withPriority, bool isManualStatus);
 	void proxy_settingsChanged();
 	void updateMainwinStatus();
 	void doOpenUri(const QUrl &uri);

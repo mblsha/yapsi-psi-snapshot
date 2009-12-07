@@ -41,6 +41,8 @@ public:
 	// reimplemented
 	virtual const YaWindowTheme& theme() const;
 
+	virtual XMPP::Status::Type statusType() const = 0;
+
 protected:
 	PsiCon* controller() const;
 	virtual void paint(QPainter* p);
@@ -55,9 +57,11 @@ protected:
 #ifdef YAPSI_ACTIVEX_SERVER
 	virtual void interactiveOperationStarted();
 	virtual void interactiveOperationFinished();
+	virtual bool interactiveOperationEnabled() const;
 	virtual void invalidateMask();
 	virtual bool showAsActiveWindow() const;
 	virtual void setYaMaximized(bool maximized);
+	virtual bool enableTopLeftBorderResize() const;
 #endif
 
 #ifdef YAPSI_ACTIVEX_SERVER
@@ -78,9 +82,12 @@ protected:
 #endif
 
 public slots:
+	void doBringToFront();
 #ifdef YAPSI_ACTIVEX_SERVER
 	void hideOnline();
 #endif
+
+	virtual void decorateButton(int);
 
 protected slots:
 	virtual void setWindowVisible(bool visible);
@@ -135,6 +142,8 @@ private:
 	bool initialShow_;
 	bool showingSidebarWithoutRaise_;
 	QTimer* afterWindowMovedTimer_;
+	QTimer* showOnlineWithoutAnimationTimer_;
+	QTimer* showOnlineAfterDesktopResizeTimer_;
 
 	int onlineWinId_;
 	QRect onlineOldGeometry_;

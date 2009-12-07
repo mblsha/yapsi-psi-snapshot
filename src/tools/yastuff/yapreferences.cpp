@@ -314,6 +314,7 @@ void YaPreferences::setController(PsiCon* controller)
 	connect(controller_->yaOnline(), SIGNAL(doApplyImmediatePreferences(const QString&)), SLOT(applyImmediatePreferences(const QString&)));
 	connect(controller_->yaOnline(), SIGNAL(doApplyPreferences(const QString&)), SLOT(applyPreferences(const QString&)));
 	connect(controller_->yaOnline(), SIGNAL(doGetChatPreferences()), SLOT(getChatPreferences()));
+	connect(controller_->yaOnline(), SIGNAL(doGetChatAccounts()), SLOT(getChatAccounts()));
 #endif
 
 	ui_.yaOnlinePreferences->hide();
@@ -844,9 +845,17 @@ void YaPreferences::getChatPreferences()
 	accountsPage_->setSendModelUpdates(true);
 	controller_->yaOnline()->setPreferences(getPreferencesXml());
 
-	QDomDocument accountsDoc = accountsPage_->getAccountsXml();
-	controller_->yaOnline()->setAccounts(accountsDoc.toString());
+	controller_->yaOnline()->setAccounts(getChatAccounts());
 #endif
+}
+
+QString YaPreferences::getChatAccounts()
+{
+#ifdef YAPSI_ACTIVEX_SERVER
+	QDomDocument accountsDoc = accountsPage_->getAccountsXml();
+	return accountsDoc.toString();
+#endif
+	return QString();
 }
 
 void YaPreferences::forceVisible()

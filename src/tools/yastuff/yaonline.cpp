@@ -34,6 +34,7 @@
 
 #include <windows.h>
 #include <tlhelp32.h>
+#include <sddl.h>
 
 #include "dummystream.h"
 #include "psiaccount.h"
@@ -89,6 +90,7 @@ YaOnline::YaOnline(YaPsiServer* parent)
 	, lastStatus_(XMPP::Status::Online)
 	, onlineAccountDnd_(false)
 	, onlineAccountConnected_(false)
+	, canConnectConnections_(false)
 	, useSsl_(true)
 	, onlinePasswordVerified_(false)
 	, doStartActions_(false)
@@ -130,6 +132,7 @@ YaOnline::YaOnline(YaPsiServer* parent)
 	// connect(parent, SIGNAL(doOnlineConnected()), SLOT(doOnlineConnected()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(showPreferences()), SIGNAL(showYapsiPreferences()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doGetChatPreferences()), SIGNAL(doGetChatPreferences()), Qt::QueuedConnection);
+	connect(parent, SIGNAL(doGetChatAccounts()), SIGNAL(doGetChatAccounts()), Qt::DirectConnection);
 	connect(parent, SIGNAL(doStopAccountUpdates()), SIGNAL(doStopAccountUpdates()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doApplyPreferences(const QString&)), SIGNAL(doApplyPreferences(const QString&)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doApplyImmediatePreferences(const QString&)), SIGNAL(doApplyImmediatePreferences(const QString&)), Qt::QueuedConnection);
@@ -143,6 +146,7 @@ YaOnline::YaOnline(YaPsiServer* parent)
 	connect(parent, SIGNAL(doJDisconnect()), SLOT(doJDisconnect()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doJSendRaw(const QString&)), SLOT(doJSendRaw(const QString&)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doJSetPresence(const QString&)), SLOT(doJSetPresence(const QString&)), Qt::QueuedConnection);
+	connect(parent, SIGNAL(doJSetCanConnectConnections(bool)), SLOT(doJSetCanConnectConnections(bool)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doOnlineHiding()), SIGNAL(doOnlineHiding()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doOnlineVisible()), SIGNAL(doOnlineVisible()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doOnlineCreated(int)), SIGNAL(doOnlineCreated(int)), Qt::QueuedConnection);
@@ -580,7 +584,7 @@ static QVariantMap toasterParams(const QString& type, PsiAccount* account, const
 void YaOnline::showToaster(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& message, const QDateTime& timeStamp, const QString& callbackId)
 {
 	QVariantMap map = toasterParams(type, account, jid, message, timeStamp, callbackId);
-	map["gender"] = Ya::VisualUtil::contactGender(account, jid);
+	map["gender"] = Ya::VisualUtil::contactGenderString(account, jid);
 
 	QString json = CuteJson::variantToJson(map);
 	server_->dynamicCall("showToaster(const QString&)", json);
@@ -589,6 +593,8 @@ void YaOnline::showToaster(const QString& type, PsiAccount* account, const XMPP:
 void YaOnline::notify(int id, PsiEvent* event)
 {
 	if (!controller_)
+		return;
+	if (!doStartActions_)
 		return;
 
 	// event->setShownInOnline(true);
@@ -613,7 +619,7 @@ void YaOnline::notify(int id, PsiEvent* event)
 		                                QString(),
 		                                QDateTime::currentDateTime(),
 		                                yaOnlineNotifyMid(id, event));
-		map["gender"] = Ya::VisualUtil::contactGender(event->account(), event->from());
+		map["gender"] = Ya::VisualUtil::contactGenderString(event->account(), event->from());
 
 		QString json = CuteJson::variantToJson(map);
 		server_->dynamicCall("authRequest(const QString&)", json);
@@ -692,6 +698,37 @@ void YaOnline::ipcMessage(const QString& message)
 	}
 }
 
+static QString getPSIDFromProcessId(DWORD process_id) {
+	QString result = 0;
+
+	HANDLE process_handle = OpenProcess(PROCESS_DUP_HANDLE, FALSE, process_id);
+	if(process_handle) {
+		HANDLE process_token;
+		if(OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &process_token)) {
+			DWORD cb_info = 0;
+			if(!GetTokenInformation(process_token, TokenOwner, 0, 0, &cb_info) &&
+			   ERROR_INSUFFICIENT_BUFFER == GetLastError())
+			{
+				TOKEN_OWNER* pto = (TOKEN_OWNER*)malloc(cb_info);
+				if(GetTokenInformation(process_token, TokenOwner, pto, cb_info, &cb_info)) {
+					char* string_sid = 0;
+					if(ConvertSidToStringSidA(pto->Owner, &string_sid)) {
+						result = string_sid;
+						LocalFree(string_sid);
+					}
+				}
+				free(pto);
+			}
+
+			CloseHandle(process_token);
+		}
+
+		CloseHandle(process_handle);
+	}
+
+	return result;
+}
+
 static bool processIsRunning(const QString& processName)
 {
 	bool processFound = false;
@@ -709,8 +746,12 @@ static bool processIsRunning(const QString& processName)
 	while (result) {
 		QString exeFile = QString::fromWCharArray(pe.szExeFile);
 		if (processName.toLower() == exeFile.toLower()) {
-			processFound = true;
-			break;
+			QString self_owner = getPSIDFromProcessId(GetCurrentProcessId());
+			QString process_owner = getPSIDFromProcessId(pe.th32ProcessID);
+			if(self_owner == process_owner) {
+				processFound = true;
+				break;
+			}
 		}
 		result = Process32Next(snapshot, &pe);
 	}
@@ -720,7 +761,6 @@ static bool processIsRunning(const QString& processName)
 
 bool YaOnline::onlineIsRunning()
 {
-	return true;
 	return processIsRunning("online.exe");
 }
 
@@ -876,7 +916,8 @@ void YaOnline::doSoundsChanged()
 
 void YaOnline::doQuit()
 {
-	doHideSidebar();
+	// ONLINE-2530
+	// doHideSidebar();
 	server_->doQuit();
 }
 
@@ -927,7 +968,7 @@ void YaOnline::setDND(bool isDND)
 	server_->dynamicCall("setDND(bool)", isDND);
 }
 
-void YaOnline::setStatus(XMPP::Status::Type statusType)
+static QString statusTypeToString(XMPP::Status::Type statusType)
 {
 	QString statusName;
 	if (statusType == XMPP::Status::DND)
@@ -936,8 +977,17 @@ void YaOnline::setStatus(XMPP::Status::Type statusType)
 		statusName = "away";
 	else
 		statusName = "online";
+	return statusName;
+}
 
-	server_->dynamicCall("setStatus(const QString&)", statusName);
+void YaOnline::setStatus(XMPP::Status::Type statusType)
+{
+	server_->dynamicCall("setStatus(const QString&)", statusTypeToString(statusType));
+}
+
+void YaOnline::setCurrentlyVisibleStatus(XMPP::Status::Type statusType)
+{
+	server_->dynamicCall("setCurrentlyVisibleStatus(const QString&)", statusTypeToString(statusType));
 }
 
 // void YaOnline::doPlaySound(const QString& type)
@@ -1182,7 +1232,7 @@ static QVariantMap contactParams(const QString& id, PsiAccount* account, const X
 	map["enable_history"] = Ya::historyAvailable(account, jid);
 	map["enable_profile"] = Ya::isYaJid(jid);
 	map["enable_block"] = contact ? (contact->blockAvailable() && !contact->isBlocked()) : false;
-	map["gender"] = Ya::VisualUtil::contactGender(account, jid);
+	map["gender"] = Ya::VisualUtil::contactGenderString(account, jid);
 	map["show_mood_changes"] = contact ? contact->moodNotificationsEnabled() : false;
 
 	bool stubTextWasUsed;
@@ -1293,7 +1343,9 @@ void YaOnline::doJConnect(bool useSsl, const QString& pemPath)
 void YaOnline::doJDisconnect()
 {
 	LOG_TRACE;
-	doSetOfflineMode();
+	if (onlineAccount() && onlineAccount()->isActive()) {
+		onlineAccount()->forceDisconnect();
+	}
 }
 
 void YaOnline::doJSendRaw(const QString& xml)
@@ -1310,18 +1362,25 @@ void YaOnline::doJSetPresence(const QString& type)
 	doSetStatus(type);
 }
 
-void YaOnline::jabberNotify(const QString& type, const QString& param1, const QString& param2)
+void YaOnline::doJSetCanConnectConnections(bool canConnectConnections)
 {
-	if (type == "online") {
-		onlinePasswordVerified_ = true;
-
+	bool changed = canConnectConnections_ != canConnectConnections;
+	canConnectConnections_ = canConnectConnections;
+	if (changed) {
 		foreach(PsiAccount* account, controller_->contactList()->enabledAccounts()) {
+			QString jid = account->jid().full();
 			if (account != onlineAccount()) {
-				account->autoLogin();
+				if (canConnectConnections)
+					account->autoLogin();
+				else
+					account->forceDisconnect();
 			}
 		}
 	}
+}
 
+void YaOnline::jabberNotify(const QString& type, const QString& param1, const QString& param2)
+{
 	server_->dynamicCall("jabberNotify(const QString&, const QString&, const QString&)", type, param1, param2);
 }
 
@@ -1337,7 +1396,7 @@ QString YaOnline::sslPemPath() const
 
 bool YaOnline::onlinePasswordVerified() const
 {
-	return onlinePasswordVerified_;
+	return canConnectConnections_;
 }
 
 void YaOnline::doStartActions()
@@ -1631,7 +1690,7 @@ void YaOnline::vcardChanged(const Jid& jid)
 	if (onlineAccount() && onlineAccount()->jid().compare(jid, false)) {
 		const XMPP::VCard* vcard = VCardFactory::instance()->vcard(jid);
 		if (vcard) {
-			server_->dynamicCall("selfGenderChanged(const QString&)", Ya::VisualUtil::contactGender(vcard->gender()));
+			server_->dynamicCall("selfGenderChanged(const QString&)", Ya::VisualUtil::contactGenderString(vcard->gender()));
 		}
 	}
 }

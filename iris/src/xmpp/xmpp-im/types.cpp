@@ -924,6 +924,7 @@ public:
 	int spamFlag;
 	QString twin;
 	QString yaMessageId;
+	int yaFlags;
 #endif
 
 	QList<int> mucStatuses;
@@ -956,6 +957,7 @@ Message::Message(const Jid &to)
 	d->messageReceipt = ReceiptNone;
 #ifdef YAPSI
 	d->spamFlag = 0;
+	d->yaFlags = 0;
 #endif
 }
 
@@ -1452,6 +1454,16 @@ void XMPP::Message::setYaMessageId(const QString& yaMessageId)
 {
 	d->yaMessageId = yaMessageId;
 }
+
+int XMPP::Message::yaFlags() const
+{
+	return d->yaFlags;
+}
+
+void XMPP::Message::setYaFlags(int flags)
+{
+	d->yaFlags = flags;
+}
 #endif
 
 const QDomElement& XMPP::Message::getExtension(const QString& ns) const
@@ -1704,6 +1716,7 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 	d->thread = QString();
 
 	QDomElement root = s.element();
+	QList<QDomElement> toDeleteList;
 
 	XDomNodeList nl = root.childNodes();
 	int n;
@@ -1729,7 +1742,9 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				}
 
 				if (removeNode) {
-					XMLHelper::removeNodes(root, e);
+					// we can't direct elements here, because otherwise
+					// nl.count() would change and we'll skip through some elements
+					toDeleteList << e;
 				}
 			}
 			else if(e.tagName() == "event" && e.namespaceURI() == "http://jabber.org/protocol/pubsub#event") {
@@ -1759,6 +1774,10 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 				//printf("extension element: [%s]\n", e.tagName().latin1());
 			}
 		}
+	}
+
+	foreach(const QDomElement& e, toDeleteList) {
+		XMLHelper::removeNodes(root, e);
 	}
 
 	if(s.type() == "error")

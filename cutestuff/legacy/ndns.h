@@ -66,8 +66,8 @@ public:
 	class Item;
 
 //! \if _hide_doc_
-protected:
-	bool event(QEvent *);
+protected slots:
+	void workerFinished();
 //! \endif
 
 private slots:

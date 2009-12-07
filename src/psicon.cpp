@@ -62,7 +62,9 @@
 #include "mucjoindlg.h"
 #include "userlist.h"
 #include "eventdlg.h"
+#ifdef HAVE_PGPUTIL
 #include "pgputil.h"
+#endif
 #include "eventdb.h"
 #include "proxy.h"
 #ifdef PSIMNG
@@ -397,7 +399,6 @@ public:
 	PsiContactList* contactList;
 	OptionsMigration optionsMigration;
 	OptionsTree accountTree;
-	QString lastStatusString;
 #ifdef YAPSI
 	YaMainWin* mainwin;
 #else
@@ -512,8 +513,10 @@ bool PsiCon::init()
 
 	connect(qApp, SIGNAL(forceSavePreferences()), SLOT(forceSavePreferences()));
 
+#ifdef HAVE_PGPUTIL
 	// PGP initialization (needs to be before any gpg usage!)
 	PGPUtil::instance();
+#endif
 
 	d->contactList = new PsiContactList(this);
 
@@ -851,7 +854,6 @@ bool PsiCon::init()
 #ifdef YAPSI
 	yaHistoryCacheManager_ = new YaHistoryCacheManager(this);
 	yaUnreadMessagesManager_ = new YaUnreadMessagesManager(this);
-	connect(&d->idle, SIGNAL(secondsIdle(int)), yaUnreadMessagesManager_, SLOT(secondsIdle(int)));
 #endif
 
 #ifndef YAPSI
@@ -1270,18 +1272,19 @@ QString PsiCon::currentStatusMessage() const
 		return QString();
 	return d->mainwin->statusMessage();
 #else
-	// return PsiOptions::instance()->getOption("options.status.last-message").toString();
-	return d->lastStatusString;
+	return PsiOptions::instance()->getOption("options.status.last-message").toString();
 #endif
 }
 
-void PsiCon::setStatusFromDialog(const XMPP::Status &s, bool withPriority)
+void PsiCon::setStatusFromDialog(const XMPP::Status &s, bool withPriority, bool isManualStatus)
 {
-	PsiOptions::instance()->setOption("options.status.last-message", s.status());
-	setGlobalStatus(s, withPriority);
+	if (isManualStatus) {
+		PsiOptions::instance()->setOption("options.status.last-message", s.status());
+	}
+	setGlobalStatus(s, withPriority, isManualStatus);
 }
 
-void PsiCon::setGlobalStatus(const Status &s,  bool withPriority)
+void PsiCon::setGlobalStatus(const Status &s, bool withPriority, bool isManualStatus)
 {
 	PsiLogger::instance()->log(QString("%1 PsiCon()::setGlobalStatus(%3, %4)").arg(LOG_THIS)
 	                           .arg(s.type())
@@ -1289,17 +1292,19 @@ void PsiCon::setGlobalStatus(const Status &s,  bool withPriority)
 
 	// Check whether all accounts are logged off
 	bool allOffline = true;
+#ifndef YAPSI
 	foreach(PsiAccount* account, d->contactList->enabledAccounts()) {
 		if ( account->isActive() ) {
 			allOffline = false;
 			break;
 		}
 	}
+#endif
 
 	// globally set each account which is logged in
 	foreach(PsiAccount* account, d->contactList->enabledAccounts())
 		if (allOffline || account->isActive())
-			account->setStatus(s, withPriority);
+			account->setStatus(s, withPriority, isManualStatus);
 }
 
 void PsiCon::pa_updatedActivity()
@@ -1750,6 +1755,7 @@ void PsiCon::processEvent(PsiEvent *e, ActivationType activationType)
 		MessageEvent *me = (MessageEvent *)e;
 		const Message &m = me->message();
 		bool emptyForm = m.getForm().fields().empty();
+		// FIXME: Refactor this, PsiAccount and PsiEvent out
 		if ((m.type() == "chat" && emptyForm)
 		    || !EventDlg::messagingEnabled()) {
 			isChat = true;

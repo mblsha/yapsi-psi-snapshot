@@ -47,7 +47,7 @@ protected:
 	virtual QRect groupNameRect(const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	virtual QRect editorRect(const QRect& nameRect) const;
 
-	virtual const QPixmap& statusPixmap(const QModelIndex& index) const;
+	virtual QPixmap statusPixmap(const QModelIndex& index) const;
 
 private slots:
 	void optionChanged(const QString& option);

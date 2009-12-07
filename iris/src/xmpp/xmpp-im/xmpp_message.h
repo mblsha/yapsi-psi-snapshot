@@ -172,6 +172,9 @@ namespace XMPP {
 
 		QString yaMessageId() const;
 		void setYaMessageId(const QString& yaMessageId);
+
+		int yaFlags() const;
+		void setYaFlags(int flags);
 #endif
 
 		const QDomElement& getExtension(const QString& ns) const;

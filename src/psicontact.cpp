@@ -264,6 +264,11 @@ const QString& PsiContact::name() const
 	return d->name_;
 }
 
+QString PsiContact::comparisonName() const
+{
+	return name() + jid().full() + account()->name();
+}
+
 #ifdef YAPSI
 XMPP::VCard::Gender PsiContact::gender() const
 {
@@ -751,6 +756,11 @@ bool PsiContact::isYaJid()
 	return Ya::isYaJid(jid().full());
 }
 
+bool PsiContact::isYandexTeamJid()
+{
+	return Ya::isYandexTeamJid(jid().full());
+}
+
 YaProfile PsiContact::getYaProfile() const
 {
 	return YaProfile(account(), jid());
@@ -758,7 +768,7 @@ YaProfile PsiContact::getYaProfile() const
 
 void PsiContact::yaProfile()
 {
-	if (!account() || !isYaJid())
+	if (!account() || !(isYaJid() || isYandexTeamJid()))
 		return;
 	getYaProfile().browse();
 }
@@ -853,6 +863,11 @@ void PsiContact::avatarChanged(const Jid& j)
 	emit updated();
 }
 
+void PsiContact::rereadVCard()
+{
+	vcardChanged(jid());
+}
+
 void PsiContact::vcardChanged(const Jid& j)
 {
 	if (!j.compare(jid(), false))
@@ -895,7 +910,7 @@ bool PsiContact::compare(const ContactListItem* other) const
 	if (contact) {
 		int rank = rankStatus(d->oldStatus_.type()) - rankStatus(contact->d->oldStatus_.type());
 		if (rank == 0)
-			rank = QString::localeAwareCompare(name().lower(), contact->name().lower());
+			rank = QString::localeAwareCompare(comparisonName().lower(), contact->comparisonName().lower());
 		return rank < 0;
 	}
 
