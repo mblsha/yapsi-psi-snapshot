@@ -1196,35 +1196,35 @@ void PsiCon::statusMenuChanged(int x)
 {
 #ifndef YAPSI
 	if(x == STATUS_OFFLINE && !PsiOptions::instance()->getOption("options.status.ask-for-message-on-offline").toBool()) {
-		setGlobalStatus(Status(Status::Offline, "Logged out", 0));
+		setGlobalStatus(Status(Status::Offline, "Logged out", 0), false, true);
 		if(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() == true)
 			d->mainwin->setTrayToolTip(Status(Status::Offline, "", 0));
 	}
 	else {
 		if(x == STATUS_ONLINE && !PsiOptions::instance()->getOption("options.status.ask-for-message-on-online").toBool()) {
-			setGlobalStatus(Status());
+			setGlobalStatus(Status(), false, true);
 			if(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() == true)
 				d->mainwin->setTrayToolTip(Status());
 		}
 		else if(x == STATUS_INVISIBLE){
 			Status s("","",0,true);
 			s.setIsInvisible(true);
-			setGlobalStatus(s);
+			setGlobalStatus(s, false, true);
 			if(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() == true)
 				d->mainwin->setTrayToolTip(s);
 		}
 		else {
 			// Create a dialog with the last status message
 			StatusSetDlg *w = new StatusSetDlg(this, makeStatus(x, currentStatusMessage()));
-			connect(w, SIGNAL(set(const XMPP::Status &, bool)), SLOT(setStatusFromDialog(const XMPP::Status &, bool)));
+			connect(w, SIGNAL(set(const XMPP::Status &, bool, bool)), SLOT(setStatusFromDialog(const XMPP::Status &, bool, bool)));
 			connect(w, SIGNAL(cancelled()), SLOT(updateMainwinStatus()));
 			if(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() == true)
-				connect(w, SIGNAL(set(const XMPP::Status &, bool)), d->mainwin, SLOT(setTrayToolTip(const XMPP::Status &, bool)));
+				connect(w, SIGNAL(set(const XMPP::Status &, bool, bool)), d->mainwin, SLOT(setTrayToolTip(const XMPP::Status &, bool, bool)));
 			w->show();
 		}
 	}
 #else
-	setGlobalStatus(makeStatus(x, currentStatusMessage()));
+	setGlobalStatus(makeStatus(x, currentStatusMessage()), false, true);
 #endif
 }
 

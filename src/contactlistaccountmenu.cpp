@@ -190,7 +190,7 @@ private slots:
 		if (!account)
 			return;
 
-		account->account()->setStatus(statusType);
+		account->account()->changeStatus(static_cast<int>(statusType));
 	}
 
 	void setMood()

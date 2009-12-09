@@ -161,7 +161,7 @@ public slots:
 	void updateReadNext(PsiIcon *nextAnim, int nextAmount);
 
 	void optionsUpdate();
-	void setTrayToolTip(const XMPP::Status &, bool usePriority = false);
+	void setTrayToolTip(const XMPP::Status &, bool usePriority = false, bool isManualStatus = false);
 
 	void toggleVisible();
 

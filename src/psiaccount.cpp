@@ -1917,8 +1917,10 @@ void PsiAccount::autoLogin()
 		if (autoLogin) {
 			PsiLogger::instance()->log(QString("%1 PsiAccount(%2)::autoLogin() ... setStatus").arg(LOG_THIS)
 			                           .arg(name()));
+
 #ifndef YAPSI
-			setStatus(Status(Status::Online, "", d->acc.priority));
+			// FIXME: we should remember last used status
+			setStatus(Status(Status::Online, "", d->acc.priority), false, true);
 #else
 			setStatus(Status(d->psi->lastLoggedInStatusType(), d->psi->currentStatusMessage(), d->acc.priority), false, true);
 #endif
@@ -4403,23 +4405,23 @@ void PsiAccount::changeStatus(int x)
 	                           .arg(name())
 	                           .arg(x));
 #ifdef YAPSI
-	setStatus(Status(static_cast<XMPP::Status::Type>(x), d->psi->currentStatusMessage()));
+	setStatus(Status(static_cast<XMPP::Status::Type>(x), d->psi->currentStatusMessage()), false, true);
 #else
 	if(x == STATUS_OFFLINE && !PsiOptions::instance()->getOption("options.status.ask-for-message-on-offline").toBool()) {
-		setStatus(loggedOutStatus());
+		setStatus(loggedOutStatus(), false, true);
 	}
 	else {
 		if(x == STATUS_ONLINE && !PsiOptions::instance()->getOption("options.status.ask-for-message-on-online").toBool()) {
-			setStatus(Status());
+			setStatus(Status(), false, true);
 		}
 		else if(x == STATUS_INVISIBLE){
 			Status s("","",0,true);
 			s.setIsInvisible(true);
-			setStatus(s);
+			setStatus(s, false, true);
 		}
 		else {
 			StatusSetDlg *w = new StatusSetDlg(this, makeStatus(x, ""));
-			connect(w, SIGNAL(set(const XMPP::Status &, bool)), SLOT(setStatus(const XMPP::Status &, bool)));
+			connect(w, SIGNAL(set(const XMPP::Status &, bool, bool)), SLOT(setStatus(const XMPP::Status &, bool, bool)));
 			w->show();
 		}
 	}
@@ -6949,49 +6951,6 @@ void PsiAccount::setExpandedState(QString name, bool expanded)
 	gd.rank = 0;
 	d->acc.groupState.insert(name, gd);
 }
-
-/*
-bool PsiAccount::expanded() const
-{
-	return getExpandedState("/\\/" + name() + "\\/\\");
-}
-
-void PsiAccount::setExpanded(bool expanded)
-{
-	setExpandedState("/\\/" + name() + "\\/\\", expanded);
-}
-
-bool PsiAccount::shouldBeVisible() const
-{
-	return enabled();
-}
-
-ContactListGroupItem* PsiAccount::desiredParent() const
-{
-	return defaultParent();
-}
-
-ContactListItemMenu* PsiAccount::contextMenu()
-{
-	return new PsiAccountMenu(this);
-}
-
-QString PsiAccount::toolTip() const
-{
-	if (!d->selfContact)
-		return QString();
-	return "<qt><center><b>" + name() + " " + groupInfo() + "</b></center> " + d->selfContact->toolTip() + "</qt>";
-}
-
-bool PsiAccount::compare(const ContactListItem* other) const
-{
-	const PsiAccount* account = dynamic_cast<const PsiAccount*>(other);
-	if (account)
-		return name() < account->name();
-
-	return ContactListGroupItem::compare(other);
-}
-*/
 
 bool PsiAccount::usingSecurityLayer() const
 {

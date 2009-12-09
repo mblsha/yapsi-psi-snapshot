@@ -264,7 +264,7 @@ signals:
 	void startBounce();
 
 public slots:
-	void setStatus(const XMPP::Status &, bool withStatus = false, bool isManualStatus = false);
+	void setStatus(const XMPP::Status &, bool withPriority = false, bool isManualStatus = false);
 
 	void capsChanged(const Jid&);
 	void tuneStopped();

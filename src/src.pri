@@ -470,7 +470,6 @@ newcontactlist {
 		$$PWD/contactlistaccountmenu.h \
 		$$PWD/contactlistitem.h \
 		$$PWD/contactlistitemmenu.h \
-		$$PWD/psiaccountmenu.h \
 		$$PWD/contactlistutil.h \
 		$$PWD/contactlistitemproxy.h
 
@@ -497,7 +496,6 @@ newcontactlist {
 		$$PWD/contactlistaccountmenu.cpp \
 		$$PWD/contactlistitem.cpp \
 		$$PWD/contactlistitemmenu.cpp \
-		$$PWD/psiaccountmenu.cpp \
 		$$PWD/contactlistutil.cpp \
 		$$PWD/contactlistitemproxy.cpp
 

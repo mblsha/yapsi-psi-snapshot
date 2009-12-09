@@ -1239,7 +1239,7 @@ void MainWin::toggleVisible()
 	}
 }
 
-void MainWin::setTrayToolTip(const Status& status, bool)
+void MainWin::setTrayToolTip(const Status& status, bool, bool)
 {
 	if (!d->tray) {
 		return;
