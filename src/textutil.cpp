@@ -557,6 +557,9 @@ QString TextUtil::emoticonify(const QString &in)
 
 QString TextUtil::legacyFormat(const QString& in)
 {
+	if (!PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool())
+		return in;
+
 	//enable *bold* stuff
 	// //old code
 	//out=out.replace(QRegExp("(^[^<>\\s]*|\\s[^<>\\s]*)\\*(\\S+)\\*([^<>\\s]*\\s|[^<>\\s]*$)"),"\\1<b>*\\2*</b>\\3");

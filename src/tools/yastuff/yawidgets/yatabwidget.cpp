@@ -189,7 +189,8 @@ YaTabWidget::YaTabWidget(QWidget* parent)
 	for (int i = 0; i < 10; ++i) {
 		QAction* action = new QAction(this);
 		connect(action, SIGNAL(triggered()), activateTabMapper_, SLOT(map()));
-		action->setShortcut(QKeySequence(QString("Ctrl+%1").arg(i)));
+		action->setShortcuts(QList<QKeySequence>() << QKeySequence(QString("Ctrl+%1").arg(i))
+		                                           << QKeySequence(QString("Alt+%1").arg(i)));
 		activateTabMapper_->setMapping(action, (i > 0 ? i : 10) - 1);
 		addAction(action);
 	}

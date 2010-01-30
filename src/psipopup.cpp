@@ -354,10 +354,8 @@ void PsiPopup::setData(const Jid &j, const Resource &r, const UserListItem *u, c
 		name = "<nobr>&lt;" + Qt::escape(jid) + "&gt;</nobr>";
 
 	QString statusString = TextUtil::plain2rich(status);
-	if ( PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool() )
-		statusString = TextUtil::emoticonify(statusString);
-	if( PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool() )
-		statusString = TextUtil::legacyFormat(statusString);
+	statusString = TextUtil::emoticonify(statusString);
+	statusString = TextUtil::legacyFormat(statusString);
 
 	if ( !statusString.isEmpty() )
 		statusString = "<br>" + statusString;

@@ -1594,10 +1594,8 @@ void GCMainDlg::appendMessage(const Message &m, bool alert)
 
 	txt = TextUtil::linkify(txt);
 
-	if(PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool())
-		txt = TextUtil::emoticonify(txt);
-	if( PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool() )
-		txt = TextUtil::legacyFormat(txt);
+	txt = TextUtil::emoticonify(txt);
+	txt = TextUtil::legacyFormat(txt);
 
 	if(emote) {
 		//ui_.log->append(QString("<font color=\"%1\">").arg(color) + QString("[%1]").arg(timestr) + QString(" *%1 ").arg(Qt::escape(who)) + txt + "</font>");

@@ -517,12 +517,8 @@ void ChatDlg::updateContact(const Jid &j, bool fromPresence)
 				QString msg = tr("%1 is %2").arg(Qt::escape(dispNick_)).arg(status2txt(status_));
 				if (!statusString_.isEmpty()) {
 					QString ss = TextUtil::linkify(TextUtil::plain2rich(statusString_));
-					if (PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool()) {
-						ss = TextUtil::emoticonify(ss);
-					}
-					if (PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool()) {
-						ss = TextUtil::legacyFormat(ss);
-					}
+					ss = TextUtil::emoticonify(ss);
+					ss = TextUtil::legacyFormat(ss);
 					msg += QString(" [%1]").arg(ss);
 				}
 #ifndef YAPSI
@@ -1194,10 +1190,7 @@ QString ChatDlg::messageText(const QString& text, bool isEmote, bool isHtml)
 	}
 
 	txt = TextUtil::emoticonify(txt);
-	if (PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool())
-		txt = TextUtil::emoticonify(txt);
-	if (PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool())
-		txt = TextUtil::legacyFormat(txt);
+	txt = TextUtil::legacyFormat(txt);
 
 	return txt;
 }

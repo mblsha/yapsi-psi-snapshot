@@ -1870,11 +1870,9 @@ void EventDlg::updateEvent(PsiEvent *e)
 			txt = "<p><font color=\"red\"><b>" + tr("Subject:") + " " + TextUtil::plain2rich(m.subject()) + "</b></font></p>" + (xhtml? "" : "<br>") + txt;
 
 		if (!xhtml) {
-			if(PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool())
-				txt = TextUtil::emoticonify(txt);
-			if( PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool() )
-				txt = TextUtil::legacyFormat(txt);
 			txt = TextUtil::linkify(txt);
+			txt = TextUtil::emoticonify(txt);
+			txt = TextUtil::legacyFormat(txt);
 		}
 
 		if ( e->type() == PsiEvent::HttpAuth )

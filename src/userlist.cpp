@@ -581,10 +581,8 @@ QString UserListItem::makeBareTip(bool trim, bool doLinkify) const
 					s = TextUtil::plain2rich(s);
 				if ( doLinkify )
 					s = TextUtil::linkify(s);
-				if( PsiOptions::instance()->getOption("options.ui.emoticons.use-emoticons").toBool() && !doLinkify )
-					s = TextUtil::emoticonify(s);
-				if( !doLinkify && PsiOptions::instance()->getOption("options.ui.chat.legacy-formatting").toBool() )
-					s = TextUtil::legacyFormat(s);
+				s = TextUtil::emoticonify(s);
+				s = TextUtil::legacyFormat(s);
 				str += QString("<div style='white-space:pre'><u>%1</u></div><div>%2</div>").arg(head).arg(s);
 			}
 		}
