@@ -63,7 +63,7 @@ signals:
 	void doToasterDone(const QString& id);
 	void doShowIgnoredToasters();
 	void doScreenUnlocked();
-	// void doPlaySound(const QString& type);
+	void doPlaySound(const QString& type);
 	void clearMoods();
 	void doAuthAccept(const QString& id);
 	void doAuthDecline(const QString& id);
@@ -122,7 +122,7 @@ public slots:
 	void soundsChanged();
 	// void onlineConnected();
 	// void onlineDisconnected();
-	// void playSound(const QString& type);
+	void playSound(const QString& type);
 
 	void showText(const QString& text);
 	void setOnlineObject(IDispatch* obj);

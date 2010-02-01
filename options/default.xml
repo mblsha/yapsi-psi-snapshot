@@ -34,6 +34,7 @@
 			</tune>
 		</extended-presence>
 		<muc comment="Multi-User Chat options">
+			<enabled comment="Enable multi-user chat functionality" type="bool">false</enabled>
 			<bookmarks comment="Options for bookmarked conference rooms">
 				<auto-join comment="Automatically join bookmarked conference rooms that are configured for auto-joining." type="bool">false</auto-join>
 			</bookmarks>
@@ -51,6 +52,7 @@
 				<jids type="QStringList" />
 				<maximum comment="The maximum number of recently joined rooms that should be remembered" type="int">10</maximum>
 			</recent-joins>
+			<reasons type="QStringList" />
 		</muc> 
 		<pgp comment="PGP encryption options">
 			<enable comment="Enable PGP globally" type="bool">true</enable>
@@ -102,6 +104,7 @@
 				<use-chat-says-style type="bool">false</use-chat-says-style>
 				<use-expanding-line-edit type="bool">true</use-expanding-line-edit>
 				<use-small-chats type="bool">false</use-small-chats>
+				<warn-before-clear type="bool">true</warn-before-clear>
 			</chat>
 			<contactlist comment="Contact list options">
 				<auto-delete-unlisted comment="Automatically remove an unlisted contact from the contact list if it does not have any pending messages anymore" type="bool">false</auto-delete-unlisted>
@@ -236,6 +239,11 @@
 							<item>Red</item>
 						</nick-colors>
 					</muc>
+					<messages comment="Message coloring.">
+						<received type="QColor" comment="Color used to indicate received messages.">#0000ff</received>
+						<sent type="QColor" comment="Color used to indicate sent messages.">#ff0000</sent>
+						<informational type="QColor" comment="Color used to indicate informational (status change, spooled) messages.">#008000</informational>
+					</messages>
 					<passive-popup>
 						<border type="QColor">#5297f9</border>
 					</passive-popup>
@@ -255,9 +263,6 @@
 					<passive-popup type="QString">Arial,10,-1,5,50,0,0,0,0,0</passive-popup>
 				</font>
 			</look>
-			<mac>
-				<use-brushed-metal-windows type="bool">false</use-brushed-metal-windows>
-			</mac>
 			<notifications>
 				<alert-style type="QString">animate</alert-style>
 				<bounce-dock type="QString">forever</bounce-dock>
@@ -455,6 +460,7 @@
 			<ask-for-message-on-online type="bool">false</ask-for-message-on-online>
 			<auto-away>
 				<away-after type="int">10</away-after>
+				<force-priority type="bool">false</force-priority>
 				<not-availible-after type="int">30</not-availible-after>
 				<offline-after type="int">0</offline-after>
 				<use-away type="bool">true</use-away>

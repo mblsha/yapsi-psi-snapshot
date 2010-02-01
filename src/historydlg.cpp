@@ -18,9 +18,14 @@
  *
  */
 
+#ifdef __GNUC__
+#warning "historydlg is still full of qt3support usage"
+#endif
+#undef QT3_SUPPORT_WARNINGS
+
 #include "historydlg.h"
 
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <q3header.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -129,7 +134,6 @@ public:
 };
 
 HistoryDlg::HistoryDlg(const Jid &jid, PsiAccount *pa)
-	: QWidget(0, 0)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
   	if ( PsiOptions::instance()->getOption("options.ui.mac.use-brushed-metal-windows").toBool() )
@@ -148,19 +152,23 @@ HistoryDlg::HistoryDlg(const Jid &jid, PsiAccount *pa)
 	d->h = new EDBHandle(d->pa->edb());
 	connect(d->h, SIGNAL(finished()), SLOT(edb_finished()));
 
-	QVBoxLayout *vb1 = new QVBoxLayout(this, 8);
+	QVBoxLayout *vb1 = new QVBoxLayout(this);
 	d->lv = new HistoryView(this);
 	d->lv->setVScrollBarMode(Q3ScrollView::AlwaysOn);
 	connect(d->lv, SIGNAL(aOpenEvent(PsiEvent *)), SLOT(actionOpenEvent(PsiEvent *)));
 	QSizePolicy sp = d->lv->sizePolicy();
-	sp.setVerStretch(1);
+	sp.setVerticalStretch(1);
 	d->lv->setSizePolicy(sp);
 	vb1->addWidget(d->lv);
 
-	QHBoxLayout *hb1 = new QHBoxLayout(vb1);
+	QHBoxLayout *hb1 = new QHBoxLayout;
+	vb1->addLayout(hb1);
 
-	QVBoxLayout *vb2 = new QVBoxLayout(hb1);
-	QHBoxLayout *hb2 = new QHBoxLayout(vb2);
+	QVBoxLayout *vb2 = new QVBoxLayout;
+	hb1->addLayout(vb2);
+
+	QHBoxLayout *hb2 = new QHBoxLayout;
+	vb2->addLayout(hb2);
 
 	//d->busy = new BusyWidget(this);
 	//hb1->addWidget(d->busy);
@@ -180,7 +188,8 @@ HistoryDlg::HistoryDlg(const Jid &jid, PsiAccount *pa)
 	connect(d->pb_next, SIGNAL(clicked()), SLOT(doNext()));
 	hb2->addWidget(d->pb_next);
 
-	QHBoxLayout *hb3 = new QHBoxLayout(vb2);
+	QHBoxLayout *hb3 = new QHBoxLayout;
+	vb2->addLayout(hb3);
 
 	d->le_find = new QLineEdit(this);
 	connect(d->le_find, SIGNAL(textChanged(const QString &)), SLOT(le_textChanged(const QString &)));
@@ -196,7 +205,9 @@ HistoryDlg::HistoryDlg(const Jid &jid, PsiAccount *pa)
 	sep->setFrameShape(QFrame::VLine);
 	hb1->addWidget(sep);
 
-	QVBoxLayout *vb3 = new QVBoxLayout(hb1);
+	QVBoxLayout *vb3 = new QVBoxLayout;
+	hb1->addLayout(vb3);
+
 	QPushButton *pb_save = new QPushButton(tr("&Export..."), this);
 	connect(pb_save, SIGNAL(clicked()), SLOT(doSave()));
 	vb3->addWidget(pb_save);
@@ -210,7 +221,8 @@ HistoryDlg::HistoryDlg(const Jid &jid, PsiAccount *pa)
 
 	hb1->addStretch(1);
 
-	QVBoxLayout *vb4 = new QVBoxLayout(hb1);
+	QVBoxLayout *vb4 = new QVBoxLayout;
+	hb1->addLayout(vb4);
 	vb4->addStretch(1);
 
 	QPushButton *pb_close = new QPushButton(tr("&Close"), this);
@@ -337,37 +349,14 @@ void HistoryDlg::displayResult(const EDBResult *r, int direction, int max)
 {
 	//d->lv->setUpdatesEnabled(false);
 	d->lv->clear();
-	Q3PtrListIterator<EDBItem> it(*r);
-	if(direction == EDB::Forward)
-		it.toLast();
+	int i = (direction == EDB::Forward) ? r->count()-1 : 0;
 	int at = 0;
-	for(EDBItem *i; (i = it.current()) && (max == -1 ? true : at < max);) {
-		PsiEvent *e = i->event();
-/*printf(" id=%s", i->id().latin1());
-if(i->prevId())
-	printf(", prevId=%s", i->prevId().latin1());
-if(i->nextId())
-	printf(", nextId=%s", i->nextId().latin1());
-printf("\n");
-if(e->type() == PsiEvent::Message) {
-	MessageEvent *me = (MessageEvent *)e;
-	printf(" body: [%s]\n", me->message().body().latin1());
-}
-else if(e->type() == PsiEvent::Auth) {
-	AuthEvent *ae = (AuthEvent *)e;
-	printf(" authType: [%s]\n", ae->authType().latin1());
-}
-else {
-	printf(" unknown event type\n");
-}
-printf("\n");*/
-
-		d->lv->addEvent(e, i->prevId());
+	while (i >= 0 && i <= r->count()-1 && (max == -1 ? true : at < max)) {
+		EDBItem* item = r->value(i);
+		PsiEvent* e = item->event();
+		d->lv->addEvent(e, item->prevId());
 		++at;
-		if(direction == EDB::Backward)
-			++it;
-		else
-			--it;
+		i += (direction == EDB::Forward) ? -1 : +1;
 	}
 	//d->lv->setUpdatesEnabled(true);
 	//d->lv->repaint(true);
@@ -379,35 +368,34 @@ void HistoryDlg::edb_finished()
 	if(d->h->lastRequestType() == EDBHandle::Read && r) {
 		//printf("EDB: retrieved %d events:\n", r->count());
 		if(r->count() > 0) {
-			Q3PtrListIterator<EDBItem> it(*r);
 			if(d->reqtype == 0 || d->reqtype == 1) {
 				// events are in backward order
 				// first entry is the end event
-				it.toFirst();
-				d->id_end = it.current()->id();
-				d->id_next = it.current()->nextId();
+				EDBItem* it = r->first();
+				d->id_end = it->id();
+				d->id_next = it->nextId();
 				// last entry is the begin event
-				it.toLast();
-				d->id_begin = it.current()->id();
-				d->id_prev = it.current()->prevId();
+				it = r->last();
+				d->id_begin = it->id();
+				d->id_prev = it->prevId();
 				displayResult(r, EDB::Backward);
 				//printf("[%s],[%s],[%s],[%s]\n", d->id_prev.latin1(), d->id_begin.latin1(), d->id_end.latin1(), d->id_next.latin1());
 			}
 			else if(d->reqtype == 2) {
 				// events are in forward order
 				// last entry is the end event
-				it.toLast();
-				d->id_end = it.current()->id();
-				d->id_next = it.current()->nextId();
+				EDBItem* it = r->last();
+				d->id_end = it->id();
+				d->id_next = it->nextId();
 				// first entry is the begin event
-				it.toFirst();
-				d->id_begin = it.current()->id();
-				d->id_prev = it.current()->prevId();
+				it = r->first();
+				d->id_begin = it->id();
+				d->id_prev = it->prevId();
 				displayResult(r, EDB::Forward);
 			}
 			else if(d->reqtype == 3) {
 				// should only be one entry
-				EDBItem *ei = it.current();
+				EDBItem *ei = r->first();
 				d->reqtype = 1;
 				d->h->get(d->pa, d->jid, ei->id(), EDB::Backward, 50);
 				//printf("EDB: requesting 50 events backward, starting at %s\n", d->id_prev.latin1());
@@ -508,10 +496,10 @@ void HistoryDlg::exportHistory(const QString &fname)
 		}
 
 		// events are in forward order
-		Q3PtrListIterator<EDBItem> it(*r);
-		for(EDBItem *i; (i = it.current()); ++it) {
-			id = it.current()->nextId();
-			PsiEvent *e = i->event();
+		for(int i = 0; i < r->count(); ++i) {
+			EDBItem* item = r->value(i);
+			id = item->nextId();
+			PsiEvent *e = item->event();
 			QString txt;
 
 			QDateTime dt = e->timeStamp();
@@ -531,11 +519,11 @@ void HistoryDlg::exportHistory(const QString &fname)
 				MessageEvent *me = (MessageEvent *)e;
 				stream << heading << endl;
 
-				QStringList lines = QStringList::split('\n', me->message().body(), true);
-				for(QStringList::ConstIterator lit = lines.begin(); lit != lines.end(); ++lit) {
-					QStringList sub = wrapString(*lit, 72);
-					for(QStringList::ConstIterator lit2 = sub.begin(); lit2 != sub.end(); ++lit2) {
-						txt += QString("    ") + *lit2 + '\n';
+				QStringList lines = me->message().body().split('\n', QString::KeepEmptyParts);
+				foreach(const QString& str, lines) {
+					QStringList sub = wrapString(str, 72);
+					foreach(const QString& str2, sub) {
+						txt += QString("    ") + str2 + '\n';
 					}
 				}
 			}
@@ -618,6 +606,18 @@ void HistoryView::doOpenEvent()
 	aOpenEvent(i->e);
 }
 
+void HistoryView::doCopyEvent()
+{
+	HistoryViewItem *i = (HistoryViewItem *)selectedItem();
+	if(!i)
+		return;
+
+	MessageEvent *me = (MessageEvent *)i->e;
+	QApplication::clipboard()->setText(me->message().body(), QClipboard::Clipboard);
+	if(QApplication::clipboard()->supportsSelection())
+		QApplication::clipboard()->setText(me->message().body(), QClipboard::Selection);
+}
+
 void HistoryView::qlv_doubleclick(Q3ListViewItem *xi)
 {
 	HistoryViewItem *i = (HistoryViewItem *)xi;
@@ -632,28 +632,16 @@ void HistoryView::qlv_contextPopup(Q3ListViewItem *ix, const QPoint &pos, int)
 	if(!i)
 		return;
 
-	Q3PopupMenu popup;
-	popup.insertItem(tr("Open"), 1);
-	popup.insertSeparator();
-	popup.insertItem(tr("Copy"), 2);
+	QMenu popup;
+	popup.addAction(tr("Open"), this, SLOT(doOpenEvent()));
+	popup.addSeparator();
+	QAction *copyAction = popup.addAction(tr("Copy"), this, SLOT(doCopyEvent()));
 
-	if(i->e->type() != PsiEvent::Message)
-		popup.setItemEnabled(2, false);
-
-	int x = popup.exec(pos);
-
-	if(x == 1)
-		doOpenEvent();
-	else if(x == 2) {
-		HistoryViewItem *i = (HistoryViewItem *)selectedItem();
-		if(!i)
-			return;
-
-		MessageEvent *me = (MessageEvent *)i->e;
-		QApplication::clipboard()->setText(me->message().body(), QClipboard::Clipboard);
-		if(QApplication::clipboard()->supportsSelection())
-			QApplication::clipboard()->setText(me->message().body(), QClipboard::Selection);
+	if(i->e->type() != PsiEvent::Message) {
+		copyAction->setEnabled(false);
 	}
+
+	popup.exec(pos);
 }
 
 
@@ -755,9 +743,13 @@ void HistoryViewItem::paintCell(QPainter *p, const QColorGroup & cg, int column,
 {
 	QColorGroup mycg = cg;
 	if(e->originLocal())
-		mycg.setColor(QColorGroup::Text, Qt::red);
+{
+		mycg.setColor(QColorGroup::Text, PsiOptions::instance()->getOption("options.ui.look.colors.messages.sent").toString() );
+}
 	else
-		mycg.setColor(QColorGroup::Text, Qt::blue);
+{
+		mycg.setColor(QColorGroup::Text,PsiOptions::instance()->getOption("options.ui.look.colors.messages.received").toString() );
+}
 
 	if(column == 3) {
 		QBrush br;

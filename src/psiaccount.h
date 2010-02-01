@@ -124,6 +124,7 @@ public:
 	QIcon alertPicture() const;
 
 	const UserAccount & userAccount() const;
+	UserAccount accountOptions() const;
 	virtual void setUserAccount(const UserAccount &);
 	const Jid & jid() const;
 	QString nameWithJid() const;
@@ -152,6 +153,7 @@ public:
 #endif
 	bool hasPGP() const;
 	QHostAddress *localAddress() const;
+	void passwordReady(QString password);
 
 	ChatDlg* findChatDialog(const Jid& jid) const;
 
@@ -213,6 +215,7 @@ public:
 
 	// sucks sucks sucks sucks sucks sucks sucks
 	GCContact *findGCContact(const Jid &j) const;
+	XMPP::Status gcContactStatus(const Jid &j);
 	QStringList groupchats() const;
 
 	void toggleSecurity(const Jid &, bool);

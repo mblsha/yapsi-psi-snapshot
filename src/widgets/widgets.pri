@@ -42,11 +42,13 @@ HEADERS += \
 !yapsi {
 	SOURCES += \
 		$$PWD/psitabwidget.cpp \
-		$$PWD/psitabbar.cpp
+		$$PWD/psitabbar.cpp \
+		$$PWD/actionlineedit.cpp
 
 	HEADERS += \
 		$$PWD/psitabwidget.h \
-		$$PWD/psitabbar.h
+		$$PWD/psitabbar.h \
+		$$PWD/actionlineedit.h
 }
 
 # to remove dependency on iconset and stuff

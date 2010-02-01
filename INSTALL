@@ -26,9 +26,11 @@ Compiling
 ---------
 
 Requirements:
-  - Qt 4.5.1 with patches
+  - Qt 4.5.x with patches
+  - QCA 2.0 or higher. This can either be installed system-wide,
+    or you can use the bundled version found in the third-party/qca dir
 
-You can obtain Qt at http://www.qtsoftware.com/
+You can obtain Qt at http://qt.nokia.com/
 
 For information about building Psi on Unix, see doc/build-unix.txt.
 For information about building Psi on Mac OS X, see doc/build-mac.txt.

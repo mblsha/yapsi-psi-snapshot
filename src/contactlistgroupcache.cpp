@@ -65,7 +65,7 @@ void ContactListGroupCache::removeContact(ContactListGroup* group, PsiContact* c
 	Q_ASSERT(group);
 	Q_ASSERT(contact);
 	if (contacts_[contact].contains(group))
-		contacts_[contact].remove(group);
+		contacts_[contact].removeAll(group);
 
 	if (contacts_[contact].isEmpty())
 		contacts_.remove(contact);

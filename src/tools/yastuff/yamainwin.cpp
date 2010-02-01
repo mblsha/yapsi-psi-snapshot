@@ -93,6 +93,7 @@ static const QString lastLoggedInStatusTypeOptionPath = "options.ya.last-logged-
 // static const QString tinyContactsOptionPath = "options.ya.main-window.contact-list.tiny-contacts";
 static const QString alwaysOnTopOptionPath = "options.ya.main-window.always-on-top";
 static const QString showDefaultMoodOptionPath = "options.ya.moods.show-default-mood";
+static const QString mucEnabledOptionPath = "options.muc.enabled";
 static const QString DEFAULT_MOOD_TEXT = QString::fromUtf8("Работает Я.Онлайн: online.yandex.ru");
 
 const static int MAX_NOTIFIER_WIDTH = 5;
@@ -240,6 +241,12 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	groupchatAction_ = new QAction(tr("Join Groupchat..."), this);
 	YaBoldMenu::ensureActionBoldText(groupchatAction_);
 	connect(groupchatAction_, SIGNAL(triggered()), SIGNAL(doGroupChat()));
+
+	toggleGroupchatAction_ = new QAction(tr("Enable Groupchat"), this);
+	connect(toggleGroupchatAction_, SIGNAL(triggered()), SLOT(toggleGroupchat()));
+	toggleGroupchatAction_->setShortcut(QKeySequence("Ctrl+Alt+Shift+K"));
+	toggleGroupchatAction_->setShortcutContext(Qt::ApplicationShortcut);
+	addAction(toggleGroupchatAction_);
 
 	clearCachesAction_ = new QAction(tr("Clear Caches"), this);
 	clearCachesAction_->setVisible(false);
@@ -403,6 +410,7 @@ YaMainWin::YaMainWin(bool _onTop, bool _asTool, PsiCon* psi, const char* name)
 	setMaximizeEnabled(false);
 
 	optionChanged(alwaysOnTopOptionPath);
+	optionChanged(mucEnabledOptionPath);
 
 	setOpacityOptionPath("options.ui.contactlist.opacity");
 	optionsUpdate();
@@ -1037,8 +1045,22 @@ void YaMainWin::optionChanged(const QString& option)
 			bringToFront(this);
 		}
 	}
+#ifdef GROUPCHAT
+	else if (option == mucEnabledOptionPath) {
+		groupchatAction_->setVisible(PsiOptions::instance()->getOption(mucEnabledOptionPath).toBool());
+	}
+#endif
 
 	YaOnlineMainWin::optionChanged(option);
+}
+
+void YaMainWin::toggleGroupchat()
+{
+	bool mucEnabled = PsiOptions::instance()->getOption(mucEnabledOptionPath).toBool();
+	PsiOptions::instance()->setOption(mucEnabledOptionPath, !mucEnabled);
+	if (!mucEnabled) {
+		emit doGroupChat();
+	}
 }
 
 void YaMainWin::paint(QPainter* p)

@@ -140,6 +140,12 @@ void YaChatContactInfoExtra::leaveEvent(QEvent* event)
 	animationTimer_->start();
 }
 
+void YaChatContactInfoExtra::contextMenuEvent(QContextMenuEvent* event)
+{
+	Q_UNUSED(event);
+	emit alternateClicked();
+}
+
 void YaChatContactInfoExtra::animate()
 {
 	int val = currentFrame_;
@@ -181,6 +187,7 @@ YaChatContactInfo::YaChatContactInfo(QWidget *parent)
 {
 	window()->installEventFilter(this);
 	connect(extra(), SIGNAL(clicked()), SIGNAL(clicked()));
+	connect(extra(), SIGNAL(alternateClicked()), SIGNAL(alternateClicked()));
 }
 
 QRect YaChatContactInfo::extraGeometry() const

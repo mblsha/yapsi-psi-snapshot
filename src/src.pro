@@ -42,6 +42,7 @@ CONFIG += pep
 #CONFIG += whiteboarding
 #CONFIG += psi_plugins
 DEFINES += QT_STATICPLUGIN
+DEFINES += QT3_SUPPORT_WARNINGS
 
 # Import several very useful Makefile targets 
 # as well as set up default directories for 
@@ -51,9 +52,9 @@ include(../qa/oldtest/unittest.pri)
 
 # qconf
 
-exists(../conf.pri) {
-	include(../conf.pri)
+include(../conf.pri)
 
+unix {
 	# Target
 	target.path = $$BINDIR
 	INSTALLS += target

@@ -118,13 +118,13 @@ public:
 		avatarMenu_->addAction(unsetAvatarAction_);
 		bookmarksMenu_ = menu->addMenu(tr("Bookmarks"));
 		bookmarksMenu_->addAction(bookmarksManageAction_);
-		menu->insertSeparator();
+		menu->addSeparator();
 		menu->addAction(addContactAction_);
 		menu->addAction(serviceDiscoveryAction_);
 		menu->addAction(newMessageAction_);
-		menu->insertSeparator();
+		menu->addSeparator();
 		menu->addAction(xmlConsoleAction_);
-		menu->insertSeparator();
+		menu->addSeparator();
 		menu->addAction(modifyAccountAction_);
 		adminMenu_ = menu->addMenu("&Admin");
 		adminMenu_->addAction(adminOnlineUsersAction_);
@@ -161,7 +161,7 @@ private slots:
 		bookmarksMenu_->addAction(bookmarksManageAction_);
 		if (account->account()->bookmarkManager()->isAvailable()) {
 			bookmarksMenu_->setEnabled(true);
-			bookmarksMenu_->insertSeparator();
+			bookmarksMenu_->addSeparator();
 			foreach(ConferenceBookmark c, account->account()->bookmarkManager()->conferences()) {
 				QAction* joinAction = new QAction(QString(tr("Join %1")).arg(c.name()), this);
 				joinAction->setProperty("bookmark", bookmarksJoinActions_.count());

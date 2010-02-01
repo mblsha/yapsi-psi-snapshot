@@ -70,7 +70,7 @@ WbDlg::WbDlg(SxeSession* session, PsiAccount* pa) {
 	vb1->addWidget(wbWidget_);
 
 	// Bottom (tool) area
-	act_save_ = new IconAction(tr("Save session"), "psi/save", tr("Save the contents of the whiteboard"), 0, this );
+	act_save_ = new IconAction(tr("Save session"), "psi/saveBoard", tr("Save the contents of the whiteboard"), 0, this );
 	act_geometry_ = new IconAction(tr("Change the geometry"), "psi/whiteboard", tr("Change the geometry"), 0, this );
 	act_clear_ = new IconAction(tr("End session"), "psi/clearChat", tr("Clear the whiteboard"), 0, this );
 	act_end_ = new IconAction(tr("End session"), "psi/closetab", tr("End session"), 0, this );
@@ -91,10 +91,10 @@ WbDlg::WbDlg(SxeSession* session, PsiAccount* pa) {
 	connect(act_fill_, SIGNAL(triggered()), SLOT(setFillColor()));
 	connect(group_widths_, SIGNAL(triggered(QAction *)), SLOT(setStrokeWidth(QAction *)));
 	connect(group_modes_, SIGNAL(triggered(QAction *)), SLOT(setMode(QAction *)));
-	connect(act_save_, SIGNAL(activated()), SLOT(save()));
-	connect(act_geometry_, SIGNAL(activated()), SLOT(setGeometry()));
-	connect(act_clear_, SIGNAL(activated()), wbWidget_, SLOT(clear()));
-	connect(act_end_, SIGNAL(activated()), SLOT(endSession()));
+	connect(act_save_, SIGNAL(triggered()), SLOT(save()));
+	connect(act_geometry_, SIGNAL(triggered()), SLOT(setGeometry()));
+	connect(act_clear_, SIGNAL(triggered()), wbWidget_, SLOT(clear()));
+	connect(act_end_, SIGNAL(triggered()), SLOT(endSession()));
 
 	pixmap = QPixmap(2, 2);
 	pixmap.fill(QColor(Qt::black));

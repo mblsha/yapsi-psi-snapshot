@@ -25,6 +25,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
+#include <QDir>
 
 #include "applicationinfo.h"
 
@@ -56,19 +57,29 @@ PsiLogger::PsiLogger(const QString& logFileName)
 			enableLogging = true;
 		}
 
+#ifdef YAPSI
 		QString extraLogFileName = ApplicationInfo::homeDir() + "/extra-log";
 		if (QFile::exists(extraLogFileName))
 			enableLogging = true;
+#endif
 	}
 
 	if (!enableLogging)
 		return;
 
+#ifdef YAPSI
 	QString fileName = ApplicationInfo::homeDir() + "/";
 	if (logFileName.isEmpty())
 		fileName += "yachat-log.txt";
 	else
 		fileName += logFileName;
+#else
+	QString fileName = QDir::homePath() + "/";
+	if (logFileName.isEmpty())
+		fileName += "psilogger.txt";
+	else
+		fileName += logFileName;
+#endif
 	QFile::remove(fileName);
 	file_ = new QFile(fileName);
 	if (!file_->open(QIODevice::WriteOnly)) {
@@ -84,6 +95,9 @@ PsiLogger::PsiLogger(const QString& logFileName)
 	    .arg(YaDayUse::ver())
 	    .arg(YaDayUse::osId())
 	    .arg(YaDayUse::osVer())
+	    .arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
+#else
+	log(QString("*** LOG STARTED %1")
 	    .arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 #endif
 }

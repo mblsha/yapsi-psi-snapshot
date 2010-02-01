@@ -59,7 +59,7 @@ public:
 	YaOnline(YaPsiServer* parent);
 	~YaOnline();
 
-	void notify(int id, PsiEvent* event);
+	void notify(int id, PsiEvent* event, int soundType);
 	void closeNotify(int id, PsiEvent* event);
 	void setSelfInfo(PsiContact* selfContact);
 
@@ -159,7 +159,7 @@ private slots:
 	void doToasterSkipped(const QString& id);
 	void doToasterDone(const QString& id);
 	void doScreenUnlocked();
-	// void doPlaySound(const QString& type);
+	void doPlaySound(const QString& type);
 	void doAuthAccept(const QString& id);
 	void doAuthDecline(const QString& id);
 	void doOpenHistory(const QString& id);
@@ -225,7 +225,7 @@ private:
 	void updateOnlineAccount();
 	void updateProxySettings();
 	void updateMiscSettings();
-	void showToaster(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& message, const QDateTime& timeStamp, const QString& callbackId);
+	void showToaster(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& message, const QDateTime& timeStamp, const QString& callbackId, int soundType);
 	bool doToasterIgnored(PsiAccount* account, const XMPP::Jid& jid);
 	void showConnectionToaster(PsiAccount* account, const QString& error, bool showingError);
 

@@ -18,10 +18,14 @@
  *
  */
 
+#ifdef __GNUC__
+#warning "contactview is still full of qt3support usage"
+#endif
+#undef QT3_SUPPORT_WARNINGS
+
 #include "gcuserview.h"
 
 #include <QPainter>
-#include <Q3Header>
 #include <Q3TextDrag>
 #include <Q3PopupMenu>
 #include <QtDebug>
@@ -67,9 +71,10 @@ void GCUserViewItem::paintBranches(QPainter *p, const QColorGroup &cg, int w, in
 //----------------------------------------------------------------------------
 
 GCUserViewGroupItem::GCUserViewGroupItem(GCUserView *par, const QString& t, int k)
-:Q3ListViewItem(par,t), key_(k)
+:Q3ListViewItem(par,t), key_(k), baseText(t)
 {
 	setDragEnabled(false);
+	updateText();
 }
 
 void GCUserViewGroupItem::paintCell(QPainter *p, const QColorGroup & cg, int column, int width, int alignment)
@@ -121,6 +126,12 @@ int GCUserViewGroupItem::compare(Q3ListViewItem *i, int col, bool ascending) con
 		return this->key_ - static_cast<GCUserViewGroupItem*>(i)->key_;
 	else
 		return Q3ListViewItem::compare(i, col, ascending);
+}
+
+void GCUserViewGroupItem::updateText()
+{
+	int c = childCount();
+	setText(0, baseText+(c?QString("  (%1)").arg(c):""));
 }
 
 //----------------------------------------------------------------------------
@@ -220,15 +231,20 @@ Q3ListViewItem *GCUserView::findEntry(const QString &nick)
 
 void GCUserView::updateEntry(const QString &nick, const Status &s)
 {
+	GCUserViewGroupItem* gr;
 	GCUserViewItem *lvi = (GCUserViewItem *)findEntry(nick);
 	if (lvi && lvi->s.mucItem().role() != s.mucItem().role()) {
+		gr = findGroup(lvi->s.mucItem().role());
 		delete lvi;
+		gr->updateText();
 		lvi = NULL;
 	}
 
 	if(!lvi) {
-		lvi = new GCUserViewItem(findGroup(s.mucItem().role()));
+		gr = findGroup(s.mucItem().role());
+		lvi = new GCUserViewItem(gr);
 		lvi->setText(0, nick);
+		gr->updateText();
 	}
 
 	lvi->s = s;
@@ -255,9 +271,12 @@ GCUserViewGroupItem* GCUserView::findGroup(MUCItem::Role a) const
 
 void GCUserView::removeEntry(const QString &nick)
 {
-	Q3ListViewItem *lvi = findEntry(nick);
-	if(lvi)
+	GCUserViewItem *lvi = (GCUserViewItem *)findEntry(nick);
+	if(lvi) {
+		GCUserViewGroupItem* gr = findGroup(lvi->s.mucItem().role());
 		delete lvi;
+		gr->updateText();
+	}
 }
 
 bool GCUserView::maybeTip(const QPoint &pos)
@@ -290,7 +309,8 @@ bool GCUserView::maybeTip(const QPoint &pos)
 	UserResource ur;
 	ur.setName(nick);
 	ur.setStatus(s);
-	ur.setClient(client_name,client_version,"");
+	//ur.setClient(client_name,client_version,"");
+	ur.setClient(QString(),QString(),"");
 	u.userResourceList().append(ur);
 
 	PsiToolTip::showText(mapToGlobal(pos), u.makeTip(), this);
@@ -337,10 +357,34 @@ void GCUserView::qlv_contextMenuRequested(Q3ListViewItem *i, const QPoint &pos, 
 	}
 	pm->insertItem(IconsetFactory::icon("psi/start-chat").icon(), tr("Open &Chat Window"), 1);
 	pm->insertSeparator();
-	pm->insertItem(tr("&Kick"),10);
-	pm->setItemEnabled(10, MUCManager::canKick(c->s.mucItem(),lvi->s.mucItem()));
-	pm->insertItem(tr("&Ban"),11);
-	pm->setItemEnabled(11, MUCManager::canBan(c->s.mucItem(),lvi->s.mucItem()));
+
+	// Kick and Ban submenus
+	QStringList reasons = PsiOptions::instance()->getOption("options.muc.reasons").toStringList();
+	int cntReasons=reasons.count();
+	if (cntReasons>99) cntReasons=99; // Only first 99 reasons
+	
+	Q3PopupMenu *kickMenu = new Q3PopupMenu(pm);
+	kickMenu->insertItem(tr("No reason"),10);
+	kickMenu->insertItem(tr("Custom reason"),100);
+	kickMenu->insertSeparator();
+	bool canKick=MUCManager::canKick(c->s.mucItem(),lvi->s.mucItem());
+	for (int i=0; i<cntReasons; ++i)
+		kickMenu->insertItem(reasons[i], 101+i);
+	kickMenu->setEnabled(canKick);
+	
+	Q3PopupMenu *banMenu = new Q3PopupMenu(pm);
+        banMenu->insertItem(tr("No reason"),11);
+	banMenu->insertItem(tr("Custom reason"),200);
+	banMenu->insertSeparator();
+	bool canBan=MUCManager::canBan(c->s.mucItem(),lvi->s.mucItem());
+	for (int i=0; i<cntReasons; ++i)
+		banMenu->insertItem(reasons[i], 201+i);
+	banMenu->setEnabled(canBan);
+
+	pm->insertItem(tr("&Kick"), kickMenu);
+	pm->setItemEnabled(10, canKick);
+	pm->insertItem(tr("&Ban"), banMenu);
+	pm->setItemEnabled(11, canBan);
 
 	Q3PopupMenu* rm = new Q3PopupMenu(pm);
 	rm->insertItem(tr("Visitor"),12);
@@ -372,11 +416,11 @@ void GCUserView::qlv_contextMenuRequested(Q3ListViewItem *i, const QPoint &pos, 
 	//pm->insertItem(tr("Send &File"), 4);
 	//pm->insertSeparator();
 #ifndef YAPSI
-	pm->insertItem(tr("Check &Status"), 2);
+	//pm->insertItem(tr("Check &Status"), 2);
 	pm->insertItem(IconsetFactory::icon("psi/vCard").icon(), tr("User &Info"), 3);
 #endif
 	int x = pm->exec(pos);
-	bool enabled = pm->isItemEnabled(x) || rm->isItemEnabled(x);
+	bool enabled = pm->isItemEnabled(x) || rm->isItemEnabled(x) || kickMenu->isItemEnabled(x) || banMenu->isItemEnabled(x);
 	delete pm;
 
 	if(x == -1 || !enabled || lvi.isNull())

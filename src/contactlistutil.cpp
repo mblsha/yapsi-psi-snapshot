@@ -39,7 +39,6 @@ void ContactListUtil::removeContact(PsiContact* contact, QMimeData* _selection, 
 	QModelIndexList indexes = model ? model->indexesFor(contact, _selection) : QModelIndexList();
 	if (model && !indexes.isEmpty()) {
 		QMimeData* selection = model->mimeData(indexes);
-		ContactListModelSelection* contactListModelSelection = dynamic_cast<ContactListModelSelection*>(selection);
 		QString selectionData = confirmationData(contact, _selection, model);
 
 		// WARNING: selection could also contain groups. and when there are groups,

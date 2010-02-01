@@ -84,7 +84,7 @@ public:
 #else
 		menu->addAction(renameAction_);
 		menu->addAction(sendMessageAction_);
-		menu->insertSeparator();
+		menu->addSeparator();
 		menu->addAction(removeGroupWithoutContactsAction_);
 		menu->addAction(removeGroupAndContactsAction_);
 #endif

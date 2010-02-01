@@ -15,8 +15,20 @@ public:
 	qc_zlib(Conf *c) : ConfObj(c) {}
 	QString name() const { return "zlib"; }
 	QString shortname() const { return "zlib"; }
+#ifdef Q_OS_WIN
+	QString resultString() const
+	{
+		return "using bundled";
+	}
+#endif
+
 	bool exec()
 	{
+#ifdef Q_OS_WIN
+		// HACK: on windows, always use psi's bundled zlib
+		conf->addExtra("CONFIG += psi-zip");
+		return true;
+#else
 		QString inc, lib;
 		QString s;
 
@@ -51,5 +63,6 @@ public:
 		conf->addLib("-lz");
 
 		return true;
+#endif
 	}
 };

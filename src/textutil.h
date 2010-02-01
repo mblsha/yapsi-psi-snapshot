@@ -21,6 +21,8 @@ namespace TextUtil
 	QString emoticonifyForYaOnline(const QString &in);
 	QString emoticonifyForHtml(const QString &in);
 #endif
+
+	QString prepareMessageText(const QString& text, bool isEmote=false, bool isHtml=false);
 };
 
 #endif

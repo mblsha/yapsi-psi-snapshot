@@ -22,7 +22,6 @@
 
 #include <QLabel>
 #include <QCursor>
-#include <Q3DragObject>
 #include <QLineEdit>
 #include <QToolButton>
 #include <QLayout>
@@ -47,6 +46,7 @@
 #include <QMenu>
 #include <QDragEnterEvent>
 #include <QTextDocument> // for Qt::escape()
+#include <QScrollBar>
 
 #include "psiaccount.h"
 #include "userlist.h"
@@ -77,6 +77,7 @@
 #ifdef HAVE_PGPUTIL
 #include "pgputil.h"
 #endif
+#include "psirichtext.h"
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -193,19 +194,19 @@ void ChatDlg::initActions()
 {
 	act_send_ = new QAction(tr("Send"), this);
 	addAction(act_send_);
-	connect(act_send_, SIGNAL(activated()), SLOT(doSend()));
+	connect(act_send_, SIGNAL(triggered()), SLOT(doSend()));
 
 	act_close_ = new QAction(this);
 	addAction(act_close_);
-	connect(act_close_, SIGNAL(activated()), SLOT(close()));
+	connect(act_close_, SIGNAL(triggered()), SLOT(close()));
 
 	act_scrollup_ = new QAction(this);
 	addAction(act_scrollup_);
-	connect(act_scrollup_, SIGNAL(activated()), SLOT(scrollUp()));
+	connect(act_scrollup_, SIGNAL(triggered()), SLOT(scrollUp()));
 
 	act_scrolldown_ = new QAction(this);
 	addAction(act_scrolldown_);
-	connect(act_scrolldown_, SIGNAL(activated()), SLOT(scrollDown()));
+	connect(act_scrolldown_, SIGNAL(triggered()), SLOT(scrollDown()));
 }
 
 void ChatDlg::ensureTabbedCorrectly() {
@@ -243,7 +244,7 @@ void ChatDlg::keyPressEvent(QKeyEvent *e)
 	if (key.toString(QKeySequence::PortableText).contains("Enter") ||
 	    key.toString(QKeySequence::PortableText).contains("Return"))
 	{
-		chatEdit()->insert("\n");
+		chatEdit()->append("\n");
 	}
 	else {
 		e->ignore();
@@ -365,7 +366,7 @@ void ChatDlg::logSelectionChanged()
 {
 #ifdef Q_WS_MAC
 	// A hack to only give the message log focus when text is selected
-	if (chatView()->hasSelectedText()) {
+	if (chatView()->textCursor().hasSelection()) {
 		chatView()->setFocus();
 	}
 	else {
@@ -396,16 +397,32 @@ void ChatDlg::activated()
 
 void ChatDlg::dropEvent(QDropEvent* event)
 {
-	QStringList l;
-	if (account()->loggedIn() && Q3UriDrag::decodeLocalFiles(event, l) && !l.isEmpty()) {
-		account()->actionSendFiles(jid(), l);
+	QStringList files;
+	if (account()->loggedIn() && event->mimeData()->hasUrls()) {
+		foreach(QUrl url, event->mimeData()->urls()) {
+			if (!url.toLocalFile().isEmpty()) {
+				files << url.toLocalFile();
+			}
+		}
+	}
+
+	if (!files.isEmpty()) {
+		account()->actionSendFiles(jid(), files);
 	}
 }
 
 void ChatDlg::dragEnterEvent(QDragEnterEvent* event)
 {
-	QStringList l;
-	event->accept(account()->loggedIn() && Q3UriDrag::canDecode(event) && Q3UriDrag::decodeLocalFiles(event, l) && !l.isEmpty());
+	Q_ASSERT(event);
+	//bool accept = false;
+	if (account()->loggedIn() && event->mimeData()->hasUrls()) {
+		foreach(QUrl url, event->mimeData()->urls()) {
+			if (!url.toLocalFile().isEmpty()) {
+				event->accept();
+				break;
+			}
+		}
+	}
 }
 
 void ChatDlg::setJid(const Jid &j)
@@ -705,7 +722,7 @@ bool ChatDlg::isEncryptionEnabled() const
 bool ChatDlg::couldSendMessages() const
 {
 	return chatEdit()->isEnabled() &&
-	       !chatEdit()->text().isEmpty() &&
+	       !chatEdit()->toPlainText().isEmpty() &&
 	       account()->isAvailable();
 }
 
@@ -722,12 +739,12 @@ void ChatDlg::doSend()
 		return;
 	}
 
-	if (chatEdit()->text().trimmed().isEmpty()) {
+	if (chatEdit()->toPlainText().trimmed().isEmpty()) {
 		chatEdit()->clear();
 		return;
 	}
 
-	if (chatEdit()->text() == "/clear") {
+	if (chatEdit()->toPlainText() == "/clear") {
 		chatEdit()->clear();
 		doClear();
 		QString line1,line2;
@@ -750,7 +767,7 @@ void ChatDlg::doSend()
 
 	Message m(jid());
 	m.setType("chat");
-	m.setBody(chatEdit()->text());
+	m.setBody(chatEdit()->toPlainText());
 	m.setTimeStamp(QDateTime::currentDateTime());
 #ifdef YAPSI
 	m.setYaFlags(YaChatViewModel::OutgoingMessage);
@@ -834,7 +851,7 @@ void ChatDlg::encryptedMessageSent(int x, bool b, int e, const QString &dtext)
 
 void ChatDlg::incomingMessage(const Message &m)
 {
-	if (m.body().isEmpty()) {
+	if (m.body().isEmpty() && m.subject().isEmpty() && m.urlList().isEmpty()) {
 		// Event message
 		if (m.containsEvent(CancelEvent)) {
 			setContactChatState(XMPP::StatePaused);
@@ -936,6 +953,7 @@ void ChatDlg::appendMessage(const Message &m, bool local)
 	}
 
 	QString txt = messageText(m);
+	QString subject = messageSubject(m);
 
 	ChatDlg::SpooledType spooledType = m.spooled() ?
 	                                   ChatDlg::Spooled_OfflineStorage :
@@ -947,9 +965,9 @@ void ChatDlg::appendMessage(const Message &m, bool local)
 		appendNormalMessage(spooledType, m.timeStamp(), local, m.spamFlag(), m.id(), m.messageReceipt(), txt, XMPP::YaDateTime::fromYaTime_t(m.yaMessageId()), m.yaFlags());
 #else
 	if (isEmoteMessage(m))
-		appendEmoteMessage(spooledType, m.timeStamp(), local, txt);
+		appendEmoteMessage(spooledType, m.timeStamp(), local, txt, subject);
 	else
-		appendNormalMessage(spooledType, m.timeStamp(), local, txt);
+		appendNormalMessage(spooledType, m.timeStamp(), local, txt, subject);
 #endif
 
 	appendMessageFields(m);
@@ -1096,7 +1114,7 @@ void ChatDlg::addEmoticon(QString text)
 	if (!isActiveTab())
 		return;
 
-	chatEdit()->insert(text + ' ');
+	PsiRichText::addEmoticon(chatEdit(), text);
 }
 
 /**
@@ -1172,26 +1190,19 @@ QString ChatDlg::messageText(const XMPP::Message& m)
 
 QString ChatDlg::messageText(const QString& text, bool isEmote, bool isHtml)
 {
-	QString txt = text;
+	return TextUtil::prepareMessageText(text, isEmote, isHtml);
+}
 
-	if (isHtml) {
-		if (isEmote) {
-			int cmd = txt.indexOf(me_cmd);
-			txt = txt.remove(cmd, me_cmd.length());
-		}
-	}
-	else {
-		if (isEmote) {
-			txt = txt.mid(me_cmd.length());
-		}
+QString ChatDlg::messageSubject(const XMPP::Message& m)
+{
+	QString txt = m.subject();
 
+	if (!txt.isEmpty()) {
 		txt = TextUtil::plain2rich(txt);
 		txt = TextUtil::linkify(txt);
+		txt = TextUtil::emoticonify(txt);
+		txt = TextUtil::legacyFormat(txt);
 	}
-
-	txt = TextUtil::emoticonify(txt);
-	txt = TextUtil::legacyFormat(txt);
-
 	return txt;
 }
 

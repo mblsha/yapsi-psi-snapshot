@@ -107,6 +107,7 @@ private slots:
 	void accountActivityChanged();
 	void showSelfProfile();
 	void clearCaches();
+	void toggleGroupchat();
 
 	// reimplemented
 	virtual void statusSelected(XMPP::Status::Type);
@@ -189,6 +190,7 @@ private:
 	QAction* dndEnabledAction_;
 	QAction* staysOnTopAction_;
 	QAction* groupchatAction_;
+	QAction* toggleGroupchatAction_;
 	QAction* clearCachesAction_;
 	QAction* optionsAction_;
 	QAction* aboutAction_;

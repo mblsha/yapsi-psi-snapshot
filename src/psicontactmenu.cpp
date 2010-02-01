@@ -393,9 +393,9 @@ public:
 		connect(activeChatsMenu_, SIGNAL(resourceActivated(PsiContact*, const XMPP::Jid&)), SLOT(openActiveChat(PsiContact*, const XMPP::Jid&)));
 
 		menu_->addAction(addAuthAction_);
-		menu_->insertSeparator();
+		menu_->addSeparator();
 		menu_->addAction(receiveIncomingEventAction_);
-		menu_->insertSeparator();
+		menu_->addSeparator();
 		menu_->addAction(sendMessageAction_);
 		menu_->addMenu(sendMessageToMenu_);
 		menu_->addAction(openChatAction_);
@@ -405,10 +405,10 @@ public:
 		menu_->addMenu(executeCommandMenu_);
 		menu_->addMenu(activeChatsMenu_);
 		menu_->addAction(voiceCallAction_);
-		menu_->insertSeparator();
+		menu_->addSeparator();
 		menu_->addAction(sendFileAction_);
 		menu_->addMenu(inviteToGroupchatMenu_);
-		menu_->insertSeparator();
+		menu_->addSeparator();
 		menu_->addAction(renameAction_);
 		menu_->addMenu(groupMenu_);
 		menu_->addAction(transportLogonAction_);
@@ -418,7 +418,7 @@ public:
 		authMenu_->addAction(authRerequestAction_);
 		authMenu_->addAction(authRemoveAction_);
 		menu_->addAction(removeAction_);
-		menu_->insertSeparator();
+		menu_->addSeparator();
 		pictureMenu_ = menu_->addMenu(tr("&Picture"));
 		pictureMenu_->addAction(pictureAssignAction_);
 		pictureMenu_->addAction(pictureClearAction_);
@@ -730,6 +730,8 @@ private slots:
 
 #ifdef WHITEBOARDING
 		contact_->account()->actionOpenWhiteboardSpecific(jid);
+#else
+		Q_UNUSED(jid);
 #endif
 	}
 

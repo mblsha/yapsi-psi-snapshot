@@ -221,14 +221,14 @@ bool fileCopy(const QString &src, const QString &dest)
 	char *dat = new char[16384];
 	int n = 0;
 	while(!in.atEnd()) {
-		n = in.readBlock(dat, 16384);
+		n = in.read(dat, 16384);
 		if(n == -1) {
-			delete dat;
+			delete[] dat;
 			return false;
 		}
-		out.writeBlock(dat, n);
+		out.write(dat, n);
 	}
-	delete dat;
+	delete[] dat;
 
 	out.close();
 	in.close();
@@ -270,8 +270,7 @@ void soundPlay(const QString &s)
 #else
 	QString player = PsiOptions::instance()->getOption("options.ui.notifications.sounds.unix-sound-player").toString();
 	if (player == "") player = soundDetectPlayer();
-	QStringList args;
-	args = QStringList::split(' ', player);
+	QStringList args = player.split(' ');
 	args += str;
 	QString prog = args.takeFirst();
 	QProcess::startDetached(prog, args);
@@ -304,8 +303,8 @@ XMPP::Status::Type makeSTATUS(const XMPP::Status &s)
 QLayout *rw_recurseFindLayout(QLayout *lo, QWidget *w)
 {
 	//printf("scanning layout: %p\n", lo);
-	QLayoutIterator it = lo->iterator();
-	for(QLayoutItem *i; (i = it.current()); ++it) {
+	for (int index = 0; index < lo->count(); ++index) {
+		QLayoutItem* i = lo->itemAt(index);
 		//printf("found: %p,%p\n", i->layout(), i->widget());
 		QLayout *slo = i->layout();
 		if(slo) {
@@ -336,7 +335,7 @@ void replaceWidget(QWidget *a, QWidget *b)
 
 	if(lo->inherits("QBoxLayout")) {
 		QBoxLayout *bo = (QBoxLayout *)lo;
-		int n = bo->findWidget(a);
+		int n = bo->indexOf(a);
 		bo->insertWidget(n+1, b);
 		delete a;
 	}
@@ -367,7 +366,8 @@ void x11wmClass(Display *dsp, WId wid, QString resName)
 	//Display *dsp = x11Display();                 // get the display
 	//WId win = winId();                           // get the window
 	XClassHint classhint;                          // class hints
-	classhint.res_name = (char *)resName.latin1(); // res_name
+	const QByteArray latinResName = resName.toLatin1();
+	classhint.res_name = (char *)latinResName.data(); // res_name
 	classhint.res_class = app_name;                // res_class
 	XSetClassHint(dsp, wid, &classhint);           // set the class hints
 }
@@ -503,7 +503,7 @@ bool operator!=(const QMap<QString, QString> &m1, const QMap<QString, QString> &
 		it2 = m2.find( it.key() );
 		if ( it2 == m2.end() )
 			return true;
-		if ( it.data() != it2.data() )
+		if ( it.value() != it2.value() )
 			return true;
 	}
 
@@ -515,7 +515,7 @@ bool operator!=(const QMap<QString, QString> &m1, const QMap<QString, QString> &
 //----------------------------------------------------------------------------
 
 ToolbarPrefs::ToolbarPrefs()
-	: dock(Qt::DockTop)
+	: dock(Qt3Dock_Top)
 	// , dirty(true)
 	, on(false)
 	, locked(false)

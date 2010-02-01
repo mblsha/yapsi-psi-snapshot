@@ -72,7 +72,7 @@ QString TranslationManager::currentXMLLanguage() const
 {
 	QString xmllang = currentLanguage_;
 	xmllang.replace('_',"-");
-	int at_index = xmllang.find('@');
+	int at_index = xmllang.indexOf('@');
 	if (at_index > 0)
 		xmllang = xmllang.left(at_index);
 	return xmllang;
@@ -148,7 +148,7 @@ VarList TranslationManager::availableTranslations()
 			// verify that it is a language file
 			if(str.left(4) != "psi_")
 				continue;
-			int n = str.find('.', 4);
+			int n = str.indexOf('.', 4);
 			if(n == -1)
 				continue;
 			if(str.mid(n) != ".qm")
@@ -170,7 +170,6 @@ VarList TranslationManager::availableTranslations()
 				name = s;
 
 			langs.set(lang, name);
-			qWarning ("Setting " + lang + "=" + name);
 		}
 	}
 	

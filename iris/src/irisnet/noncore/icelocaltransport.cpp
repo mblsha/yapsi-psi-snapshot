@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009  Barracuda Networks, Inc.
+ * Copyright (C) 2009,2010  Barracuda Networks, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,11 +28,18 @@
 #include "stuntransaction.h"
 #include "stunbinding.h"
 #include "stunallocate.h"
+#include "turnclient.h"
 
 // don't queue more incoming packets than this per transmit path
 #define MAX_PACKET_QUEUE 64
 
 namespace XMPP {
+
+enum
+{
+	Direct,
+	Relayed
+};
 
 //----------------------------------------------------------------------------
 // SafeUdpSocket
@@ -48,11 +55,12 @@ private:
 	int writtenCount;
 
 public:
-	SafeUdpSocket(QObject *parent = 0) :
+	SafeUdpSocket(QUdpSocket *_sock, QObject *parent = 0) :
 		QObject(parent),
-		sess(this)
+		sess(this),
+		sock(_sock)
 	{
-		sock = new QUdpSocket(this);
+		sock->setParent(this);
 		connect(sock, SIGNAL(readyRead()), SLOT(sock_readyRead()));
 		connect(sock, SIGNAL(bytesWritten(qint64)), SLOT(sock_bytesWritten(qint64)));
 
@@ -61,14 +69,25 @@ public:
 
 	~SafeUdpSocket()
 	{
-		sock->disconnect(this);
-		sock->setParent(0);
-		sock->deleteLater();
+		if(sock)
+		{
+			QUdpSocket *out = release();
+			out->deleteLater();
+		}
 	}
 
-	bool bind(const QHostAddress &addr, quint16 port = 0)
+	QUdpSocket *release()
 	{
-		return sock->bind(addr, port);
+		sock->disconnect(this);
+		sock->setParent(0);
+		QUdpSocket *out = sock;
+		sock = 0;
+		return out;
+	}
+
+	QHostAddress localAddress() const
+	{
+		return sock->localAddress();
 	}
 
 	quint16 localPort() const
@@ -132,11 +151,27 @@ class IceLocalTransport::Private : public QObject
 	Q_OBJECT
 
 public:
-	enum WriteType
+	class WriteItem
 	{
-		InternalWrite,
-		DirectWrite,
-		RelayedWrite
+	public:
+		enum Type
+		{
+			Direct,
+			Pool,
+			Turn
+		};
+
+		Type type;
+		QHostAddress addr;
+		int port;
+	};
+
+	class Written
+	{
+	public:
+		QHostAddress addr;
+		int port;
+		int count;
 	};
 
 	class Datagram
@@ -149,12 +184,12 @@ public:
 
 	IceLocalTransport *q;
 	ObjectSession sess;
+	QUdpSocket *extSock;
 	SafeUdpSocket *sock;
 	StunTransactionPool *pool;
 	StunBinding *stunBinding;
-	StunAllocate *stunAllocate;
-	bool alloc_started;
-	bool changing_perms;
+	TurnClient *turn;
+	bool turnActivated;
 	QHostAddress addr;
 	int port;
 	QHostAddress refAddr;
@@ -166,27 +201,29 @@ public:
 	IceLocalTransport::StunServiceType stunType;
 	QString stunUser;
 	QCA::SecureArray stunPass;
+	QString clientSoftware;
 	QList<Datagram> in;
 	QList<Datagram> inRelayed;
-	QList<Datagram> outRelayed;
-	QList<WriteType> pendingWrites;
-	QList<QHostAddress> pendingPerms;
+	QList<WriteItem> pendingWrites;
+	int retryCount;
+	bool stopping;
 
 	Private(IceLocalTransport *_q) :
 		QObject(_q),
 		q(_q),
 		sess(this),
+		extSock(0),
 		sock(0),
+		pool(0),
 		stunBinding(0),
-		stunAllocate(0),
-		alloc_started(false),
-		changing_perms(false),
+		turn(0),
+		turnActivated(false),
 		port(-1),
 		refPort(-1),
-		relPort(-1)
+		relPort(-1),
+		retryCount(0),
+		stopping(false)
 	{
-		pool = new StunTransactionPool(StunTransaction::Udp, this);
-		connect(pool, SIGNAL(retransmit(XMPP::StunTransaction *)), SLOT(pool_retransmit(XMPP::StunTransaction *)));
 	}
 
 	~Private()
@@ -201,13 +238,21 @@ public:
 		delete stunBinding;
 		stunBinding = 0;
 
-		delete stunAllocate;
-		stunAllocate = 0;
-		alloc_started = false;
-		changing_perms = false;
+		delete turn;
+		turn = 0;
+		turnActivated = false;
 
-		delete sock;
-		sock = 0;
+		if(sock)
+		{
+			if(extSock)
+			{
+				sock->release();
+				extSock = 0;
+			}
+
+			delete sock;
+			sock = 0;
+		}
 
 		addr = QHostAddress();
 		port = -1;
@@ -220,17 +265,15 @@ public:
 
 		in.clear();
 		inRelayed.clear();
-		outRelayed.clear();
 		pendingWrites.clear();
+
+		retryCount = 0;
+		stopping = false;
 	}
 
 	void start()
 	{
 		Q_ASSERT(!sock);
-
-		sock = new SafeUdpSocket(this);
-		connect(sock, SIGNAL(readyRead()), SLOT(sock_readyRead()));
-		connect(sock, SIGNAL(datagramsWritten(int)), SLOT(sock_datagramsWritten(int)));
 
 		sess.defer(this, "postStart");
 	}
@@ -238,153 +281,196 @@ public:
 	void stop()
 	{
 		Q_ASSERT(sock);
+		Q_ASSERT(!stopping);
 
-		if(stunAllocate)
-			stunAllocate->stop();
+		stopping = true;
+
+		if(turn)
+			turn->close();
 		else
 			sess.defer(this, "postStop");
 	}
 
 	void stunStart()
 	{
-		Q_ASSERT(!stunBinding && !stunAllocate);
+		Q_ASSERT(!pool);
 
-		if(stunType == IceLocalTransport::Relay)
+		pool = new StunTransactionPool(StunTransaction::Udp, this);
+		connect(pool, SIGNAL(outgoingMessage(const QByteArray &, const QHostAddress &, int)), SLOT(pool_outgoingMessage(const QByteArray &, const QHostAddress &, int)));
+		connect(pool, SIGNAL(needAuthParams()), SLOT(pool_needAuthParams()));
+
+		pool->setLongTermAuthEnabled(true);
+		if(!stunUser.isEmpty())
 		{
-			stunAllocate = new StunAllocate(pool);
-			connect(stunAllocate, SIGNAL(started()), SLOT(allocate_started()));
-			connect(stunAllocate, SIGNAL(stopped()), SLOT(allocate_stopped()));
-			connect(stunAllocate, SIGNAL(error(XMPP::StunAllocate::Error)), SLOT(allocate_error(XMPP::StunAllocate::Error)));
-			connect(stunAllocate, SIGNAL(permissionsChanged()), SLOT(allocate_permissionsChanged()));
-			connect(stunAllocate, SIGNAL(readyRead()), SLOT(allocate_readyRead()));
-			connect(stunAllocate, SIGNAL(datagramsWritten(int)), SLOT(allocate_datagramsWritten(int)));
-			stunAllocate->start();
+			pool->setUsername(stunUser);
+			pool->setPassword(stunPass);
 		}
-		else // Basic
+
+		bool useStun = false;
+		bool useTurn = false;
+		if(stunType == IceLocalTransport::Basic)
+			useStun = true;
+		else if(stunType == IceLocalTransport::Relay)
+			useTurn = true;
+		else // Auto
+		{
+			useStun = true;
+			useTurn = true;
+		}
+
+		if(useStun)
 		{
 			stunBinding = new StunBinding(pool);
 			connect(stunBinding, SIGNAL(success()), SLOT(binding_success()));
 			connect(stunBinding, SIGNAL(error(XMPP::StunBinding::Error)), SLOT(binding_error(XMPP::StunBinding::Error)));
 			stunBinding->start();
 		}
-	}
 
-	void tryWriteRelayed(const QByteArray &buf, const QHostAddress &addr, int port)
-	{
-		QList<QHostAddress> perms = stunAllocate->permissions();
-
-		// do we have permission to relay to this address yet?
-		if(perms.contains(addr))
+		if(useTurn)
 		{
-			writeRelayed(buf, addr, port);
-		}
-		else
-		{
-			// no?  then queue while we ask the server to grant
-			Datagram dg;
-			dg.addr = addr;
-			dg.port = port;
-			dg.buf = buf;
-			outRelayed += dg;
-
-			if(!changing_perms)
-			{
-				perms += addr;
-				stunAllocate->setPermissions(perms);
-			}
-			else
-				pendingPerms += addr;
+			do_turn();
 		}
 	}
 
-	void writeRelayed(const QByteArray &buf, const QHostAddress &addr, int port)
+	void do_turn()
 	{
-		QByteArray enc = stunAllocate->encode(buf, addr, port);
-		if(enc.isEmpty())
-		{
-			printf("Warning: could not encode packet for sending.\n");
-			return;
-		}
+		turn = new TurnClient(this);
+		connect(turn, SIGNAL(connected()), SLOT(turn_connected()));
+		connect(turn, SIGNAL(tlsHandshaken()), SLOT(turn_tlsHandshaken()));
+		connect(turn, SIGNAL(closed()), SLOT(turn_closed()));
+		connect(turn, SIGNAL(activated()), SLOT(turn_activated()));
+		connect(turn, SIGNAL(packetsWritten(int, const QHostAddress &, int)), SLOT(turn_packetsWritten(int, const QHostAddress &, int)));
+		connect(turn, SIGNAL(error(XMPP::TurnClient::Error)), SLOT(turn_error(XMPP::TurnClient::Error)));
+		connect(turn, SIGNAL(outgoingDatagram(const QByteArray &)), SLOT(turn_outgoingDatagram(const QByteArray &)));
+		connect(turn, SIGNAL(debugLine(const QString &)), SLOT(turn_debugLine(const QString &)));
 
-		pendingWrites += RelayedWrite;
-		sock->writeDatagram(enc, stunAddr, stunPort);
+		turn->setClientSoftwareNameAndVersion(clientSoftware);
+
+		turn->connectToHost(pool);
 	}
 
-	// return true if we received a relayed packet
-	bool processIncomingStun(const QByteArray &buf, Datagram *dg)
+private:
+	// note: emits signal on error
+	QUdpSocket *createSocket()
 	{
-		// this might be a ChannelData message.  check the first
-		//   two bits:
-		if(stunAllocate && alloc_started && buf.size() >= 1 && buf[0] & 0xC0 == 0x40)
+		QUdpSocket *qsock = new QUdpSocket(this);
+		if(!qsock->bind(addr, 0))
 		{
-			QHostAddress fromAddr;
-			int fromPort;
-			QByteArray buf = stunAllocate->decode(buf, &fromAddr, &fromPort);
-			if(fromAddr.isNull())
-			{
-				printf("Warning: server responded with what appears to be an invalid packet, skipping.\n");
-				return false;
-			}
-
-			dg->addr = fromAddr;
-			dg->port = fromPort;
-			dg->buf = buf;
-			return true;
+			delete qsock;
+			emit q->error(IceLocalTransport::ErrorBind);
+			return 0;
 		}
 
-		// else, interpret it as a stun message
-		StunMessage message = StunMessage::fromBinary(buf);
-		if(message.isNull())
-		{
-			printf("Warning: server responded with what doesn't seem to be a STUN packet, skipping.\n");
+		return qsock;
+	}
+
+	void prepareSocket()
+	{
+		addr = sock->localAddress();
+		port = sock->localPort();
+
+		connect(sock, SIGNAL(readyRead()), SLOT(sock_readyRead()));
+		connect(sock, SIGNAL(datagramsWritten(int)), SLOT(sock_datagramsWritten(int)));
+	}
+
+	// return true if we are retrying, false if we should error out
+	bool handleRetry()
+	{
+		// don't allow retrying if activated or stopping)
+		if(turnActivated || stopping)
 			return false;
-		}
 
-		// indication?  maybe it's a relayed packet
-		if(message.mclass() == StunMessage::Indication)
+		++retryCount;
+		if(retryCount)
 		{
-			QHostAddress fromAddr;
-			int fromPort;
-			QByteArray buf = stunAllocate->decode(message, &fromAddr, &fromPort);
-			if(fromAddr.isNull())
+			printf("retrying...\n");
+
+			delete sock;
+			sock = 0;
+
+			// to receive this error, it is a Relay, so change
+			//   the mode
+			stunType = IceLocalTransport::Relay;
+
+			QUdpSocket *qsock = createSocket();
+			if(!qsock)
 			{
-				printf("Warning: server responded with an unknown Indication packet, skipping.\n");
-				return false;
+				// signal emitted in this case.  bail.
+				//   (return true so caller takes no action)
+				return true;
 			}
 
-			dg->addr = fromAddr;
-			dg->port = fromPort;
-			dg->buf = buf;
-			return true;
-		}
+			sock = new SafeUdpSocket(qsock, this);
 
-		if(!pool->writeIncomingMessage(message))
-		{
-			printf("Warning: received unexpected message, skipping.\n");
+			prepareSocket();
+
+			refAddr = QHostAddress();
+			refPort = -1;
+
+			relAddr = QHostAddress();
+			relPort = -1;
+
+			do_turn();
+
+			// tell the world that our local address probably
+			//   changed, and that we lost our reflexive address
+			emit q->addressesChanged();
+			return true;
 		}
 
 		return false;
 	}
 
-public slots:
+	// return true if data packet, false if pool or nothing
+	bool processIncomingStun(const QByteArray &buf, Datagram *dg)
+	{
+		QByteArray data;
+		QHostAddress fromAddr;
+		int fromPort;
+
+		bool notStun;
+		if(!pool->writeIncomingMessage(buf, &notStun) && turn)
+		{
+			data = turn->processIncomingDatagram(buf, notStun, &fromAddr, &fromPort);
+			if(!data.isNull())
+			{
+				dg->addr = fromAddr;
+				dg->port = fromPort;
+				dg->buf = data;
+				return true;
+			}
+			else
+				printf("Warning: server responded with what doesn't seem to be a STUN or data packet, skipping.\n");
+		}
+
+		return false;
+	}
+
+private slots:
 	void postStart()
 	{
-		bool ok;
-		if(port != -1)
-			ok = sock->bind(addr, port);
-		else
-			ok = sock->bind(addr, 0);
+		if(stopping)
+			return;
 
-		if(ok)
+		if(extSock)
 		{
-			port = sock->localPort();
-			emit q->started();
+			sock = new SafeUdpSocket(extSock, this);
 		}
 		else
 		{
-			reset();
-			emit q->error(IceLocalTransport::ErrorGeneric);
+			QUdpSocket *qsock = createSocket();
+			if(!qsock)
+			{
+				// signal emitted in this case.  bail
+				return;
+			}
+
+			sock = new SafeUdpSocket(qsock, this);
 		}
+
+		prepareSocket();
+
+		emit q->started();
 	}
 
 	void postStop()
@@ -395,7 +481,7 @@ public slots:
 
 	void sock_readyRead()
 	{
-		ObjectSessionWatcher watcher(&sess);
+		ObjectSessionWatcher watch(&sess);
 
 		QList<Datagram> dreads;
 		QList<Datagram> rreads;
@@ -404,18 +490,21 @@ public slots:
 		{
 			QHostAddress from;
 			quint16 fromPort;
-			QByteArray buf = sock->readDatagram(&from, &fromPort);
 
 			Datagram dg;
 
+			QByteArray buf = sock->readDatagram(&from, &fromPort);
 			if(from == stunAddr && fromPort == stunPort)
 			{
-				// came from stun server
-				if(processIncomingStun(buf, &dg))
-					rreads += dg;
+				bool haveData = processIncomingStun(buf, &dg);
 
-				if(!watcher.isValid())
+				// processIncomingStun could cause signals to
+				//   emit.  for example, stopped()
+				if(!watch.isValid())
 					return;
+
+				if(haveData)
+					rreads += dg;
 			}
 			else
 			{
@@ -429,53 +518,102 @@ public slots:
 		if(dreads.count() > 0)
 		{
 			in += dreads;
-			emit q->readyRead(IceLocalTransport::Direct);
-			if(!watcher.isValid())
+			emit q->readyRead(Direct);
+			if(!watch.isValid())
 				return;
 		}
 
 		if(rreads.count() > 0)
 		{
 			inRelayed += rreads;
-			emit q->readyRead(IceLocalTransport::Relayed);
+			emit q->readyRead(Relayed);
 		}
 	}
 
 	void sock_datagramsWritten(int count)
 	{
-		Q_ASSERT(count <= pendingWrites.count());
+		QList<Written> dwrites;
+		int twrites = 0;
 
-		int dwrites = 0;
-		int rwrites = 0;
-		for(int n = 0; n < count; ++n)
+		while(count > 0)
 		{
-			WriteType type = pendingWrites.takeFirst();
-			if(type == DirectWrite)
-				++dwrites;
-			else if(type == RelayedWrite)
-				++rwrites;
+			Q_ASSERT(!pendingWrites.isEmpty());
+			WriteItem wi = pendingWrites.takeFirst();
+			--count;
+
+			if(wi.type == WriteItem::Direct)
+			{
+				int at = -1;
+				for(int n = 0; n < dwrites.count(); ++n)
+				{
+					if(dwrites[n].addr == wi.addr && dwrites[n].port == wi.port)
+					{
+						at = n;
+						break;
+					}
+				}
+
+				if(at != -1)
+				{
+					++dwrites[at].count;
+				}
+				else
+				{
+					Written wr;
+					wr.addr = wi.addr;
+					wr.port = wi.port;
+					wr.count = 1;
+					dwrites += wr;
+				}
+			}
+			else if(wi.type == WriteItem::Turn)
+				++twrites;
 		}
+
+		if(dwrites.isEmpty() && twrites == 0)
+			return;
 
 		ObjectSessionWatcher watch(&sess);
 
-		if(dwrites > 0)
+		if(!dwrites.isEmpty())
 		{
-			emit q->datagramsWritten(IceLocalTransport::Direct, dwrites);
-			if(!watch.isValid())
-				return;
+			foreach(const Written &wr, dwrites)
+			{
+				emit q->datagramsWritten(Direct, wr.count, wr.addr, wr.port);
+				if(!watch.isValid())
+					return;
+			}
 		}
 
-		if(rwrites > 0)
-			emit q->datagramsWritten(IceLocalTransport::Relayed, rwrites);
+		if(twrites > 0)
+		{
+			// note: this will invoke turn_packetsWritten()
+			turn->outgoingDatagramsWritten(twrites);
+		}
 	}
 
-	void pool_retransmit(XMPP::StunTransaction *trans)
+	void pool_outgoingMessage(const QByteArray &packet, const QHostAddress &toAddress, int toPort)
 	{
+		// we aren't using IP-associated transactions
+		Q_UNUSED(toAddress);
+		Q_UNUSED(toPort);
+
 		// warning: read StunTransactionPool docs before modifying
 		//   this function
 
-		pendingWrites += InternalWrite;
-		sock->writeDatagram(trans->packet(), stunAddr, stunPort);
+		WriteItem wi;
+		wi.type = WriteItem::Pool;
+		pendingWrites += wi;
+		sock->writeDatagram(packet, stunAddr, stunPort);
+	}
+
+	void pool_needAuthParams()
+	{
+		// we can get this signal if the user did not provide
+		//   creds to us.  however, since this class doesn't support
+		//   prompting just continue on as if we had a blank
+		//   user/pass
+		pool->continueAfterParams();
 	}
 
 	void binding_success()
@@ -486,7 +624,7 @@ public slots:
 		delete stunBinding;
 		stunBinding = 0;
 
-		emit q->stunFinished();
+		emit q->addressesChanged();
 	}
 
 	void binding_error(XMPP::StunBinding::Error e)
@@ -496,91 +634,93 @@ public slots:
 		delete stunBinding;
 		stunBinding = 0;
 
-		emit q->stunFinished();
+		//if(stunType == IceLocalTransport::Basic || (stunType == IceLocalTransport::Auto && !turn))
+		//	emit q->addressesChanged();
 	}
 
-	void allocate_started()
+	void turn_connected()
 	{
-		refAddr = stunAllocate->reflexiveAddress();
-		refPort = stunAllocate->reflexivePort();
-		relAddr = stunAllocate->relayedAddress();
-		relPort = stunAllocate->relayedPort();
-		alloc_started = true;
-
-		emit q->stunFinished();
+		printf("turn_connected\n");
 	}
 
-	void allocate_stopped()
+	void turn_tlsHandshaken()
 	{
-		// allocation deleted
-		delete stunAllocate;
-		stunAllocate = 0;
-		alloc_started = false;
+		printf("turn_tlsHandshaken\n");
+	}
+
+	void turn_closed()
+	{
+		printf("turn_closed\n");
+
+		delete turn;
+		turn = 0;
+		turnActivated = false;
 
 		postStop();
 	}
 
-	void allocate_error(XMPP::StunAllocate::Error e)
+	void turn_activated()
 	{
-		delete stunAllocate;
-		stunAllocate = 0;
-		bool wasStarted = alloc_started;
-		alloc_started = false;
+		StunAllocate *allocate = turn->stunAllocate();
+
+		refAddr = allocate->reflexiveAddress();
+		refPort = allocate->reflexivePort();
+		printf("Server says we are %s;%d\n", qPrintable(refAddr.toString()), refPort);
+
+		relAddr = allocate->relayedAddress();
+		relPort = allocate->relayedPort();
+		printf("Server relays via %s;%d\n", qPrintable(relAddr.toString()), relPort);
+
+		turnActivated = true;
+
+		emit q->addressesChanged();
+	}
+
+	void turn_packetsWritten(int count, const QHostAddress &addr, int port)
+	{
+		emit q->datagramsWritten(Relayed, count, addr, port);
+	}
+
+	void turn_error(XMPP::TurnClient::Error e)
+	{
+		printf("turn_error: %s\n", qPrintable(turn->errorString()));
+
+		delete turn;
+		turn = 0;
+		bool wasActivated = turnActivated;
+		turnActivated = false;
+
+		if(e == TurnClient::ErrorMismatch)
+		{
+			if(!extSock && handleRetry())
+				return;
+		}
 
 		// this means our relay died on us.  in the future we might
 		//   consider reporting this
-		if(wasStarted)
+		if(wasActivated)
 			return;
 
-		// if we get an error during initialization, fall back to
-		//   binding
-		if(e != StunAllocate::ErrorTimeout)
-		{
-			stunType = IceLocalTransport::Basic;
-			stunStart();
-		}
-		else
-		{
-			emit q->stunFinished();
-		}
+		//if(stunType == IceLocalTransport::Relay || (stunType == IceLocalTransport::Auto && !stunBinding))
+		//	emit q->addressesChanged();
 	}
 
-	void allocate_permissionsChanged()
+	void turn_outgoingDatagram(const QByteArray &buf)
 	{
-		// get updated list
-		QList<QHostAddress> perms = stunAllocate->permissions();
+		WriteItem wi;
+		wi.type = WriteItem::Turn;
+		pendingWrites += wi;
+		sock->writeDatagram(buf, stunAddr, stunPort);
+	}
 
-		// extract any sendable packets from the out queue
-		QList<Datagram> sendable;
-		for(int n = 0; n < outRelayed.count(); ++n)
-		{
-			if(perms.contains(outRelayed[n].addr))
-			{
-				sendable += outRelayed[n];
-				outRelayed.removeAt(n);
-				--n; // adjust position
-			}
-		}
-
-		// and send them
-		foreach(const Datagram &dg, sendable)
-			writeRelayed(dg.buf, dg.addr, dg.port);
-
-		changing_perms = false;
-
-		if(!pendingPerms.isEmpty())
-		{
-			perms += pendingPerms;
-			pendingPerms.clear();
-
-			changing_perms = true;
-			stunAllocate->setPermissions(perms);
-		}
+	void turn_debugLine(const QString &line)
+	{
+		printf("turn_debugLine: %s\n", qPrintable(line));
 	}
 };
 
 IceLocalTransport::IceLocalTransport(QObject *parent) :
-	QObject(parent)
+	IceTransport(parent)
 {
 	d = new Private(this);
 }
@@ -590,10 +730,20 @@ IceLocalTransport::~IceLocalTransport()
 	delete d;
 }
 
-void IceLocalTransport::start(const QHostAddress &addr, int port)
+void IceLocalTransport::setClientSoftwareNameAndVersion(const QString &str)
+{
+	d->clientSoftware = str;
+}
+
+void IceLocalTransport::start(QUdpSocket *sock)
+{
+	d->extSock = sock;
+	d->start();
+}
+
+void IceLocalTransport::start(const QHostAddress &addr)
 {
 	d->addr = addr;
-	d->port = port;
 	d->start();
 }
 
@@ -602,11 +752,11 @@ void IceLocalTransport::stop()
 	d->stop();
 }
 
-void IceLocalTransport::setStunService(StunServiceType type, const QHostAddress &addr, int port)
+void IceLocalTransport::setStunService(const QHostAddress &addr, int port, StunServiceType type)
 {
-	d->stunType = type;
 	d->stunAddr = addr;
 	d->stunPort = port;
+	d->stunType = type;
 }
 
 void IceLocalTransport::setStunUsername(const QString &user)
@@ -654,7 +804,13 @@ int IceLocalTransport::relayedPort() const
 	return d->relPort;
 }
 
-bool IceLocalTransport::hasPendingDatagrams(TransmitPath path) const
+void IceLocalTransport::addChannelPeer(const QHostAddress &addr, int port)
+{
+	if(d->turn)
+		d->turn->addChannelPeer(addr, port);
+}
+
+bool IceLocalTransport::hasPendingDatagrams(int path) const
 {
 	if(path == Direct)
 		return !d->in.isEmpty();
@@ -667,7 +823,7 @@ bool IceLocalTransport::hasPendingDatagrams(TransmitPath path) const
 	}
 }
 
-QByteArray IceLocalTransport::readDatagram(TransmitPath path, QHostAddress *addr, int *port)
+QByteArray IceLocalTransport::readDatagram(int path, QHostAddress *addr, int *port)
 {
 	QList<Private::Datagram> *in = 0;
 	if(path == Direct)
@@ -685,24 +841,24 @@ QByteArray IceLocalTransport::readDatagram(TransmitPath path, QHostAddress *addr
 		return datagram.buf;
 	}
 	else
-	{
-		*addr = QHostAddress();
-		*port = -1;
 		return QByteArray();
-	}
 }
 
-void IceLocalTransport::writeDatagram(TransmitPath path, const QByteArray &buf, const QHostAddress &addr, int port)
+void IceLocalTransport::writeDatagram(int path, const QByteArray &buf, const QHostAddress &addr, int port)
 {
 	if(path == Direct)
 	{
-		d->pendingWrites += Private::DirectWrite;
+		Private::WriteItem wi;
+		wi.type = Private::WriteItem::Direct;
+		wi.addr = addr;
+		wi.port = port;
+		d->pendingWrites += wi;
 		d->sock->writeDatagram(buf, addr, port);
 	}
 	else if(path == Relayed)
 	{
-		if(d->stunAllocate && d->alloc_started)
-			d->tryWriteRelayed(buf, addr, port);
+		if(d->turn && d->turnActivated)
+			d->turn->write(buf, addr, port);
 	}
 	else
 		Q_ASSERT(0);

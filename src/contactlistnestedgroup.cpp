@@ -173,9 +173,9 @@ void ContactListNestedGroup::contactGroupsChanged(PsiContact* contact, QStringLi
 
 		foreach(QString i, mergedGroupNames) {
 #ifdef CONTACTLIST_NESTED_GROUPS
-			splitGroupNames.remove(i.split(groupDelimiter()));
+			splitGroupNames.removeAll(i.split(groupDelimiter()));
 #else
-			splitGroupNames.remove(QStringList() << i);
+			splitGroupNames.removeAll(QStringList() << i);
 #endif
 		}
 
@@ -249,7 +249,7 @@ void ContactListNestedGroup::contactGroupsChanged(PsiContact* contact, QStringLi
 		if (!child->itemsCount()) {
 // qWarning("ContactListNextedGroup(%x)::contactGroupsChanged: removing empty group2: %s", this, qPrintable(child->fullName()));
 			removeItem(ContactListGroup::findGroup(child));
-			groups_.remove(groups_.indexOf(child));
+			groups_.removeAll(groups_.indexOf(child));
 			delete group;
 		}
 	}

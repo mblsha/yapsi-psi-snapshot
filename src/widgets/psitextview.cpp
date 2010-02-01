@@ -24,6 +24,7 @@
 #include <QScrollBar>
 #include <QAbstractTextDocumentLayout>
 #include <QTextDocumentFragment>
+#include <QTextFragment>
 
 #include "urlobject.h"
 #include "psirichtext.h"
@@ -42,7 +43,7 @@ class PsiTextView::Private : public QObject
 
 public:
 	Private(QObject *parent)
-	: QObject(parent, "PsiTextView::Private") 
+	: QObject(parent) 
 	{
 		anchorOnMousePress = QString();
 		hadSelectionOnMousePress = false;
@@ -125,39 +126,44 @@ void PsiTextView::scrollToTop()
 void PsiTextView::appendText(const QString &text)
 {
 	QTextCursor cursor = textCursor();
-	Selection selection = saveSelection(cursor);
+	PsiRichText::Selection selection = PsiRichText::saveSelection(this, cursor);
 	
 	PsiRichText::appendText(document(), cursor, text);
 	
-	restoreSelection(cursor, selection);
+	PsiRichText::restoreSelection(this, cursor, selection);
 	setTextCursor(cursor);
 }
 
-/**
- * Saves current Selection in a structure, so it could be restored at later time.
- */
-PsiTextView::Selection PsiTextView::saveSelection(QTextCursor &cursor)
+QString PsiTextView::getTextHelper(bool html) const
 {
-	Selection selection;
-	selection.start = selection.end = -1;
+	PsiTextView *ptv = (PsiTextView *)this;
+	QTextCursor cursor = ptv->textCursor();
+	int position = ptv->verticalScrollBar()->value();
 
-	if (cursor.hasSelection()) {
-		selection.start = cursor.selectionStart();
-		selection.end   = cursor.selectionEnd();
+	bool unselectAll = false;
+	if (!textCursor().hasSelection()) {
+		ptv->selectAll();
+		unselectAll = true;
 	}
-	
-	return selection;
-}
 
-/**
- * Restores a Selection that was previously saved by call to saveSelection().
- */
-void PsiTextView::restoreSelection(QTextCursor &cursor, Selection selection)
-{
-	if (selection.start != -1 && selection.end != -1) {
-		cursor.setPosition(selection.start, QTextCursor::MoveAnchor);
-		cursor.setPosition(selection.end,   QTextCursor::KeepAnchor);
+	QMimeData *mime = createMimeDataFromSelection();
+	QString result;
+	if (html)
+		result = mime->html();
+	else
+		result = mime->text();
+	delete mime;
+
+	// we need to restore original position if selectAll()
+	// was called, because setTextCursor() (which is necessary
+	// to clear selection) will move vertical scroll bar
+	if (unselectAll) {
+		cursor.clearSelection();
+		ptv->setTextCursor(cursor);
+		ptv->verticalScrollBar()->setValue(position);
 	}
+
+	return result;
 }
 
 /**
@@ -166,30 +172,12 @@ void PsiTextView::restoreSelection(QTextCursor &cursor, Selection selection)
  */
 QString PsiTextView::getHtml() const
 {
-	PsiTextView *ptv = (PsiTextView *)this;
-	QTextCursor cursor = ptv->textCursor();
-	int position = ptv->verticalScrollBar()->value();
-	
-	bool unselectAll = false;
-	if (!hasSelectedText()) {
-		ptv->selectAll();
-		unselectAll = true;
-	}
-	
-	QMimeData *mime = createMimeDataFromSelection();
-	QString result = mime->html();
-	delete mime;
-	
-	// we need to restore original position if selectAll() 
-	// was called, because setTextCursor() (which is necessary
-	// to clear selection) will move vertical scroll bar
-	if (unselectAll) {
-		cursor.clearSelection();
-		ptv->setTextCursor(cursor);
-		ptv->verticalScrollBar()->setValue(position);
-	}
-	
-	return result;
+	return getTextHelper(true);
+}
+
+QString PsiTextView::getPlainText() const
+{
+	return getTextHelper(false);
 }
 
 void PsiTextView::contextMenuEvent(QContextMenuEvent *e) 

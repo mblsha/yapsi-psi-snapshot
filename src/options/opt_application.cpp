@@ -6,7 +6,6 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlineedit.h>
-#include <q3groupbox.h>
 #include <QList>
 
 #include "ui_opt_application.h"
@@ -74,6 +73,8 @@ QWidget *OptionsTabApplication::widget()
 		d->ck_autoUpdate->hide();
 	}
 
+	connect(d->le_dtPort, SIGNAL(textChanged(QString)), this, SLOT(updatePortLabel()));
+
 	return w;
 }
 
@@ -132,4 +133,30 @@ void OptionsTabApplication::restoreOptions()
 	// data transfer
 	d->le_dtPort->setText( QString::number(PsiOptions::instance()->getOption("options.p2p.bytestreams.listen-port").toInt()) );
 	d->le_dtExternal->setText( PsiOptions::instance()->getOption("options.p2p.bytestreams.external-address").toString() );
+}
+
+void OptionsTabApplication::updatePortLabel()
+{
+	if ( !w )
+		return;
+
+	OptApplicationUI *d = (OptApplicationUI *)w;
+
+	if ( d->le_dtPort->text().isEmpty() ) {
+		d->label->clear();
+		return;
+	}
+
+	int port = d->le_dtPort->text().toInt();
+	if ( port < 0 || port > 65532 ) {
+		d->label->clear();
+		return;
+	}
+
+	if ( port == 0 ) {
+		d->label->setText(tr("(TCP: Disabled, UDP: Auto)"));
+	}
+	else {
+		d->label->setText(tr("(TCP: %1, UDP: %1-%2)").arg( port ).arg( port + 3 ));
+	}
 }

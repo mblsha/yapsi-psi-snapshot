@@ -1,3 +1,8 @@
+#ifdef __GNUC__
+#warning "filetransdlg is still full of qt3support usage"
+#endif
+#undef QT3_SUPPORT_WARNINGS
+
 #include "filetransdlg.h"
 
 #include <QFileDialog>
@@ -7,7 +12,6 @@
 #include <qpushbutton.h>
 #include <qtimer.h>
 #include <qfile.h>
-#include <q3progressbar.h>
 #include <qdir.h>
 #include <q3listview.h>
 #include <qlayout.h>
@@ -92,7 +96,7 @@ static void active_file_remove(const QString &s)
 {
 	if(!activeFiles)
 		return;
-	activeFiles->remove(s);
+	activeFiles->removeAll(s);
 	//printf("removed: [%s]\n", s.latin1());
 }
 
@@ -343,7 +347,7 @@ void FileTransferHandler::ft_connected()
 				ok = true;
 			}
 			else {
-				if(d->f.at(d->offset))
+				if(d->f.seek(d->offset))
 					ok = true;
 			}
 		}
@@ -370,7 +374,7 @@ void FileTransferHandler::ft_connected()
 				ok = true;
 			}
 			else {
-				if(d->f.at(d->offset))
+				if(d->f.seek(d->offset))
 					ok = true;
 			}
 		}
@@ -381,7 +385,7 @@ void FileTransferHandler::ft_connected()
 			return;
 		}
 
-		d->activeFile = d->f.name();
+		d->activeFile = d->f.fileName();
 		active_file_add(d->activeFile);
 
 		// done already?  this means a file size of zero
@@ -396,7 +400,7 @@ void FileTransferHandler::ft_readyRead(const QByteArray &a)
 {
 	if(!d->sending) {
 		//printf("%d bytes read\n", a.size());
-		int r = d->f.writeBlock(a.data(), a.size());
+		int r = d->f.write(a.data(), a.size());
 		if(r < 0) {
 			d->f.close();
 			delete d->ft;
@@ -560,7 +564,7 @@ FileRequestDlg::FileRequestDlg(const Jid &jid, PsiCon *psi, PsiAccount *pa, cons
 
 	d->te = new ChatView(this);
 	d->te->setReadOnly(false);
-	d->te->setTextFormat(Qt::PlainText);
+	d->te->setAcceptRichText(false);
 	replaceWidget(te_desc, d->te);
 	setTabOrder(le_fname, d->te);
 	setTabOrder(d->te, pb_stop);
@@ -603,7 +607,7 @@ FileRequestDlg::FileRequestDlg(const Jid &jid, PsiCon *psi, PsiAccount *pa, cons
 			return;
 		}
 
-		FileUtil::setLastUsedSavePath(fi.dirPath());
+		FileUtil::setLastUsedSavePath(fi.path());
 		le_fname->setText(QDir::convertSeparators(fi.filePath()));
 		lb_size->setText(tr("%1 byte(s)").arg(fi.size())); // TODO: large file support
 	}
@@ -645,7 +649,7 @@ FileRequestDlg::FileRequestDlg(const QDateTime &ts, FileTransfer *ft, PsiAccount
 	replaceWidget(lb_accountlabel, hb);
 
 	d->te = new ChatView(this);
-	d->te->setTextFormat(Qt::PlainText);
+	d->te->setAcceptRichText(false);
 	replaceWidget(te_desc, d->te);
 	setTabOrder(le_fname, d->te);
 	setTabOrder(d->te, pb_stop);
@@ -813,7 +817,7 @@ void FileRequestDlg::doStart()
 		connect(d->ft, SIGNAL(statusMessage(const QString &)), SLOT(ft_statusMessage(const QString &)));
 		connect(d->ft, SIGNAL(connected()), SLOT(ft_connected()));
 		connect(d->ft, SIGNAL(error(int, int, const QString &)), SLOT(ft_error(int, int, const QString &)));
-		d->ft->send(le_to->text(), le_fname->text(), d->te->text());
+		d->ft->send(le_to->text(), le_fname->text(), d->te->getPlainText());
 	}
 	else {
 		QString fname, savename;
@@ -850,7 +854,8 @@ void FileRequestDlg::doStart()
 		busy->start();
 		lb_status->setText(tr("Accepting..."));
 
-		d->t.start(30000, true);
+		d->t.setSingleShot(true);
+		d->t.start(30000);
 
 		connect(d->ft, SIGNAL(accepted()), SLOT(ft_accepted()));
 		connect(d->ft, SIGNAL(statusMessage(const QString &)), SLOT(ft_statusMessage(const QString &)));
@@ -1561,13 +1566,15 @@ FileTransDlg::FileTransDlg(PsiCon *psi)
 	setWindowIcon(IconsetFactory::icon("psi/filemanager").icon());
 #endif
 
-	QVBoxLayout *vb = new QVBoxLayout(this, 11, 6);
+	QVBoxLayout *vb = new QVBoxLayout(this);
+	vb->setSpacing(6); // FIXME: Is forced spacing really necessary?
 	d->lv = new FileTransView(this);
 	connect(d->lv, SIGNAL(itemCancel(int)), SLOT(itemCancel(int)));
 	connect(d->lv, SIGNAL(itemOpenDest(int)), SLOT(itemOpenDest(int)));
 	connect(d->lv, SIGNAL(itemClear(int)), SLOT(itemClear(int)));
 	vb->addWidget(d->lv);
-	QHBoxLayout *hb = new QHBoxLayout(vb);
+	QHBoxLayout *hb = new QHBoxLayout;
+	vb->addLayout(hb);
 	hb->addStretch(1);
 	QPushButton *pb_clear = new QPushButton(tr("Clear &Finished"), this);
 	connect(pb_clear, SIGNAL(clicked()), SLOT(clearFinished()));
@@ -1750,9 +1757,9 @@ void FileTransDlg::itemOpenDest(int id)
 	QString path;
 	bool recv = (i->h->mode() == FileTransferHandler::Receiving);
 	if(recv)
-		path = QFileInfo(i->h->saveName()).dirPath();
+		path = QFileInfo(i->h->saveName()).path();
 	else
-		path = QFileInfo(i->h->fileName()).dirPath();
+		path = QFileInfo(i->h->fileName()).path();
 
 	//printf("item open dest: [%s]\n", path.latin1());
 }

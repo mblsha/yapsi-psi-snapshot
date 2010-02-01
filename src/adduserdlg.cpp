@@ -61,7 +61,7 @@ AddUserDlg::AddUserDlg(const QStringList &services, const QStringList &names, co
 	QStringList::ConstIterator it1 = services.begin();
 	QStringList::ConstIterator it2 = names.begin();
 	for(; it1 != services.end(); ++it1, ++it2)
-		cb_service->insertItem(PsiIconset::instance()->status(*it1, STATUS_ONLINE).impix(), *it2);
+		cb_service->addItem(PsiIconset::instance()->status(*it1, STATUS_ONLINE).icon(), *it2);
 	connect(cb_service, SIGNAL(activated(int)), SLOT(serviceActivated(int)));
 
 	connect(le_transPrompt, SIGNAL(textChanged(const QString &)), SLOT(le_transPromptChanged(const QString &)));
@@ -103,20 +103,21 @@ void AddUserDlg::init(const QStringList &groups, PsiAccount *pa)
 	connect(d->tasks, SIGNAL(started()),  busy, SLOT(start()));
 	connect(d->tasks, SIGNAL(finished()), busy, SLOT(stop()));
 
-	setWindowTitle(CAP(caption()));
+	setWindowTitle(CAP(windowTitle()));
 	setWindowIcon(IconsetFactory::icon("psi/addContact").icon());
 
 	d->busy = busy;
 
 	QString str = tr("<None>");
-	cb_group->insertItem(str);
+	cb_group->addItem(str);
 	QStringList temp=groups;
 	temp.sort();
-	cb_group->insertStringList(temp);
+	cb_group->addItems(temp);
 	// FIXME: Re-do the hidden group trick the proper way
 	// str = ContactView::tr("Hidden");
-	// if(!groups.contains(str))
-	// 	cb_group->insertItem(str);
+	// if (!groups.contains(str)) {
+	// 	cb_group->addItem(str);
+	// }
 	cb_group->setAutoCompletion(true);
 
 	pb_add->setDefault(true);
@@ -144,14 +145,14 @@ AddUserDlg::~AddUserDlg()
 
 Jid AddUserDlg::jid() const
 {
-	return Jid(le_jid->text().stripWhiteSpace());
+	return Jid(le_jid->text().trimmed());
 }
 
 void AddUserDlg::cancel()
 {
 	le_jid->setText("");
 	le_nick->setText("");
-	cb_group->setCurrentItem(0);
+	cb_group->setCurrentIndex(0);
 	reject();
 }
 
@@ -182,7 +183,7 @@ void AddUserDlg::ok()
 	le_jid->setText("");
 	le_nick->setText("");
 	if(ck_close->isChecked()) {
-		cb_group->setCurrentItem(0);
+		cb_group->setCurrentIndex(0);
 		accept();
 	} else {
 		le_jid->setFocus();
@@ -226,7 +227,7 @@ void AddUserDlg::getTransID()
 
 	d->jt = new JT_Gateway(d->pa->client()->rootTask());
 	connect(d->jt, SIGNAL(finished()), SLOT(jt_setFinished()));
-	d->jt->set(Jid(d->services[cb_service->currentItem()-1]), le_transPrompt->text());
+	d->jt->set(Jid(d->services[cb_service->currentIndex()-1]), le_transPrompt->text());
 	d->jt->go(true);
 	d->tasks->append( d->jt );
 }

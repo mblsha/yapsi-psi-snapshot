@@ -54,8 +54,6 @@ public:
 
 	Private(PsiIconset *_psi) {
 		psi = _psi;
-		psi->emoticons.setAutoDelete(true);
-		psi->roster.setAutoDelete(true);
 #ifdef YAPSI
 		yaEmoticonSelectorIconset_ = 0;
 #endif
@@ -84,7 +82,8 @@ public:
 				return fileName;
 		}
 
-		return QString::null;
+		qWarning("PsiIconset::Private::iconsetPath(\"%s\"): not found", qPrintable(name));
+		return QString();
 	}
 
 	void stripFirstAnimFrame(Iconset &is) {
@@ -98,13 +97,13 @@ public:
 		if ( !to ) {
 			qWarning("PsiIconset::loadIconset(): 'to' iconset is NULL!");
 			if ( from )
-				qWarning("from->name() = '%s'", from->name().latin1());
+				qWarning("from->name() = '%s'", qPrintable(from->name()));
 			return;
 		}
 		if ( !from ) {
 			qWarning("PsiIconset::loadIconset(): 'from' iconset is NULL!");
 			if ( to )
-				qWarning("to->name() = '%s'", to->name().latin1());
+				qWarning("to->name() = '%s'", qPrintable(to->name()));
 			return;
 		}
 
@@ -166,8 +165,8 @@ public:
 			foreach(QVariant serviceV, PsiOptions::instance()->mapKeyList("options.iconsets.service-status")) {
 				QString service = serviceV.toString();
 				if (services.contains(service)) {
-					if (services[service].search(jid.domain()) != -1 ) {
-						Iconset *is = psi->roster.find(
+					if (services[service].indexIn(jid.domain()) != -1 ) {
+						const Iconset *is = psi->roster.value(
 								PsiOptions::instance()->getOption(
 								PsiOptions::instance()->mapLookup("options.iconsets.service-status", service)+".iconset").toString());
 						if ( is ) {
@@ -186,7 +185,7 @@ public:
 			// let's try the default transport iconset then...
 			if ( !found && jid.node().isEmpty() ) {
 				if (PsiOptions::instance()->mapKeyList("options.iconsets.service-status").contains("transport")) {
-					Iconset *is = psi->roster.find(
+					const Iconset *is = psi->roster.value(
 								PsiOptions::instance()->getOption(
 								PsiOptions::instance()->mapLookup("options.iconsets.service-status", "transport")+".iconset").toString());			  
 					if ( is ) {
@@ -203,8 +202,8 @@ public:
 		QStringList customicons = PsiOptions::instance()->getChildOptionNames("options.iconsets.custom-status", true, true);
 		foreach(QString base, customicons) {
 			QRegExp rx = QRegExp(PsiOptions::instance()->getOption(base + ".regexp").toString());
-			if ( rx.search(jid.bare()) != -1 ) {
-				Iconset *is = psi->roster.find(PsiOptions::instance()->getOption(base + ".iconset").toString());
+			if ( rx.indexIn(jid.bare()) != -1 ) {
+				const Iconset *is = psi->roster.value(PsiOptions::instance()->getOption(base + ".iconset").toString());
 				if ( is ) {
 					PsiIcon *i = (PsiIcon *)is->icon(iconName);
 					if ( i )
@@ -250,9 +249,9 @@ public:
 		return def;
 	}
 
-	Q3PtrList<Iconset> emoticons()
+	QList<Iconset*> emoticons()
 	{
-		Q3PtrList<Iconset> emo;
+		QList<Iconset*> emo;
 
 		foreach(QString name, PsiOptions::instance()->getOption("options.iconsets.emoticons").toStringList()) {
 			Iconset *is = new Iconset;
@@ -301,6 +300,7 @@ bool PsiIconset::loadSystem()
 bool PsiIconset::loadRoster()
 {
 	// load roster
+	qDeleteAll(roster);
 	roster.clear();
 
 	// default roster iconset
@@ -318,6 +318,8 @@ bool PsiIconset::loadRoster()
 	foreach(QVariant service, PsiOptions::instance()->mapKeyList("options.iconsets.service-status")) {
 		QString val = PsiOptions::instance()->getOption(
 		                  PsiOptions::instance()->mapLookup("options.iconsets.service-status", service) + ".iconset").toString();
+		if (val.isEmpty())
+			continue;
 		rosterIconsets << val;
 		d->cur_service_status.insert(service.toString(), val);
 	}
@@ -354,6 +356,7 @@ void PsiIconset::loadEmoticons()
 {
 	QStringList cur_emoticons = PsiOptions::instance()->getOption("options.iconsets.emoticons").toStringList();
 	if (d->cur_emoticons != cur_emoticons) {
+		qDeleteAll(emoticons);
 		emoticons.clear();
 		emoticons = d->emoticons();
 
@@ -434,9 +437,7 @@ void PsiIconset::reloadRoster()
 		Iconset *oldDef = roster[d->cur_status];
 		d->loadIconset(oldDef, newDef);
 
-		roster.setAutoDelete(false);
 		roster.remove(d->cur_status);
-		roster.setAutoDelete(true);
 
 		roster.insert(cur_status, oldDef);
 		delete newDef;
@@ -449,6 +450,8 @@ void PsiIconset::reloadRoster()
 	foreach(QVariant service, PsiOptions::instance()->mapKeyList("options.iconsets.service-status")) {
 		QString val = PsiOptions::instance()->getOption(
 		                  PsiOptions::instance()->mapLookup("options.iconsets.service-status", service) + ".iconset").toString();
+		if (val.isEmpty())
+			continue;
 		cur_service_status.insert(service.toString(), val);
 	}
 
@@ -465,13 +468,13 @@ void PsiIconset::reloadRoster()
 	
 		QMap<QString, QString>::Iterator it = cur_service_status.begin();
 		for (; it != cur_service_status.end(); ++it)
-			if (rosterIconsets.findIndex(it.data()) == -1)
-				rosterIconsets << it.data();
+			if (!rosterIconsets.contains(it.value()))
+				rosterIconsets << it.value();
 	
 		it = cur_custom_status.begin();
 		for (; it != cur_custom_status.end(); ++it)
-			if (rosterIconsets.findIndex(it.data()) == -1)
-				rosterIconsets << it.data();
+			if (!rosterIconsets.contains(it.value()))
+				rosterIconsets << it.value();
 	
 		QStringList::Iterator it2 = rosterIconsets.begin();
 		for (; it2 != rosterIconsets.end(); ++it2) {
@@ -498,16 +501,17 @@ void PsiIconset::reloadRoster()
 		while (!clear) {
 			clear = true;
 	
-			Q3DictIterator<Iconset> it3(roster);
-			for (; it3.current(); ++it3) {
-				QString name = it3.currentKey();
+			QMutableHashIterator<QString, Iconset*> it3(roster);
+			while (it3.hasNext()) {
+				it3.next();
+				QString name = it3.key();
 				if (name == PsiOptions::instance()->getOption("options.iconsets.status").toString())
 					continue;
 
-				it2 = rosterIconsets.find(name);
-				if (it2 == rosterIconsets.end()) {
+				if (!rosterIconsets.contains(name)) {
 					// remove redundant iconset
-					roster.remove(name);
+					delete roster[name];
+					it3.remove();
 					clear = false;
 					break;
 				}
@@ -633,7 +637,7 @@ PsiIcon *PsiIconset::transportStatusPtr(QString name, int s)
 	
 	QVariantList serviceicons = PsiOptions::instance()->mapKeyList("options.iconsets.service-status");
 	if (serviceicons.contains(name)) {
-		Iconset *is = roster.find(
+		const Iconset *is = roster.value(
 							PsiOptions::instance()->getOption(
 							PsiOptions::instance()->mapLookup("options.iconsets.service-status", name)+".iconset").toString());
 		if ( is ) {

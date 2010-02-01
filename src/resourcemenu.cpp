@@ -86,6 +86,7 @@ void ResourceMenu::actionActivated()
 	}
 }
 
+#ifndef NEWCONTACTLIST
 // FIXME: Deprecate this function and move to signal-based calls
 void ResourceMenu::addResource(const UserResource &r, int id)
 {
@@ -103,6 +104,7 @@ void ResourceMenu::addResource(int status, QString name, int id)
 
 	insertItem(PsiIconset::instance()->status(status).icon(), rname, id);
 }
+#endif
 
 void ResourceMenu::contactUpdated()
 {

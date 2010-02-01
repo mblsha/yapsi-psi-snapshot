@@ -32,6 +32,10 @@
 #include "yaonline.h"
 #endif
 
+#ifdef YAPSI
+#include "yatokenauth.h"
+#endif
+
 #ifdef Q_WS_WIN
 #include <windows.h>
 
@@ -99,8 +103,6 @@ bool DesktopUtil::openUrl(const QString& url)
 #endif
 
 #ifdef YAPSI_ACTIVEX_SERVER
-	// FIXME: IM-473 Workaround for Qt 4.3.5/Win
-	// This appears to be fixed in Qt 4.4.2+
 	YaOnlineHelper::instance()->openUrl(url, false);
 	return true;
 #endif
@@ -131,7 +133,8 @@ bool DesktopUtil::openYaUrl(const QString& url)
 	YaOnlineHelper::instance()->openUrl(url, true);
 	return true;
 #else
-	return DesktopUtil::openUrl(url);
+	YaTokenAuth::instance()->openYaUrl(url);
+	return true;
 #endif
 }
 
@@ -146,6 +149,11 @@ bool DesktopUtil::openEMail(const QString& email)
 #endif
 }
 #endif
+
+bool DesktopUtil::openUrl(const QUrl& url)
+{
+	return doOpenUrl(url);
+}
 
 /**
  * \brief Sets the handler for the given \a scheme to be the \a handler method provided by the \a receiver object.

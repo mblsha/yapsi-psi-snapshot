@@ -18,6 +18,12 @@
  *
  */
 
+
+#ifdef __GNUC__
+#warning "contactview is still full of qt3support usage"
+#endif
+#undef QT3_SUPPORT_WARNINGS
+
 #include "contactview.h"
 
 #include <QFileDialog>
@@ -857,7 +863,8 @@ void ContactProfile::animateNick(const Jid &j)
 
 void ContactProfile::deferredUpdateGroups()
 {
-	d->t->start(250, true);
+	d->t->setSingleShot(true);
+	d->t->start(250);
 }
 
 void ContactProfile::updateGroups()
@@ -917,7 +924,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 	if(i->type() == ContactViewItem::Profile) {
 		Q3PopupMenu pm;
 
-		Q3PopupMenu *am = new Q3PopupMenu(&pm);
+		QMenu *am = new QMenu(&pm);
 		am->insertItem(IconsetFactory::icon("psi/disco").icon(), tr("Online Users"), 5);
 		am->insertItem(IconsetFactory::icon("psi/sendMessage").icon(), tr("Send Server Message"), 1);
 		am->insertSeparator();
@@ -926,7 +933,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 		am->insertItem(IconsetFactory::icon("psi/remove").icon(), tr("Delete MOTD"), 4);
 
 		const int status_start = 15;
-		Q3PopupMenu *sm = new Q3PopupMenu(&pm);
+		QMenu *sm = new QMenu(&pm);
 		sm->insertItem(PsiIconset::instance()->status(STATUS_ONLINE).icon(),	status2txt(STATUS_ONLINE),	STATUS_ONLINE		+ status_start);
 		if (PsiOptions::instance()->getOption("options.ui.menu.status.chat").toBool())
 			sm->insertItem(PsiIconset::instance()->status(STATUS_CHAT).icon(),		status2txt(STATUS_CHAT),	STATUS_CHAT		+ status_start);
@@ -946,7 +953,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 		pm.insertItem(tr("Mood"), 11);
 		pm.setItemEnabled(11, d->pa->serverInfoManager()->hasPEP());
 
-		Q3PopupMenu *avatarm = new Q3PopupMenu (&pm);
+		QMenu *avatarm = new QMenu (&pm);
 		avatarm->insertItem(tr("Set Avatar"), 12);
 		avatarm->insertItem(tr("Unset Avatar"), 13);
 		pm.insertItem(tr("Avatar"), avatarm, 14);
@@ -1180,6 +1187,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 
 		if(!rl.isEmpty()) {
 			for(UserResourceList::ConstIterator it = rl.begin(); it != rl.end(); ++it) {
+#ifndef NEWCONTACTLIST
 				const UserResource &r = *it;
 				s2m->addResource(r,  base_sendto+at_sendto++);
 				c2m->addResource(r,  base_sendto+at_sendto++);
@@ -1187,6 +1195,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 				wb2m->addResource(r,  base_sendto+at_sendto++);
 #endif
 				rc2m->addResource(r, base_sendto+at_sendto++);
+#endif
 			}
 		}
 
@@ -1238,7 +1247,9 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 					status = makeSTATUS((*uit).status());
 				else
 					status = STATUS_OFFLINE;
+#ifndef NEWCONTACTLIST
 				cm->addResource(status, *it, base_hidden+at_hidden++);
+#endif
 			}
 			pm.insertItem(tr("Active Chats"), cm, 7);
 			if(hc.isEmpty())
@@ -1274,7 +1285,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 		int at_gc = 0;
 		QStringList groupchats;
 		if(!isPrivate && !isAgent) {
-			Q3PopupMenu *gm = new Q3PopupMenu(&pm);
+			QMenu *gm = new QMenu(&pm);
 			groupchats = d->pa->groupchats();
 			for(QStringList::ConstIterator it = groupchats.begin(); it != groupchats.end(); ++it) {
 				int id = gm->insertItem(*it, base_gc+at_gc++);
@@ -1302,7 +1313,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 
 			if(!isAgent) {
 				if(inList && !PsiOptions::instance()->getOption("options.ui.contactlist.lockdown-roster").toBool()) {
-					Q3PopupMenu *gm = new Q3PopupMenu(&pm);
+					QMenu *gm = new QMenu(&pm);
 
 					gm->setCheckable(true);
 					gm->insertItem(tr("&None"), 8);
@@ -1357,7 +1368,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 		}
 
 		if(inList && !PsiOptions::instance()->getOption("options.ui.contactlist.lockdown-roster").toBool()) {
-			Q3PopupMenu *authm = new Q3PopupMenu (&pm);
+			QMenu *authm = new QMenu (&pm);
 
 			authm->insertItem(tr("Resend Authorization To"), 6);
 			authm->insertItem(tr("Rerequest Authorization From"), 11);
@@ -1382,7 +1393,7 @@ void ContactProfile::doContextMenu(ContactViewItem *i, const QPoint &pos)
 
 		// Avatars
 		if (PsiOptions::instance()->getOption("options.ui.menu.contact.custom-picture").toBool()) {
-			Q3PopupMenu *avpm = new Q3PopupMenu(&pm);
+			QMenu *avpm = new QMenu(&pm);
 			d->cv->qa_assignAvatar->addTo(avpm);
 			d->cv->qa_clearAvatar->setEnabled(d->pa->avatarFactory()->hasManualAvatar(u->jid()));
 			d->cv->qa_clearAvatar->addTo(avpm);
@@ -2195,7 +2206,7 @@ void ContactView::keyPressEvent(QKeyEvent *e)
 		Q3ListView::keyPressEvent(e);
 #endif 
 	} else {
-		QString text = e->text().lower();
+		QString text = e->text().toLower();
 		if (text.isEmpty()) {
 			Q3ListView::keyPressEvent(e);
 		}
@@ -2698,7 +2709,8 @@ QSize ContactView::sizeHint() const
  */
 void ContactView::recalculateSize()
 {
-	d->recalculateSizeTimer->start( 0, true );
+	d->recalculateSizeTimer->setSingleShot(true);
+	d->recalculateSizeTimer->start(0);
 }
 
 //------------------------------------------------------------------------------
@@ -3309,10 +3321,10 @@ int ContactViewItem::compare(Q3ListViewItem *lvi, int, bool) const
 			if ( PsiOptions::instance()->getOption("options.ui.contactlist.contact-sort-style").toString() == "status" ) {
 				ret = rankStatus(d->status) - rankStatus(i->status());
 				if(ret == 0)
-					ret = text(0).lower().localeAwareCompare(i->text(0).lower());
+					ret = text(0).toLower().localeAwareCompare(i->text(0).toLower());
 			}
 			else { // ContactSortStyle_Alpha
-				ret = text(0).lower().localeAwareCompare(i->text(0).lower());
+				ret = text(0).toLower().localeAwareCompare(i->text(0).toLower());
 			}
 		}
 	}
@@ -3330,7 +3342,7 @@ int ContactViewItem::compare(Q3ListViewItem *lvi, int, bool) const
 			else { // GroupSortStyle_Alpha
 				ret = rankGroup(d->groupType) - rankGroup(i->groupType());
 				if(ret == 0)
-					ret = text(0).lower().localeAwareCompare(i->text(0).lower());
+					ret = text(0).toLower().localeAwareCompare(i->text(0).toLower());
 			}
 		}
 		else if(i->type() == Profile) {
@@ -3341,7 +3353,7 @@ int ContactViewItem::compare(Q3ListViewItem *lvi, int, bool) const
 				ret = ourRank - theirRank;
 			}
 			else // AccountSortStyle_Alpha
-				ret = text(0).lower().localeAwareCompare(i->text(0).lower());
+				ret = text(0).toLower().localeAwareCompare(i->text(0).toLower());
 		}
 	}
 
@@ -3420,7 +3432,7 @@ void ContactViewItem::resetName(bool forceNoStatusMsg)
 			}
 
 			if (d->status_single) {
-				statusMsg = statusMsg.simplifyWhiteSpace();
+				statusMsg = statusMsg.simplified();
 				if (!statusMsg.isEmpty()) {
 					s += "<br><font size=-1 color='" + PsiOptions::instance()->getOption("options.ui.look.colors.contactlist.status-messages").value<QColor>().name() + "'><nobr>" + TextUtil::plain2rich(statusMsg) + "</nobr></font>";
 				}

@@ -36,8 +36,8 @@ class ChatDlg;
 class QPushButton;
 class QMenu;
 class QString;
-class Q3DragObject;
 class QContextMenuEvent;
+class QActionGroup;
 #ifdef YAPSI
 class YaTabWidget;
 #include "yawindow.h"
@@ -123,6 +123,7 @@ protected:
 protected slots:
 	void detachCurrentTab();
 	void mouseDoubleClickTab(QWidget*);
+	void mouseMiddleClickTab(QWidget*);
 	void reorderTabs(int oldIndex, int newIndex);
 
 public slots:

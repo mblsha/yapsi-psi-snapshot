@@ -39,7 +39,7 @@ AboutDlg::AboutDlg(QWidget* parent)
 
 	QString lang_name = qApp->translate( "@default", "language_name" );
 	if ( lang_name == "language_name" ) // remove the translation tab, if no translation is used
-		ui_.tw_tabs->removePage ( ui_.tw_tabs->page(3) );
+		ui_.tw_tabs->removeTab ( 3 );
 
 	// fill in Authors tab...
 	QString authors;
@@ -65,9 +65,12 @@ AboutDlg::AboutDlg(QWidget* parent)
 
 	// fill in Thanks To tab...
 	QString thanks;
+	thanks += details(QString::fromUtf8("Frederik Schwarzer"),
+			  "schwarzerf@gmail.com", "", "",
+			  tr("Language coordinator, miscellaneous assistance"));
 	thanks += details(QString::fromUtf8("Akito Nozaki"),
 			  "anpluto@usa.net", "", "",
-			  tr("Language coordinator, miscellaneous assistance"));
+			  tr("Former language coordinator, miscellaneous assistance"));
 	thanks += details(QString::fromUtf8("Jan Niehusmann"),
 			  "jan@gondor.com", "", "",
 			  tr("Build setup, miscellaneous assistance"));
@@ -132,7 +135,7 @@ QString AboutDlg::loadText( const QString & fileName )
 	QString text;
 
 	QFile f(fileName);
-	if(f.open(IO_ReadOnly)) {
+	if(f.open(QIODevice::ReadOnly)) {
 		QTextStream t(&f);
 		while(!t.atEnd())
 			text += t.readLine() + '\n';

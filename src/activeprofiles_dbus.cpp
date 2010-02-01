@@ -83,16 +83,16 @@ static bool registerBusname(QDBusConnectionInterface *dbusIface, QString name, b
 	if (reply.isValid()) {
 		switch (reply.value()) {
 			case QDBusConnectionInterface::ServiceNotRegistered:
-				qWarning("failed to register dbus name %s:", (const char*)name); 
+				qWarning("failed to register dbus name %s:", qPrintable(name)); 
 				break;
 			case QDBusConnectionInterface::ServiceQueued:
-				qDebug("dbus name %s already taken, queueing", (const char*)name);
+				qDebug("dbus name %s already taken, queueing", qPrintable(name));
 				break;
 			case QDBusConnectionInterface::ServiceRegistered:
 				ok = true;
 		}
 	} else {
-		qWarning("failed to register dbus name %s: %s", (const char*)name,  (const char*)reply.error().message());
+		qWarning("failed to register dbus name %s: %s", qPrintable(name), qPrintable(reply.error().message()));
 	}
 	return ok;
 }
@@ -152,9 +152,20 @@ bool ActiveProfiles::isActive(const QString &profile) const
 	return true;
 #endif
 
+	if (!QDBusConnection::sessionBus().isConnected()) {
+		qWarning("can't connect to dbus");
+		return false;
+	}
+
 	QDBusConnectionInterface *dbusIface = QDBusConnection::sessionBus().interface ();
 	return dbusIface->isServiceRegistered(d->dbusName(profile));
 }
+
+bool ActiveProfiles::isAnyActive() const
+{
+	return isActive("");
+}
+
 
 bool ActiveProfiles::setThisProfile(const QString &profile)
 {
@@ -212,30 +223,25 @@ ActiveProfiles::~ActiveProfiles()
 }
 
 
-
-
-bool ActiveProfiles::sendOpenUri(const QString &uri, const QString &profile) const
+bool ActiveProfiles::setStatus(const QString &profile, const QString &status, const QString &message) const
 {
-#ifdef YAPSI
+	QDBusInterface(d->dbusName(profile), "/Main", PSIDBUSMAINIF).call(QDBus::NoBlock,
+			"setStatus", status, message);
 	return true;
-#endif
-
-	QDBusInterface(d->dbusName(profile), "/Main", PSIDBUSMAINIF).call(QDBus::NoBlock, 
-			"openURI", uri);
-	return true;
-	
-	// FIXME
-	return false; //  isActive(profile)? profile : pickProfile();
 }
 
-
-
-bool ActiveProfiles::raiseOther(QString profile, bool withUI) const
+bool ActiveProfiles::openUri(const QString &profile, const QString &uri) const
 {
 #ifdef YAPSI
 	return true;
 #endif
+ 	QDBusInterface(d->dbusName(profile), "/Main", PSIDBUSMAINIF).call(QDBus::NoBlock, 
+ 			"openURI", uri);
+ 	return true;
+}
 
+bool ActiveProfiles::raise(const QString &profile, bool withUI) const
+{
 	QLabel *lab=0;
 	QDBusMessage msg = QDBusMessage::createMethodCall ( d->dbusName(profile), "/Main", PSIDBUSMAINIF, "raise" );
 	if (withUI) {

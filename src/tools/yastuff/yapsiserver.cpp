@@ -425,10 +425,10 @@ void YaPsiServer::onlineDisconnected()
 }
 #endif
 
-// void YaPsiServer::playSound(const QString& type)
-// {
-// 	emit doPlaySound(type);
-// }
+void YaPsiServer::playSound(const QString& type)
+{
+	emit doPlaySound(type);
+}
 
 void YaPsiServer::authAccept(const QString& id)
 {

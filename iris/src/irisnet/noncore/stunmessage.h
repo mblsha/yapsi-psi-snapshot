@@ -89,6 +89,18 @@ public:
 	// minimal 3-field check
 	static bool isProbablyStun(const QByteArray &a);
 
+	// extract out the class value from a raw packet.  assumes that 'a' has
+	//   already passed isProbablyStun()
+	static Class extractClass(const QByteArray &a);
+
+	// examine raw data, such as from a stream, to see if it contains a
+	//   stun packet
+	static bool containsStun(const quint8 *data, int size);
+
+	// try to read a stun packet from the raw data, else return null.
+	//   a successful result can be passed to fromBinary()
+	static QByteArray readStun(const quint8 *data, int size);
+
 private:
 	class Private;
 	QSharedDataPointer<Private> d;

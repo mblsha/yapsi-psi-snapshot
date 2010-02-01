@@ -37,12 +37,7 @@ public:
 	virtual void appendText(const QString &text);	
 
 	QString getHtml() const;
-	
-	struct Selection {
-		int start, end;
-	};
-	Selection saveSelection(QTextCursor &cursor);
-	void restoreSelection(QTextCursor &cursor, Selection selection);
+	QString getPlainText() const;
 	
 public slots:
 	void scrollToBottom();
@@ -67,6 +62,8 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *e);
 	QMimeData *createMimeDataFromSelection() const;
 	void resizeEvent(QResizeEvent *);
+
+	QString getTextHelper(bool html) const;
 
 	class Private;
 private:

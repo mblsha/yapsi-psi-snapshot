@@ -168,6 +168,7 @@ protected:
 	bool isEmoteMessage(const XMPP::Message& m);
 	QString messageText(const QString& text, bool isEmote, bool isHtml = false);
 	QString messageText(const XMPP::Message& m);
+	QString messageSubject(const XMPP::Message& m);
 	bool couldSendMessages() const;
 
 	virtual void initUi() = 0;
@@ -179,8 +180,8 @@ protected:
 	virtual bool isEncryptionEnabled() const;
 	virtual void appendSysMsg(const QString& txt) = 0;
 #ifndef YAPSI
-	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt) = 0;
-	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt) = 0;
+	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, const QString& txt, const QString& subject) = 0;
+	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, const QString& txt, const QString& subject) = 0;
 #else
 	virtual void appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags) = 0;
 	virtual void appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, int spamFlag, QString id, XMPP::MessageReceipt messageReceipt, QString txt, const XMPP::YaDateTime& yaTime, int yaFlags) = 0;

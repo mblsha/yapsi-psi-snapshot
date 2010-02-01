@@ -23,6 +23,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QMap>
 
 class PsiCon;
 
@@ -30,10 +31,13 @@ class PsiMain : public QObject
 {
 	Q_OBJECT
 public:
-	PsiMain(const QString& uriToOpen, QObject *parent=0);
+	PsiMain(const QMap<QString, QString>& commandline, QObject *parent=0);
 	~PsiMain();
 
 	PsiCon* controller() const;
+
+	bool useActiveInstance();
+	void useLocalInstance();
 
 signals:
 	void quit();
@@ -50,7 +54,7 @@ public slots:
 private:
 	QString lastProfile, lastLang;
 	bool autoOpen;
-	QString uri;
+	QMap<QString, QString> cmdline;
 
 	PsiCon *pcon;
 };

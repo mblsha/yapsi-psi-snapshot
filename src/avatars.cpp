@@ -67,7 +67,7 @@ static QByteArray scaleAvatar(const QByteArray& b)
 {
 	//int maxSize = (LEGOPTS.avatarsSize > MAX_AVATAR_SIZE ? MAX_AVATAR_SIZE : LEGOPTS.avatarsSize);
 	int maxSize = AvatarFactory::maxAvatarSize();
-	QImage i(b);
+	QImage i = QImage::fromData(b);
 	if (i.isNull()) {
 		qWarning("AvatarFactory::scaleAvatar(): Null image (unrecognized format?)");
 		return QByteArray();
@@ -104,18 +104,15 @@ Avatar::~Avatar()
 
 void Avatar::setImage(const QImage& i)
 {
-	if (i.width() > MAX_AVATAR_DISPLAY_SIZE || i.height() > MAX_AVATAR_DISPLAY_SIZE) {
-		pixmap_.convertFromImage(i.scaled(QSize(MAX_AVATAR_DISPLAY_SIZE, MAX_AVATAR_DISPLAY_SIZE),
-		                                  Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	}
-	else {
-		pixmap_.convertFromImage(i);
-	}
+	if (i.width() > MAX_AVATAR_DISPLAY_SIZE || i.height() > MAX_AVATAR_DISPLAY_SIZE)
+		pixmap_ = QPixmap::fromImage(i.scaled(MAX_AVATAR_DISPLAY_SIZE,MAX_AVATAR_DISPLAY_SIZE,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	else
+		pixmap_ = QPixmap::fromImage(i);
 }
 
 void Avatar::setImage(const QByteArray& ba)
 {
-	setImage(QImage(ba));
+	setImage(QImage::fromData(ba));
 }
 
 void Avatar::setImage(const QPixmap& p)
@@ -212,12 +209,12 @@ void CachedAvatar::saveToCache(const QByteArray& data)
 	hash_ = hash;
 	// printf("Saving %s to cache.\n",hash.latin1());
 	QFile f(cachedFileName());
-	if (f.open(IO_WriteOnly)) {
-		f.writeBlock(data);
+	if (f.open(QIODevice::WriteOnly)) {
+		f.write(data);
 		f.close();
 	}
 	else {
-		printf("Error opening %s for writing.\n",f.name().latin1());
+		printf("Error opening %s for writing.\n", qPrintable(f.fileName()));
 	}
 }
 
@@ -257,7 +254,7 @@ signals:
 
 protected:
 	void requestAvatar() {
-		factory()->account()->pepManager()->get(jid_,"http://www.xmpp.org/extensions/xep-0084.html#ns-data",hash());
+		factory()->account()->pepManager()->get(jid_,"urn:xmpp:avatar:data",hash());
 	}
 
 	void avatarUpdated() 
@@ -596,25 +593,25 @@ void AvatarFactory::setSelfAvatar(const QString& fileName)
 			return;
 		
 		QByteArray avatar_data = scaleAvatar(avatar_file.readAll());
-		QImage avatar_image(avatar_data);
+		QImage avatar_image = QImage::fromData(avatar_data);
 		if(!avatar_image.isNull()) {
 			// Publish data
 			QDomDocument* doc = account()->client()->doc();
 			QString hash = Hash("sha1").hashToString(avatar_data);
 			QDomElement el = doc->createElement("data");
-			el.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0084.html#ns-data ");
+			el.setAttribute("xmlns","urn:xmpp:avatar:data");
 			el.appendChild(doc->createTextNode(Base64().arrayToString(avatar_data)));
 			selfAvatarData_ = avatar_data;
 			selfAvatarHash_ = hash;
-			account()->pepManager()->publish("http://www.xmpp.org/extensions/xep-0084.html#ns-data",PubSubItem(hash,el));
+			account()->pepManager()->publish("urn:xmpp:avatar:data",PubSubItem(hash,el));
 		}
 	}
 	else {
 		QDomDocument* doc = account()->client()->doc();
 		QDomElement meta_el =  doc->createElement("metadata");
-		meta_el.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+		meta_el.setAttribute("xmlns","urn:xmpp:avatar:metadata");
 		meta_el.appendChild(doc->createElement("stop"));
-		account()->pepManager()->publish("http://www.xmpp.org/extensions/xep-0084.html#ns-metadata",PubSubItem("current",meta_el));
+		account()->pepManager()->publish("urn:xmpp:avatar:metadata",PubSubItem("current",meta_el));
 	}
 }
 
@@ -684,7 +681,7 @@ int AvatarFactory::maxAvatarSize()
 
 void AvatarFactory::itemPublished(const Jid& jid, const QString& n, const PubSubItem& item)
 {
-	if (n == "http://www.xmpp.org/extensions/xep-0084.html#ns-data") {
+	if (n == "urn:xmpp:avatar:data") {
 		if (item.payload().tagName() == "data") {
 			if (pep_avatars_.contains(jid.bare())) {
 				pep_avatars_[jid.bare()]->setData(item.id(),item.payload().text());
@@ -694,7 +691,7 @@ void AvatarFactory::itemPublished(const Jid& jid, const QString& n, const PubSub
 			qWarning("avatars.cpp: Unexpected item payload");
 		}
 	}
-	else if (n == "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata") {
+	else if (n == "urn:xmpp:avatar:metadata") {
 		if (!pep_avatars_.contains(jid.bare())) {
 			pep_avatars_[jid.bare()] = new PEPAvatar(this, jid.bare());
 			connect(pep_avatars_[jid.bare()],SIGNAL(avatarChanged(const Jid&)),this, SLOT(updateAvatar(const Jid&)));
@@ -713,12 +710,12 @@ void AvatarFactory::itemPublished(const Jid& jid, const QString& n, const PubSub
 
 void AvatarFactory::publish_success(const QString& n, const PubSubItem& item)
 {
-	if (n == "http://www.xmpp.org/extensions/xep-0084.html#ns-data" && item.id() == selfAvatarHash_) {
+	if (n == "urn:xmpp:avatar:data" && item.id() == selfAvatarHash_) {
 		// Publish metadata
 		QDomDocument* doc = account()->client()->doc();
-		QImage avatar_image(selfAvatarData_);
+		QImage avatar_image = QImage::fromData(selfAvatarData_);
 		QDomElement meta_el = doc->createElement("metadata");
-		meta_el.setAttribute("xmlns","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+		meta_el.setAttribute("xmlns","urn:xmpp:avatar:metadata");
 		QDomElement info_el = doc->createElement("info");
 		info_el.setAttribute("id",selfAvatarHash_);
 		info_el.setAttribute("bytes",avatar_image.numBytes());
@@ -726,7 +723,7 @@ void AvatarFactory::publish_success(const QString& n, const PubSubItem& item)
 		info_el.setAttribute("width",avatar_image.width());
 		info_el.setAttribute("type",image2type(selfAvatarData_));
 		meta_el.appendChild(info_el);
-		account()->pepManager()->publish("http://www.xmpp.org/extensions/xep-0084.html#ns-metadata",PubSubItem(selfAvatarHash_,meta_el));
+		account()->pepManager()->publish("urn:xmpp:avatar:metadata",PubSubItem(selfAvatarHash_,meta_el));
 	}
 }
 

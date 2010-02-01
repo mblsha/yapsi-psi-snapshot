@@ -11,19 +11,21 @@ include($$PWD/tabs/tabs.pri)
 include($$PWD/Certificates/Certificates.pri)
 
 # tools
-include($$PWD/tools/trayicon/trayicon.pri)
 include($$PWD/tools/iconset/iconset.pri)
-include($$PWD/tools/idle/idle.pri)
-include($$PWD/tools/systemwatch/systemwatch.pri)
-include($$PWD/tools/zip/zip.pri)
+# include($$PWD/tools/trayicon/trayicon.pri)
 include($$PWD/tools/optionstree/optionstree.pri)
-include($$PWD/tools/globalshortcut/globalshortcut.pri)
+include($$PWD/libpsi/tools/idle/idle.pri)
+include($$PWD/libpsi/tools/systemwatch/systemwatch.pri)
+include($$PWD/libpsi/tools/zip/zip.pri)
 include($$PWD/tools/advwidget/advwidget.pri)
 include($$PWD/tools/yastuff/syntaxhighlighters/syntaxhighlighters.pri)
-include($$PWD/tools/spellchecker/spellchecker.pri)
-include($$PWD/tools/grepshortcutkeydlg/grepshortcutkeydlg.pri)
-include($$PWD/tools/atomicxmlfile/atomicxmlfile.pri)
+include($$PWD/libpsi/tools/globalshortcut/globalshortcut.pri)
+include($$PWD/tools/httphelper/httphelper.pri)
 
+include($$PWD/libpsi/tools/spellchecker/spellchecker.pri)
+include($$PWD/libpsi/dialogs/grepshortcutkeydialog.pri)
+include($$PWD/libpsi/tools/atomicxmlfile/atomicxmlfile.pri)
+include($$PWD/libpsi/tools/simplecli/simplecli.pri)
 # psimedia
 include($$PWD/psimedia/psimedia.pri)
 
@@ -33,12 +35,12 @@ include($$PWD/avcall/avcall.pri)
 # Growl
 mac {
 	contains(DEFINES, HAVE_GROWL) {
-		include($$PWD/tools/growlnotifier/growlnotifier.pri)
+		include($$PWD/libpsi/tools/growlnotifier/growlnotifier.pri)
 	}
 }
 
 # Mac dock
-mac { include($$PWD/tools/mac_dock/mac_dock.pri) }
+mac { include($$PWD/libpsi/tools/mac_dock/mac_dock.pri) }
 
 # Tune
 pep {
@@ -185,6 +187,7 @@ HEADERS += \
 	$$PWD/mucaffiliationsmodel.h \
 	$$PWD/mucaffiliationsproxymodel.h \
 	$$PWD/mucaffiliationsview.h \
+	$$PWD/mucreasonseditor.h \
 	$$PWD/rosteritemexchangetask.h \
 	$$PWD/mood.h \
 	$$PWD/moodcatalog.h \
@@ -217,12 +220,20 @@ HEADERS += \
 	$$PWD/psicontactlist.h \
 	$$PWD/accountlabel.h \
 	$$PWD/psiactions.h \
+	$$PWD/bookmarkmanagedlg.h \
+	$$PWD/vcardphotodlg.h \
+	$$PWD/psicli.h \
 	$$PWD/dummystream.h \
 	$$PWD/contactupdatesmanager.h
 
-
 HEADERS += tabcompletion.h
 SOURCES += tabcompletion.cpp
+
+HEADERS += alertmanager.h
+SOURCES += alertmanager.cpp
+
+HEADERS += accountloginpassword.h
+SOURCES += accountloginpassword.cpp
 
 HEADERS += mcmdcompletion.h
 SOURCES += mcmdcompletion.cpp
@@ -299,6 +310,7 @@ SOURCES += \
 	$$PWD/mucaffiliationsmodel.cpp \
 	$$PWD/mucaffiliationsproxymodel.cpp \
 	$$PWD/mucaffiliationsview.cpp \
+	$$PWD/mucreasonseditor.cpp \
 	$$PWD/rosteritemexchangetask.cpp \
 	$$PWD/mood.cpp \
 	$$PWD/moodcatalog.cpp \
@@ -332,14 +344,14 @@ SOURCES += \
 	$$PWD/contactupdatesmanager.cpp
 
 HEADERS += \
-	$$PWD/deliveryconfirmationmanager.h \
-	$$PWD/bookmarkmanagedlg.h
+	$$PWD/deliveryconfirmationmanager.h
 
 SOURCES += \
 	$$PWD/psicon.cpp \
 	$$PWD/psiaccount.cpp \
 	$$PWD/deliveryconfirmationmanager.cpp \
-	$$PWD/bookmarkmanagedlg.cpp
+	$$PWD/bookmarkmanagedlg.cpp \
+	$$PWD/vcardphotodlg.cpp
 
 # CONFIG += filetransfer
 filetransfer {
@@ -539,13 +551,16 @@ INTERFACES += \
 	$$PWD/optioneditor.ui \
 	$$PWD/passphrase.ui \
 	$$PWD/mucconfig.ui \
+	$$PWD/mucreasonseditor.ui \
 	$$PWD/xmlconsole.ui \
 	$$PWD/disco.ui \
 	$$PWD/tip.ui \
 	$$PWD/filetrans.ui \
 	$$PWD/mood.ui \
 	$$PWD/voicecall.ui \
-	$$PWD/bookmarkmanage.ui
+	$$PWD/bookmarkmanage.ui \
+	$$PWD/ahcommanddlg.ui \
+	$$PWD/ahcformdlg.ui
 
 # options dialog
 include($$PWD/options/options.pri)
@@ -583,7 +598,7 @@ unix:!dbus {
 }
 
 mac {
-	QMAKE_LFLAGS += -framework Carbon -framework IOKit
+	QMAKE_LFLAGS += -framework Carbon -framework IOKit -framework AppKit
 }
 
 !yapsi {

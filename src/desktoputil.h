@@ -23,10 +23,13 @@
 
 class QString;
 class QObject;
+class QUrl;
 
 namespace DesktopUtil
 {
 	bool openUrl(const QString& url);
+	bool openUrl(const QUrl& url);
+
 #ifdef YAPSI
 	bool openYaUrl(const QString& url);
 	bool openEMail(const QString& email);

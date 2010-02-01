@@ -45,14 +45,14 @@
 #include "yaonline.h"
 #endif
 
-void YaPopupNotification::notify(int id, PsiEvent* event)
+bool YaPopupNotification::notify(int id, PsiEvent* event, int soundType)
 {
 	Q_ASSERT(event);
 
 #ifndef YAPSI_ACTIVEX_SERVER
 	// FIXME: should use PsiAccount::Private::noPopup()
 	if (!event->account() || event->account()->status().type() != XMPP::Status::Online)
-		return;
+		return false;
 #endif
 
 	if (event->type() == PsiEvent::Message || event->type() == PsiEvent::Mood) {
@@ -61,13 +61,13 @@ void YaPopupNotification::notify(int id, PsiEvent* event)
 			chatDlg = event->account()->findChatDialog(event->jid());
 
 		if (chatDlg && chatDlg->isActiveTab())
-			return;
+			return false;
 	}
 
 	if (event->type() == PsiEvent::Message) {
 #ifndef YAPSI_ACTIVEX_SERVER
 		if (!PsiOptions::instance()->getOption("options.ya.popups.message.enable").toBool()) {
-			return;
+			return false;
 		}
 #endif
 	}
@@ -76,14 +76,14 @@ void YaPopupNotification::notify(int id, PsiEvent* event)
 		MoodEvent* moodEvent = static_cast<MoodEvent*>(event);
 		if (!event->account()->psi()->yaToasterCentral()->showToaster(YaToasterCentral::MoodChange, event->from(), moodEvent->mood())) {
 			// qWarning("YaToasterCentral blocked mood change: %s %s", qPrintable(contact->jid().full()), qPrintable(mood));
-			return;
+			return false;
 		}
 
 		// qWarning("%s Changed mood to: %s", qPrintable(contact->jid().full()), qPrintable(mood));
 
 #ifndef YAPSI_ACTIVEX_SERVER
 		if (!PsiOptions::instance()->getOption("options.ya.popups.moods.enable").toBool()) {
-			return;
+			return false;
 		}
 #endif
 
@@ -93,20 +93,20 @@ void YaPopupNotification::notify(int id, PsiEvent* event)
 			QString contactName = Ya::contactName(contact->name(), contact->jid().bare());
 			PsiGrowlNotifier::instance()->moodChanged(event->account(), contact->jid(), contactName, moodEvent->mood());
 		}
-		return;
+		return true;
 #endif
 	}
 
 #ifdef YAPSI_ACTIVEX_SERVER
 	if (event->account()->psi()->yaOnline()) {
-		event->account()->psi()->yaOnline()->notify(id, event);
-		return;
+		event->account()->psi()->yaOnline()->notify(id, event, soundType);
+		return true;
 	}
 #endif
 
 #if defined(Q_WS_MAC) && defined(HAVE_GROWL)
 	// nasty-nasty YaToster steals focus on Mac OS X
-	return;
+	return true;
 #endif
 
 	YaPopupNotification* notification = new YaPopupNotification(id, event);
@@ -117,6 +117,7 @@ void YaPopupNotification::notify(int id, PsiEvent* event)
 	toster->setTimes(1000, 5000, 500);
 	toster->setSize(QSize(280, height));
 	toster->start();
+	return true;
 }
 
 YaPopupNotification::YaPopupNotification(int id, PsiEvent* event)

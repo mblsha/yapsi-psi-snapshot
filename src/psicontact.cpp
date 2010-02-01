@@ -670,12 +670,14 @@ void PsiContact::blockContactConfirmationHelper(bool block)
 	if (!account())
 		return;
 
-// FIXME
 #ifdef YAPSI
 	YaPrivacyManager* privacyManager = dynamic_cast<YaPrivacyManager*>(account()->privacyManager());
 	Q_ASSERT(privacyManager);
 
 	privacyManager->setContactBlocked(jid(), block);
+#else
+	// FIXME
+	Q_UNUSED(block);
 #endif
 }
 
@@ -910,7 +912,7 @@ bool PsiContact::compare(const ContactListItem* other) const
 	if (contact) {
 		int rank = rankStatus(d->oldStatus_.type()) - rankStatus(contact->d->oldStatus_.type());
 		if (rank == 0)
-			rank = QString::localeAwareCompare(comparisonName().lower(), contact->comparisonName().lower());
+			rank = QString::localeAwareCompare(comparisonName().toLower(), contact->comparisonName().toLower());
 		return rank < 0;
 	}
 

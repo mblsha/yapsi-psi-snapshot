@@ -158,6 +158,7 @@ public:
 		minimumSSF = 0;
 		maximumSSF = 0;
 		doBinding = true;
+		doCompress = false;
 		lang = "";
 
 		in_rrsig = false;

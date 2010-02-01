@@ -143,7 +143,7 @@ private:
 	Ui::GroupChatDlg ui_;
 
 	void doAlert();
-	void appendSysMsg(const QString &, bool, const QDateTime &ts=QDateTime());
+	void appendSysMsg(const QString &, bool, const QDateTime &ts=QDateTime(), bool prepareAsChatMessage=false);
 	void appendMessage(const Message &, bool);
 	void updateLastMsgTime(QDateTime t);
 	void setLooks();
@@ -165,7 +165,7 @@ class GCFindDlg : public QDialog
 {
 	Q_OBJECT
 public:
-	GCFindDlg(const QString &, QWidget *parent=0, const char *name=0);
+	GCFindDlg(const QString&, QWidget* parent);
 	~GCFindDlg();
 
 	void found();

@@ -35,6 +35,8 @@ public:
 	static const int IconFormatType;
 };
 
+class QTextEdit;
+
 class PsiRichText
 {
 public:
@@ -47,4 +49,11 @@ public:
 	static QTextCursor textIconCursorAt(QTextDocument* doc, const QPoint& pos);
 	static QString iconTextAt(QTextDocument* doc, const QPoint& pos);
 	static QString iconNameAt(QTextDocument* doc, const QPoint& pos);
+	static void addEmoticon(QTextEdit *textEdit, const QString &emoticon);
+
+	struct Selection {
+		int start, end;
+	};
+	static Selection saveSelection(QTextEdit *textEdit, QTextCursor &cursor);
+	static void restoreSelection(QTextEdit *textEdit, QTextCursor &cursor, Selection selection);
 };

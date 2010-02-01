@@ -8,6 +8,9 @@
   <dep type='qt4'>
     <required/>
   </dep>
+  <dep type='buildmodeapp'>
+    <required/>
+  </dep>
   <dep type='bundled-qca' />
   <dep type='qca'>
     <required/>
@@ -26,16 +29,16 @@
   <dep type='growl'/>
   <!--<dep type='sparkle'/>-->
   <dep type='xss'/>
-  <dep type='ghbnr'/>
   <dep type='aspell'/>
+  <dep type='enchant'/>
+  <dep type='spell'>
+    <required/>
+  </dep>
   <!--<dep type='plugins'/>-->
-  <dep type='debug'>
+  <dep type='conf'>
     <required/>
   </dep>
   <dep type='recursiveprl'>
-    <required/>
-  </dep>
-  <dep type='conf'>
     <required/>
   </dep>
 </qconf>

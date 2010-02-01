@@ -70,7 +70,9 @@ HEADERS += \
 	$$PWD/yahistorycachemanager.h \
 	$$PWD/yaunreadmessagesmanager.h \
 	$$PWD/yaexception.h \
-	$$PWD/yadebugconsole.h
+	$$PWD/yadebugconsole.h \
+	$$PWD/yatokenauth.h \
+	$$PWD/yanaroddiskmanager.h
 
 SOURCES += \
 	$$PWD/yaprofile.cpp \
@@ -105,7 +107,9 @@ SOURCES += \
 	$$PWD/yahistorycachemanager.cpp \
 	$$PWD/yaunreadmessagesmanager.cpp \
 	$$PWD/yaexception.cpp \
-	$$PWD/yadebugconsole.cpp
+	$$PWD/yadebugconsole.cpp \
+	$$PWD/yatokenauth.cpp \
+	$$PWD/yanaroddiskmanager.cpp
 
 RESOURCES += \
 	$$PWD/yastuff.qrc \

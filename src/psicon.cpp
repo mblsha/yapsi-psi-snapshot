@@ -20,7 +20,6 @@
 
 #include "psicon.h"
 
-#include <q3ptrlist.h>
 #include <qapplication.h>
 #include <qdesktopwidget.h>
 #include <QMenuBar>
@@ -106,6 +105,7 @@
 #include "capsmanager.h"
 #include "avcall/avcall.h"
 #include "avcall/calldlg.h"
+#include "alertmanager.h"
 
 #include "AutoUpdater/AutoUpdater.h"
 #ifdef HAVE_SPARKLE
@@ -120,6 +120,8 @@
 #include "yatoastercentral.h"
 #include "yahistorycachemanager.h"
 #include "yaunreadmessagesmanager.h"
+#include "yatokenauth.h"
+#include "yanaroddiskmanager.h"
 #endif
 #ifdef YAPSI_ACTIVEX_SERVER
 #include "yaonline.h"
@@ -138,13 +140,13 @@ class PsiConObject : public QObject
 	Q_OBJECT
 public:
 	PsiConObject(QObject *parent)
-	: QObject(parent, "PsiConObject")
+	: QObject(parent)
 	{
 		QDir p(ApplicationInfo::homeDir());
 		QDir v(ApplicationInfo::homeDir() + "/tmp-sounds");
 		if(!v.exists())
 			p.mkdir("tmp-sounds");
-		Iconset::setSoundPrefs(v.absPath(), this, SLOT(playSound(QString)));
+		Iconset::setSoundPrefs(v.absolutePath(), this, SLOT(playSound(QString)));
 		connect(URLObject::getInstance(), SIGNAL(openURL(QString)), SLOT(openURL(QString)));
 	}
 
@@ -241,6 +243,7 @@ public:
 		, restoringSavedChats(false)
 		, restoredSavedChats(false)
 		, quitting(false)
+		, alertManager(parent)
 	{
 		psi = parent;
 	}
@@ -284,12 +287,8 @@ private slots:
 	void updateIconSelect()
 	{
 		Iconset iss;
-		Q3PtrListIterator<Iconset> iconsets(PsiIconset::instance()->emoticons);
-		Iconset *iconset;
-		while ( (iconset = iconsets.current()) != 0 ) {
+		foreach(Iconset* iconset, PsiIconset::instance()->emoticons) {
 			iss += *iconset;
-
-			++iconsets;
 		}
 
 		iconSelect->setIconset(iss);
@@ -426,6 +425,7 @@ public:
 	bool quitting;
 	QTimer* updatedAccountTimer_;
 	AutoUpdater *autoUpdater;
+	AlertManager alertManager;
 };
 
 //----------------------------------------------------------------------------
@@ -447,6 +447,9 @@ PsiCon::PsiCon()
 
 #ifdef YAPSI_ACTIVEX_SERVER
 	yaOnline_ = YaOnlineHelper::instance();
+#endif
+#ifdef YAPSI
+	YaTokenAuth::instance()->setController(this);
 #endif
 
 	d->mainwin = 0;
@@ -630,13 +633,14 @@ bool PsiCon::init()
 	PsiOptions::instance()->setOption("options.ui.message.enabled", false);
 	PsiOptions::instance()->setOption("options.ya.main-window.status-bar.show", false);
 	PsiOptions::instance()->setOption("options.muc.bookmarks.auto-join", false);
-	PsiOptions::instance()->setOption("options.ui.muc.enabled", true);
+	PsiOptions::instance()->removeOption("options.ui.muc.enabled", true);
 #endif
 
 #ifdef YAPSI
 	yaToasterCentral_ = new YaToasterCentral(this);
 	yaHistoryCacheManager_ = 0;
 	yaUnreadMessagesManager_ = 0;
+	yaNarodDiskManager_ = 0;
 #endif
 
 	contactUpdatesManager_ = new ContactUpdatesManager(this);
@@ -665,9 +669,9 @@ bool PsiCon::init()
 
 	// setup the main window
 #ifdef YAPSI
-	d->mainwin = new YaMainWin(PsiOptions::instance()->getOption("options.ui.contactlist.always-on-top").toBool(), (PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() && PsiOptions::instance()->getOption("options.contactlist.use-toolwindow").toBool()), this, "yapsimain");
+	d->mainwin = new YaMainWin(PsiOptions::instance()->getOption("options.ui.contactlist.always-on-top").toBool(), (PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() && PsiOptions::instance()->getOption("options.contactlist.use-toolwindow").toBool()), this);
 #else
-	d->mainwin = new MainWin(PsiOptions::instance()->getOption("options.ui.contactlist.always-on-top").toBool(), (PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() && PsiOptions::instance()->getOption("options.contactlist.use-toolwindow").toBool()), this, "psimain");
+	d->mainwin = new MainWin(PsiOptions::instance()->getOption("options.ui.contactlist.always-on-top").toBool(), (PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool() && PsiOptions::instance()->getOption("options.contactlist.use-toolwindow").toBool()), this);
 #endif
 	d->mainwin->setUseDock(PsiOptions::instance()->getOption("options.ui.systemtray.enable").toBool());
 
@@ -787,18 +791,18 @@ bool PsiCon::init()
 	             << "http://jabber.org/protocol/physloc"
 	             << "http://jabber.org/protocol/geoloc"
 #endif
-	             << "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
-	             << "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
+	             << "urn:xmpp:avatar:data"
+	             << "urn:xmpp:avatar:metadata"
 	            );
 
-	registerCaps("ep-notify", QStringList()
+	registerCaps("ep-notify-2", QStringList()
 #ifndef YAPSI
 	             << "http://jabber.org/protocol/mood+notify"
 	             << "http://jabber.org/protocol/tune+notify"
 	             << "http://jabber.org/protocol/physloc+notify"
 	             << "http://jabber.org/protocol/geoloc+notify"
 #endif
-	             << "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata+notify"
+	             << "urn:xmpp:avatar:metadata+notify"
 	            );
 
 	registerCaps("html", QStringList("http://jabber.org/protocol/xhtml-im"));
@@ -854,6 +858,7 @@ bool PsiCon::init()
 #ifdef YAPSI
 	yaHistoryCacheManager_ = new YaHistoryCacheManager(this);
 	yaUnreadMessagesManager_ = new YaUnreadMessagesManager(this);
+	yaNarodDiskManager_ = new YaNarodDiskManager(this);
 #endif
 
 #ifndef YAPSI
@@ -866,8 +871,6 @@ bool PsiCon::init()
 #ifdef USE_DBUS
 	addPsiConAdapter(this);
 #endif
-	connect(ActiveProfiles::instance(), SIGNAL(raiseMainWindow()), SLOT(raiseMainwin()));
-	connect(ActiveProfiles::instance(), SIGNAL(openUri(const QUrl &)), SLOT(doOpenUri(const QUrl &)));
 
 #ifndef YAPSI_ACTIVEX_SERVER
 	d->restoreSavedChats();
@@ -875,7 +878,13 @@ bool PsiCon::init()
 
 	LOG_TRACE;
 
-	DesktopUtil::setUrlHandler("xmpp", this, "doOpenUri");
+	connect(ActiveProfiles::instance(), SIGNAL(setStatusRequested(const QString &, const QString &)), SLOT(setStatusFromCommandline(const QString &, const QString &)));
+	connect(ActiveProfiles::instance(), SIGNAL(openUriRequested(const QString &)), SLOT(openUri(const QString &)));
+	connect(ActiveProfiles::instance(), SIGNAL(raiseRequested()), SLOT(raiseMainwin()));
+
+
+	DesktopUtil::setUrlHandler("xmpp", this, "openUri");
+	DesktopUtil::setUrlHandler("x-psi-atstyle", this, "openAtStyleUri");
 
 	if(AvCallManager::isSupported()) {
 		options_avcall_update();
@@ -932,6 +941,9 @@ void PsiCon::deinit()
 
 	delete yaUnreadMessagesManager_;
 	yaUnreadMessagesManager_ = 0;
+
+	delete yaNarodDiskManager_;
+	yaNarodDiskManager_ = 0;
 #endif
 
 	// delete s5b server
@@ -1008,6 +1020,11 @@ TuneController *PsiCon::tuneController() const
 	return d->tuneController;
 }
 
+AlertManager *PsiCon::alertManager() const {
+	return &(d->alertManager);
+}
+
+
 void PsiCon::closeProgram()
 {
 	doQuit(QuitProgram);
@@ -1017,8 +1034,15 @@ void PsiCon::changeProfile()
 {
 	ActiveProfiles::instance()->unsetThisProfile();
 	if(d->contactList->haveActiveAccounts()) {
-		QMessageBox::information(0, CAP(tr("Error")), tr("Please disconnect before changing the profile."));
-		return;
+		QMessageBox messageBox(QMessageBox::Information, CAP(tr("Error")), tr("Please disconnect before changing the profile."));
+		QPushButton* cancel = messageBox.addButton(QMessageBox::Cancel);
+		QPushButton* disconnect = messageBox.addButton(tr("&Disconnect"), QMessageBox::AcceptRole);
+		messageBox.setDefaultButton(disconnect);
+		messageBox.exec();
+		if (messageBox.clickedButton() == cancel)
+			return;
+
+		setStatusFromDialog(XMPP::Status::Offline, false, true);
 	}
 
 	doQuit(QuitProfile);
@@ -1116,7 +1140,7 @@ void PsiCon::dialogRegister(QWidget *w)
 {
 	item_dialog *i = new item_dialog;
 	i->widget = w;
-	i->className = w->className();
+	i->className = w->metaObject()->className();
 	d->dialogList.append(i);
 }
 
@@ -1284,6 +1308,18 @@ void PsiCon::setStatusFromDialog(const XMPP::Status &s, bool withPriority, bool 
 	setGlobalStatus(s, withPriority, isManualStatus);
 }
 
+void PsiCon::setStatusFromCommandline(const QString &status, const QString &message)
+{
+	bool isManualStatus = true; // presume that this will always be a manual user action
+	if (isManualStatus) {
+		PsiOptions::instance()->setOption("options.status.last-message", message);
+	}
+	XMPP::Status s;
+	s.setType(status);
+	s.setStatus(message);	// yes, a bit different naming convention..
+	setGlobalStatus(s, false, isManualStatus);
+}
+
 void PsiCon::setGlobalStatus(const Status &s, bool withPriority, bool isManualStatus)
 {
 	PsiLogger::instance()->log(QString("%1 PsiCon()::setGlobalStatus(%3, %4)").arg(LOG_THIS)
@@ -1395,9 +1431,16 @@ void PsiCon::checkAccountsEmpty()
 	}
 }
 
-void PsiCon::doOpenUri(const QUrl &uri)
+void PsiCon::openUri(const QString &uri)
 {
-	qDebug() << "uri:  " << uri.toString();
+	QUrl url;
+	url.setEncodedUrl(uri.toLatin1());
+	openUri(url);
+}
+
+void PsiCon::openUri(const QUrl &uri)
+{
+	//qDebug() << "uri:  " << uri.toString();
 
 	// scheme
 	if (uri.scheme() != "xmpp") {
@@ -1449,6 +1492,13 @@ void PsiCon::doOpenUri(const QUrl &uri)
 
 }
 
+void PsiCon::openAtStyleUri(const QUrl &uri)
+{
+	QUrl u(uri);
+	u.setScheme("mailto");
+	DesktopUtil::openUrl(u);
+}
+
 void PsiCon::doToolbars()
 {
 	OptionsDlg *w = (OptionsDlg *)dialogFind("OptionsDlg");
@@ -1492,6 +1542,7 @@ void PsiCon::slotApplyOptions()
 
 #ifndef YAPSI
 #ifndef Q_WS_MAC
+	PsiOptions *o = PsiOptions::instance();
 	if (!PsiOptions::instance()->getOption("options.ui.contactlist.show-menubar").toBool()) {
 		// check if all toolbars are disabled
 		bool toolbarsVisible = false;
@@ -1607,11 +1658,10 @@ QStringList PsiCon::recentGCList() const
 void PsiCon::recentGCAdd(const QString &str)
 {
 	QStringList recentList = recentGCList();
-	
 	// remove it if we have it
-	for(QStringList::Iterator it = recentList.begin(); it != recentList.end(); ++it) {
-		if(*it == str) {
-			recentList.remove(it);
+	foreach(const QString& s, recentList) {
+		if(s == str) {
+			recentList.removeAll(s);
 			break;
 		}
 	}
@@ -1621,7 +1671,7 @@ void PsiCon::recentGCAdd(const QString &str)
 
 	// trim the list if bigger than 10
 	while(recentList.count() > PsiOptions::instance()->getOption("options.muc.recent-joins.maximum").toInt()) {
-		recentList.remove(recentList.fromLast());
+		recentList.takeLast();
 	}
 	
 	PsiOptions::instance()->setOption("options.muc.recent-joins.jids", recentList);
@@ -1636,9 +1686,9 @@ void PsiCon::recentBrowseAdd(const QString &str)
 {
 	QStringList recentList = recentBrowseList();
 	// remove it if we have it
-	for(QStringList::Iterator it = recentList.begin(); it != recentList.end(); ++it) {
-		if(*it == str) {
-			recentList.remove(it);
+	foreach(const QString& s, recentList) {
+		if(s == str) {
+			recentList.removeAll(s);
 			break;
 		}
 	}
@@ -1648,7 +1698,7 @@ void PsiCon::recentBrowseAdd(const QString &str)
 
 	// trim the list if bigger than 10
 	while(recentList.count() > 10) {
-		recentList.remove(recentList.fromLast());
+		recentList.takeLast();
 	}
 	
 	PsiOptions::instance()->setOption("options.ui.service-discovery.recent-jids", recentList);
@@ -1662,9 +1712,9 @@ const QStringList & PsiCon::recentNodeList() const
 void PsiCon::recentNodeAdd(const QString &str)
 {
 	// remove it if we have it
-	for(QStringList::Iterator it = d->recentNodeList.begin(); it != d->recentNodeList.end(); ++it) {
-		if(*it == str) {
-			d->recentNodeList.remove(it);
+	foreach(const QString& s, d->recentNodeList) {
+		if(s == str) {
+			d->recentNodeList.removeAll(s);
 			break;
 		}
 	}
@@ -1674,7 +1724,7 @@ void PsiCon::recentNodeAdd(const QString &str)
 
 	// trim the list if bigger than 10
 	while(d->recentNodeList.count() > 10)
-		d->recentNodeList.remove(d->recentNodeList.fromLast());
+		d->recentNodeList.takeLast();
 }
 
 void PsiCon::proxy_settingsChanged()
@@ -2015,6 +2065,11 @@ YaUnreadMessagesManager* PsiCon::yaUnreadMessagesManager() const
 YaContactListModel* PsiCon::contactListModel() const
 {
 	return d->mainwin->contactListModel();
+}
+
+YaNarodDiskManager* PsiCon::yaNarodDiskManager() const
+{
+	return yaNarodDiskManager_;
 }
 #endif
 

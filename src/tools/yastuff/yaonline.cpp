@@ -121,7 +121,7 @@ YaOnline::YaOnline(YaPsiServer* parent)
 	connect(parent, SIGNAL(doToasterDone(const QString&)), SLOT(doToasterDone(const QString&)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doShowIgnoredToasters()), SLOT(doShowIgnoredToasters()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doScreenUnlocked()), SLOT(doScreenUnlocked()), Qt::QueuedConnection);
-	// connect(parent, SIGNAL(doPlaySound(const QString&)), SLOT(doPlaySound(const QString&)), Qt::QueuedConnection);
+	connect(parent, SIGNAL(doPlaySound(const QString&)), SLOT(doPlaySound(const QString&)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(clearMoods()), SIGNAL(clearMoods()), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doAuthAccept(const QString&)), SLOT(doAuthAccept(const QString&)), Qt::QueuedConnection);
 	connect(parent, SIGNAL(doAuthDecline(const QString&)), SLOT(doAuthDecline(const QString&)), Qt::QueuedConnection);
@@ -313,7 +313,7 @@ void YaOnline::doToasterClicked(const QString& id, bool activate)
 			if (event->type() == PsiEvent::Auth) {
 				AuthEvent* authEvent = static_cast<AuthEvent*>(event);
 				if (authEvent->authType() == "subscribe") {
-					notify(eventData.id, event);
+					notify(eventData.id, event, 0);
 					return;
 				}
 
@@ -528,7 +528,7 @@ void YaOnline::notifyAllUnshownEvents()
 			continue;
 		}
 
-		notify(id, event);
+		notify(id, event, 0);
 	}
 
 	startEventQueueTimer();
@@ -542,7 +542,7 @@ void YaOnline::doScreenUnlocked()
 	notifyAllUnshownEvents();
 }
 
-static QVariantMap toasterParams(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& _message, const QDateTime& timeStamp, const QString& callbackId)
+static QVariantMap toasterParams(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& _message, const QDateTime& timeStamp, const QString& callbackId, int soundType)
 {
 	QString message = Ya::limitText(_message, 300);
 	message = TextUtil::plain2richSimple(message);
@@ -578,19 +578,20 @@ static QVariantMap toasterParams(const QString& type, PsiAccount* account, const
 	map["avatar"] = Ya::VisualUtil::scaledAvatarPath(account, jid);
 	map["timestamp"] = timeStamp;
 	map["show_toaster"] = showToaster;
+	map["sound_type"] = QString::number(soundType);
 	return map;
 }
 
-void YaOnline::showToaster(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& message, const QDateTime& timeStamp, const QString& callbackId)
+void YaOnline::showToaster(const QString& type, PsiAccount* account, const XMPP::Jid& jid, const QString& message, const QDateTime& timeStamp, const QString& callbackId, int soundType)
 {
-	QVariantMap map = toasterParams(type, account, jid, message, timeStamp, callbackId);
+	QVariantMap map = toasterParams(type, account, jid, message, timeStamp, callbackId, soundType);
 	map["gender"] = Ya::VisualUtil::contactGenderString(account, jid);
 
 	QString json = CuteJson::variantToJson(map);
 	server_->dynamicCall("showToaster(const QString&)", json);
 }
 
-void YaOnline::notify(int id, PsiEvent* event)
+void YaOnline::notify(int id, PsiEvent* event, int soundType)
 {
 	if (!controller_)
 		return;
@@ -607,7 +608,8 @@ void YaOnline::notify(int id, PsiEvent* event)
 		            event->account(), event->from(),
 		            moodEvent->mood().trimmed(),
 		            moodEvent->timeStamp(),
-		            yaOnlineNotifyMid(id, event));
+		            yaOnlineNotifyMid(id, event),
+		            soundType);
 		return;
 	}
 
@@ -618,7 +620,8 @@ void YaOnline::notify(int id, PsiEvent* event)
 		                                event->jid(),
 		                                QString(),
 		                                QDateTime::currentDateTime(),
-		                                yaOnlineNotifyMid(id, event));
+		                                yaOnlineNotifyMid(id, event),
+		                                soundType);
 		map["gender"] = Ya::VisualUtil::contactGenderString(event->account(), event->from());
 
 		QString json = CuteJson::variantToJson(map);
@@ -644,7 +647,8 @@ void YaOnline::notify(int id, PsiEvent* event)
 	            event->account(), event->from(),
 	            lastMail.subject,
 	            lastMail.timeStamp,
-	            lastMail.mid);
+	            lastMail.mid,
+	            soundType);
 }
 
 void YaOnline::closeNotify(int id, PsiEvent* event)
@@ -990,15 +994,13 @@ void YaOnline::setCurrentlyVisibleStatus(XMPP::Status::Type statusType)
 	server_->dynamicCall("setCurrentlyVisibleStatus(const QString&)", statusTypeToString(statusType));
 }
 
-// void YaOnline::doPlaySound(const QString& type)
-// {
-// 	if (!onlineAccount())
-// 		return;
-//
-// 	if (type == "message") {
-// 		onlineAccount()->playSound(eChat1);
-// 	}
-// }
+void YaOnline::doPlaySound(const QString& type)
+{
+	if (!onlineAccount())
+		return;
+
+	onlineAccount()->playSound(type.toInt());
+}
 
 static const int maximumEventCount = 100;
 static const int maximumQueueChangedDelay = 30; // in seconds

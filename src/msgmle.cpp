@@ -36,7 +36,6 @@
 #include <QDateTime>
 
 #include "shortcutmanager.h"
-#include "spellhighlighter.h"
 #include "spellchecker.h"
 #include "psioptions.h"
 
@@ -48,7 +47,6 @@
 #include "wikihighlighter.h"
 #include "listhighlighter.h"
 #include "quotationhighlighter.h"
-#include "yaspellhighlighter.h"
 #include "combinedsyntaxhighlighter.h"
 #endif
 
@@ -124,7 +122,7 @@ void ChatView::keyPressEvent(QKeyEvent *e)
 	else if(e->key() == Qt::Key_I && (e->modifiers() & Qt::ControlModifier))
 		e->ignore(); */
 	/*else*/ if(e->key() == Qt::Key_M && (e->modifiers() & Qt::ControlModifier) && !isReadOnly()) // newline 
-		insert("\n");
+		append("\n");
 /*	else if(e->key() == Qt::Key_U && (e->modifiers() & Qt::ControlModifier) && !isReadOnly())
 		clear(); */
 	else if ((e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter) && ((e->modifiers() & Qt::ControlModifier) || (e->modifiers() & Qt::AltModifier))) {

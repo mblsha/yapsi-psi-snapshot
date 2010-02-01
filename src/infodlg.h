@@ -21,11 +21,7 @@
 #ifndef INFODLG_H
 #define INFODLG_H
 
-// #ifdef YAPSI
-// #include "ui_yainfo.h"
-// #else
 #include "ui_info.h"
-// #endif
 
 namespace XMPP
 {
@@ -49,7 +45,8 @@ public:
 protected:
 	// reimplemented
 	//void closeEvent(QCloseEvent *);
-	void updatePhoto();
+	void showEvent ( QShowEvent * event );
+	bool updatePhoto();
 
 public slots:
 	void doRefresh();
@@ -65,18 +62,23 @@ private slots:
 	void requestLastActivityFinished();
 	void jt_finished();
 	void doSubmit();
+	void doDisco();
+	void doShowCal();
+	void doUpdateFromCalendar(const QDate &);
+	void doClearBirthDate();
+	void doBdayCheck();
 	void textChanged();
 	void selectPhoto();
 	void clearPhoto();
+	void showPhoto();
 
 private:
 	class Private;
 	Private *d;
-// #ifdef YAPSI
-// 	Ui::YaInfo ui_;
-// #else
 	Ui::Info ui_;
-// #endif
+	QPushButton* pb_refresh_;
+	QPushButton* pb_close_;
+	QPushButton* pb_submit_;
 
 	void setData(const XMPP::VCard &);
 	XMPP::VCard makeVCard();

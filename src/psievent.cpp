@@ -142,7 +142,7 @@ void PsiEvent::setTimeStamp(const QDateTime &t)
 QDomElement PsiEvent::toXml(QDomDocument *doc) const
 {
 	QDomElement e = doc->createElement("event");
-	e.setAttribute("type", className());
+	e.setAttribute("type", metaObject()->className());
 #ifdef YAPSI_ACTIVEX_SERVER
 	e.setAttribute("shownInOnline", v_shownInOnline ? "true" : "false");
 #endif
@@ -166,7 +166,7 @@ bool PsiEvent::fromXml(PsiCon *psi, PsiAccount *account, const QDomElement *e)
 {
 	if ( e->tagName() != "event" )
 		return false;
-	if ( e->attribute("type") != className() )
+	if ( e->attribute("type") != metaObject()->className() )
 		return false;
 #ifdef YAPSI_ACTIVEX_SERVER
 	v_shownInOnline = e->attribute("shownInOnline") == "true";
@@ -329,7 +329,7 @@ bool MessageEvent::fromXml(PsiCon *psi, PsiAccount *account, const QDomElement *
 	if ( found ) {
 		DummyStream stream;
 		Stanza s = stream.createStanza(addCorrectNS(msg));
-		v_m.fromStanza(s, 0); // FIXME: fix tzoffset?
+		v_m.fromStanza(s);
 
 		// if message was not spooled, it will be initialized with the
 		// current datetime. we want to reset it back to the original
@@ -620,7 +620,7 @@ HttpAuthEvent::HttpAuthEvent(const PsiHttpAuthRequest &req, PsiAccount *acc)
 	XMPP::Message m;
 
 	if ( s.kind() == XMPP::Stanza::Message ) {
-		m.fromStanza(s, acc->client()->timeZoneOffset());
+		m.fromStanza(s);
 	}
 	else {
 		m.setFrom(s.from());
@@ -985,7 +985,7 @@ void EventQueue::enqueue(PsiEvent *e)
 	// skip all with higher or equal priority
 	foreach(EventItem *ei, list_) {
 		if (ei && ei->event()->priority() < prior ) {
-			list_.insert(list_.find(ei), i);
+			list_.insert(list_.indexOf(ei), i);
 			found = true;
 			break;
 		}
@@ -1008,7 +1008,7 @@ void EventQueue::dequeue(PsiEvent *e)
 			if (enabled_) {
 				GlobalEventQueue::instance()->dequeue(i);
 			}
-			list_.remove(i);
+			list_.removeAll(i);
 			emit queueChanged();
 			delete i;
 			return;
@@ -1025,7 +1025,7 @@ PsiEvent *EventQueue::dequeue(const Jid &j, bool compareRes)
 			if (enabled_) {
 				GlobalEventQueue::instance()->dequeue(i);
 			}
-			list_.remove(i);
+			list_.removeAll(i);
 			emit queueChanged();
 			delete i;
 			return e;
@@ -1060,7 +1060,7 @@ PsiEvent *EventQueue::dequeueNext()
 	if (enabled_) {
 		GlobalEventQueue::instance()->dequeue(i);
 	}
-	list_.remove(i);
+	list_.removeAll(i);
 	emit queueChanged();
 	delete i;
 	return e;

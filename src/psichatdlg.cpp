@@ -40,6 +40,7 @@
 #include "jidutil.h"
 #include "textutil.h"
 #include "xmpp_tasks.h"
+#include "lastactivitytask.h"
 
 
 #define MCMDCHAT		"http://psi-im.org/ids/mcmd#chatmain"
@@ -55,7 +56,7 @@ public:
 		Q_UNUSED(preset);
 		if (oldstate->getName() == MCMDCHAT) {
 			QString cmd;
-			if (command.count() > 0) cmd = command[0].lower();
+			if (command.count() > 0) cmd = command[0].toLower();
 			if (cmd == "version") {
 				JT_ClientVersion *version = new JT_ClientVersion(dlg_->account()->client()->rootTask());
 				connect(version, SIGNAL(finished()), SLOT(version_finished()));
@@ -63,6 +64,11 @@ public:
 				//qDebug() << "querying: " << dlg_->jid().full();
 				version->get(dlg_->jid());
 				version->go();
+				newstate = 0;
+			} else if (cmd == "idle") {
+				LastActivityTask *idle = new LastActivityTask(dlg_->jid(), dlg_->account()->client()->rootTask());
+				connect(idle, SIGNAL(finished()), SLOT(lastactivity_finished()));
+				idle->go();
 				newstate = 0;
 			} else if (cmd == "clear") {
 				dlg_->doClear();
@@ -72,14 +78,14 @@ public:
 				newstate = 0;
 			} else if (cmd == "auth") {
 				if (command.count() == 2) {
-					if (command[1].lower() == "request") {
-						// FIXME
+					if (command[1].toLower() == "request") {
+						dlg_->account()->actionAuthRequest(dlg_->jid());
 					}
 				}
 				newstate = 0;
 			} else if (cmd == "compact") {
 				if (command.count() == 2) {
-					QString sub = command[1].lower();
+					QString sub = command[1].toLower();
 					if ("on" == sub) {
 						dlg_->smallChat_ = true;
 					} else if ("off" == sub) {
@@ -106,7 +112,7 @@ public:
 		QStringList all;
 		if (state->getName() == MCMDCHAT) {
 			if (item == 0) {
-				all << "version" << "clear" << "vcard" << "auth" << "compact";
+				all << "version" << "idle" << "clear" << "vcard" << "auth" << "compact";
 			}
 		}
 		QStringList res;
@@ -126,12 +132,30 @@ public slots:
 	void version_finished() {
 		JT_ClientVersion *version = qobject_cast<JT_ClientVersion*>(sender());
 		if (!version) {
-			dlg_->appendSysMsg("Error in version getter!");
+			dlg_->appendSysMsg("No version information available.");
 			return;
 		}
 		dlg_->appendSysMsg(QString("Version response: N: %2 V: %3 OS: %4")
 			.arg(version->name(), version->version(), version->os()));
 	};
+
+	void lastactivity_finished()
+	{
+		LastActivityTask *idle = (LastActivityTask *)sender();
+
+		if (!idle->success()) {
+			dlg_->appendSysMsg("Could not determine time of last activity.");
+			return;
+		}
+
+		if (idle->status().isEmpty()) {
+			dlg_->appendSysMsg(QString("Last activity at %1")
+				.arg(idle->time().toString()));
+		} else {
+			dlg_->appendSysMsg(QString("Last activity at %1 (%2)")
+				.arg(idle->time().toString(), idle->status()));
+		}
+	}
 
 private:
 	PsiChatDlg *dlg_;
@@ -180,6 +204,7 @@ void PsiChatDlg::initUi()
 	pm_settings_ = new QMenu(this);
 	connect(pm_settings_, SIGNAL(aboutToShow()), SLOT(buildMenu()));
 	ui_.tb_actions->setMenu(pm_settings_);
+	ui_.tb_actions->setStyleSheet(" QToolButton::menu-indicator { image:none } ");
 
 	connect(account()->capsManager(), SIGNAL(capsChanged(const Jid&)), SLOT(capsChanged(const Jid&)));
 
@@ -192,7 +217,7 @@ void PsiChatDlg::initUi()
 
 	act_mini_cmd_ = new QAction(this);
 	act_mini_cmd_->setText(tr("Input command..."));
-	connect(act_mini_cmd_, SIGNAL(activated()), SLOT(doMiniCmd()));
+	connect(act_mini_cmd_, SIGNAL(triggered()), SLOT(doMiniCmd()));
 	addAction(act_mini_cmd_);
 
 	ui_.mini_prompt->hide();
@@ -244,8 +269,8 @@ void PsiChatDlg::setLooks()
 
 	// toolbuttons
 	QIcon i;
-	i.setPixmap(IconsetFactory::icon("psi/cryptoNo").impix(),  QIcon::Automatic, QIcon::Normal, QIcon::Off);
-	i.setPixmap(IconsetFactory::icon("psi/cryptoYes").impix(), QIcon::Automatic, QIcon::Normal, QIcon::On);
+	i.addPixmap(IconsetFactory::icon("psi/cryptoNo").impix(),  QIcon::Normal, QIcon::Off);
+	i.addPixmap(IconsetFactory::icon("psi/cryptoYes").impix(), QIcon::Normal, QIcon::On);
 	act_pgp_->setPsiIcon(0);
 	act_pgp_->setIcon(i);
 }
@@ -276,7 +301,7 @@ void PsiChatDlg::updateIdentityVisibility()
 void PsiChatDlg::initToolButtons()
 {
 	act_clear_ = new IconAction(tr("Clear Chat Window"), "psi/clearChat", tr("Clear Chat Window"), 0, this);
-	connect(act_clear_, SIGNAL(activated()), SLOT(doClearButton()));
+	connect(act_clear_, SIGNAL(triggered()), SLOT(doClearButton()));
 
 	connect(account()->psi()->iconSelectPopup(), SIGNAL(textSelected(QString)), this, SLOT(addEmoticon(QString)));
 	act_icon_ = new IconAction(tr("Select Icon"), "psi/smile", tr("Select Icon"), 0, this);
@@ -284,23 +309,23 @@ void PsiChatDlg::initToolButtons()
 	ui_.tb_emoticons->setMenu(account()->psi()->iconSelectPopup());
 
 	act_voice_ = new IconAction(tr("Voice Call"), "psi/voice", tr("Voice Call"), 0, this);
-	connect(act_voice_, SIGNAL(activated()), SLOT(doVoice()));
+	connect(act_voice_, SIGNAL(triggered()), SLOT(doVoice()));
 	act_voice_->setEnabled(false);
 
 	act_file_ = new IconAction(tr("Send File"), "psi/upload", tr("Send File"), 0, this);
-	connect(act_file_, SIGNAL(activated()), SLOT(doFile()));
+	connect(act_file_, SIGNAL(triggered()), SLOT(doFile()));
 
-	act_pgp_ = new IconAction(tr("Toggle Encryption"), "psi/cryptoNo", tr("Toggle Encryption"), 0, this, 0, true);
+	act_pgp_ = new IconAction(tr("Toggle Encryption"), "", tr("Toggle Encryption"), 0, this, 0, true);
 	ui_.tb_pgp->setDefaultAction(act_pgp_);
 
 	act_info_ = new IconAction(tr("User Info"), "psi/vCard", tr("User Info"), 0, this);
-	connect(act_info_, SIGNAL(activated()), SLOT(doInfo()));
+	connect(act_info_, SIGNAL(triggered()), SLOT(doInfo()));
 
 	act_history_ = new IconAction(tr("Message History"), "psi/history", tr("Message History"), 0, this);
-	connect(act_history_, SIGNAL(activated()), SLOT(doHistory()));
+	connect(act_history_, SIGNAL(triggered()), SLOT(doHistory()));
 
 	act_compact_ = new IconAction(tr("Toggle Compact/Full Size"), "psi/compact", tr("Toggle Compact/Full Size"), 0, this);
-	connect(act_compact_, SIGNAL(activated()), SLOT(toggleSmallChat()));
+	connect(act_compact_, SIGNAL(triggered()), SLOT(toggleSmallChat()));
 }
 
 void PsiChatDlg::initToolBar()
@@ -443,9 +468,26 @@ void PsiChatDlg::updatePGP()
 
 void PsiChatDlg::doClearButton()
 {
-	int n = QMessageBox::information(this, tr("Warning"), tr("Are you sure you want to clear the chat window?\n(note: does not affect saved history)"), tr("&Yes"), tr("&No"));
-	if (n == 0)
+	if (PsiOptions::instance()->getOption("options.ui.chat.warn-before-clear").toBool()) {
+		switch (
+			QMessageBox::warning(
+				this,
+				tr("Warning"),
+				tr("Are you sure you want to clear the chat window?\n(note: does not affect saved history)"),
+				QMessageBox::Yes, QMessageBox::YesAll, QMessageBox::No
+			)
+		) {
+		case QMessageBox::No:
+			break;
+		case QMessageBox::YesAll:
+			PsiOptions::instance()->setOption("options.ui.chat.warn-before-clear", false);
+			// fall-through
+		case QMessageBox::Yes:
+			doClear();
+		}
+	} else {
 		doClear();
+	}
 }
 
 void PsiChatDlg::setPGPEnabled(bool enabled)
@@ -465,14 +507,14 @@ void PsiChatDlg::buildMenu()
 	pm_settings_->clear();
 	pm_settings_->addAction(act_compact_);
 	pm_settings_->addAction(act_clear_);
-	pm_settings_->insertSeparator();
+	pm_settings_->addSeparator();
 
 	pm_settings_->addAction(act_icon_);
 	pm_settings_->addAction(act_file_);
 	if (account()->voiceCaller())
 		act_voice_->addTo(pm_settings_);
 	pm_settings_->addAction(act_pgp_);
-	pm_settings_->insertSeparator();
+	pm_settings_->addSeparator();
 
 	pm_settings_->addAction(act_info_);
 	pm_settings_->addAction(act_history_);
@@ -480,37 +522,59 @@ void PsiChatDlg::buildMenu()
 
 void PsiChatDlg::updateCounter()
 {
-	ui_.lb_count->setNum(chatEdit()->text().length());
+	ui_.lb_count->setNum(chatEdit()->toPlainText().length());
 }
 
-void PsiChatDlg::appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt)
+void PsiChatDlg::appendEmoteMessage(SpooledType spooled, const QDateTime& time, bool local, const QString& txt, const QString& subject)
 {
 	updateLastMsgTime(time);
 	QString color = colorString(local, spooled);
 	QString timestr = chatView()->formatTimeStamp(time);
 
-	chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString("[%1]").arg(timestr) + QString(" *%1 ").arg(whoNick(local)) + txt + "</span>");
+	if (subject.isEmpty()) {
+		chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString("[%1]").arg(timestr) + QString(" *%1 ").arg(whoNick(local)) + txt + "</span>");
+	} else {
+		chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString("[%1]").arg(timestr) + "</span><br><b>" + tr("Subject:") + "</b> " + subject);
+		chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString(" *%1 ").arg(whoNick(local)) + txt + "</span>");
+	}
+
 }
 
-void PsiChatDlg::appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, QString txt)
+void PsiChatDlg::appendNormalMessage(SpooledType spooled, const QDateTime& time, bool local, const QString& txt, const QString& subject)
 {
 	updateLastMsgTime(time);
 	QString color = colorString(local, spooled);
 	QString timestr = chatView()->formatTimeStamp(time);
+	QString subjectLine;
+	if (!subject.isEmpty()) {
+		subjectLine = "<b>" + tr("Subject:") + "</b> " + subject;
+	}
 
 	if (PsiOptions::instance()->getOption("options.ui.chat.use-chat-says-style").toBool()) {
-		chatView()->appendText(QString("<p style=\"color: %1\">").arg(color) + QString("[%1] ").arg(timestr) + tr("%1 says:").arg(whoNick(local)) + "</p>" + txt);
+		chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString("[%1] ").arg(timestr) + tr("%1 says:").arg(whoNick(local)) + "</span>");
+		if (!subjectLine.isEmpty()) {
+			chatView()->appendText(subjectLine);
+		}
+		chatView()->appendText(txt);
 	}
 	else {
-		chatView()->appendText(QString("<span style=\"color: %1\">").arg(color) + QString("[%1] &lt;").arg(timestr) + whoNick(local) + QString("&gt;</span> ") + txt);
+		QString intro = QString("<span style=\"color: %1\">").arg(color) + QString("[%1] &lt;").arg(timestr) + whoNick(local) + QString("&gt;</span>");
+		if (subjectLine.isEmpty()) {
+			chatView()->appendText(intro + " " + txt);
+		} else {
+			chatView()->appendText(intro);
+			chatView()->appendText(subjectLine);
+			chatView()->appendText(txt);
+		}
+
 	}
 }
 
 void PsiChatDlg::appendMessageFields(const Message& m)
 {
-	if (!m.subject().isEmpty()) {
-		chatView()->appendText(QString("<b>") + tr("Subject:") + "</b> " + QString("%1").arg(Qt::escape(m.subject())));
-	}
+//	if (!m.subject().isEmpty()) {
+//		chatView()->appendText(QString("<b>") + tr("Subject:") + "</b> " + QString("%1").arg(Qt::escape(m.subject())));
+//	}
 	if (!m.urlList().isEmpty()) {
 		UrlList urls = m.urlList();
 		chatView()->appendText(QString("<i>") + tr("-- Attached URL(s) --") + "</i>");
@@ -532,20 +596,22 @@ void PsiChatDlg::appendSysMsg(const QString &str)
 	QDateTime t = QDateTime::currentDateTime();
 	updateLastMsgTime(t);
 	QString timestr = chatView()->formatTimeStamp(t);
-	QString color = "#00A000";
+	QString color = PsiOptions::instance()->getOption("options.ui.look.colors.messages.informational").toString();
 
 	chatView()->appendText(QString("<font color=\"%1\">[%2]").arg(color, timestr) + QString(" *** %1</font>").arg(str));
 }
 
 QString PsiChatDlg::colorString(bool local, ChatDlg::SpooledType spooled) const
 {
-	if (spooled == ChatDlg::Spooled_OfflineStorage)
-		return "#008000";
+	if (spooled == ChatDlg::Spooled_OfflineStorage) {
+		return PsiOptions::instance()->getOption("options.ui.look.colors.messages.informational").toString();
+	}
 
-	if (local)
-		return "#FF0000";
+	if (local) {
+		return PsiOptions::instance()->getOption("options.ui.look.colors.messages.sent").toString();
+	}
 
-	return "#0000FF";
+	return PsiOptions::instance()->getOption("options.ui.look.colors.messages.received").toString();
 }
 
 ChatView* PsiChatDlg::chatView() const
@@ -574,7 +640,7 @@ void PsiChatDlg::chatEditCreated()
 void PsiChatDlg::doSend() {
 	tabCompletion.reset();
 	if (mCmdSite_.isActive()) {
-		QString str = chatEdit()->text();
+		QString str = chatEdit()->toPlainText();
 		if (!mCmdManager_.processCommand(str)) {
 			appendSysMsg(tr("Error: Can not parse command: ") + str);
 		}
@@ -609,7 +675,6 @@ bool PsiChatDlg::eventFilter( QObject *obj, QEvent *ev ) {
 		}
 
 		tabCompletion.reset();
-		return false;
 	}
 
 	return ChatDlg::eventFilter( obj, ev );

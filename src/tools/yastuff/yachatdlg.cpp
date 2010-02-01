@@ -202,6 +202,7 @@ void YaChatDlg::initUi()
 	ui_.contactInfo->setMode(YaChatContactInfoExtra::Button);
 
 	connect(ui_.contactInfo, SIGNAL(clicked()), SLOT(showContactProfile()));
+	connect(ui_.contactInfo, SIGNAL(alternateClicked()), SLOT(showAlternateContactProfile()));
 
 	// connect(ui_.sendButton, SIGNAL(clicked()), SLOT(doSend()));
 	// connect(ui_.historyButton, SIGNAL(clicked()), SLOT(doHistory()));
@@ -342,6 +343,8 @@ void YaChatDlg::contactUpdated(UserListItem* u, int status, const QString& statu
 	}
 
 	lastStatus_ = XMPP::Status(statusType, statusString);
+	alternateContactProfile_ = QString("<div style='white-space:pre'>Self JID: %1</div><br>").arg(Qt::escape(account()->jid().full()));
+	alternateContactProfile_ += u ? u->makeTip(true, false) : QString();
 
 	updateModelNotices();
 	// ui_.addToFriendsButton->setEnabled(!Ya::isInFriends(u));
@@ -408,15 +411,15 @@ void YaChatDlg::appendMessageFields(const Message& m)
 {
 	QString txt;
 	if (!m.subject().isEmpty()) {
-		txt += QString("<b>") + tr("Subject:") + "</b> " + QString("%1").arg(Qt::escape(m.subject()));
+		txt += QString("<b>") + tr("Subject:") + "</b> " + QString("%1").arg(Qt::escape(m.subject())) + "<br>";
 	}
 	if (!m.urlList().isEmpty()) {
 		UrlList urls = m.urlList();
-		txt += QString("<i>") + tr("-- Attached URL(s) --") + "</i>";
+		txt += QString("<i>") + tr("-- Attached URL(s) --") + "</i>" + "<br>";
 		for (QList<Url>::ConstIterator it = urls.begin(); it != urls.end(); ++it) {
 			const Url &u = *it;
-			txt += QString("<b>") + tr("URL:") + "</b> " + QString("%1").arg(TextUtil::linkify(Qt::escape(u.url())));
-			txt += QString("<b>") + tr("Desc:") + "</b> " + QString("%1").arg(u.desc());
+			txt += QString("<b>") + tr("URL:") + "</b> " + QString("%1").arg(TextUtil::linkify(Qt::escape(u.url()))) + "<br>";
+			txt += QString("<b>") + tr("Desc:") + "</b> " + QString("%1").arg(u.desc()) + "<br>";
 		}
 	}
 
@@ -442,6 +445,12 @@ ChatViewClass* YaChatDlg::chatView() const
 ChatEdit* YaChatDlg::chatEdit() const
 {
 	return ui_.bottomFrame->chatEdit();
+}
+
+void YaChatDlg::showAlternateContactProfile()
+{
+	QPoint global = ui_.contactInfo->parentWidget()->mapToGlobal(ui_.contactInfo->geometry().topLeft());
+	PsiToolTip::showText(global, alternateContactProfile_, this);
 }
 
 void YaChatDlg::showContactProfile()

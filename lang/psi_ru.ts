@@ -3999,15 +3999,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../src/tools/yastuff/yamainwin.cpp" line="324"/>
         <source>Join Groupchat...</source>
-        <translation>Конференция… (NDA)</translation>
+        <translation>Конференция…</translation>
     </message>
     <message>
         <source>Clear Caches</source>
         <translation>Очистить кэши (NDA)</translation>
-    </message>
-    <message>
-        <source>YaChatView Style...</source>
-        <translation>Поменять стиль чата (NDA)</translation>
     </message>
     <message>
         <location filename="../src/tools/yastuff/yamainwin.cpp" line="239"/>

@@ -24,6 +24,57 @@ public:
 		if (!QFile::exists("third-party/qca/qca") || !conf->getenv("QC_DISABLE_bundled_qca").isEmpty() || !QFile::exists("third-party/qca/qca-ossl"))
 			return false;
 
+#ifdef Q_OS_WIN
+		QString ossl_inc = conf->getenv("QC_WITH_OPENSSL_INC");
+		if(ossl_inc.isEmpty())
+			return false;
+
+		QString ossl_lib = conf->getenv("QC_WITH_OPENSSL_LIB");
+		if(ossl_lib.isEmpty())
+			return false;
+
+		QStringList libnames;
+		libnames += "-llibeay32 -lssleay32";
+		libnames += "-leay32 -lssl32";
+		libnames += "-leay32 " + ossl_lib + "/ssleay32.a";
+
+		bool success = false;
+		QString libname_success;
+		foreach(const QString &libname, libnames)
+		{
+			QString str =
+				"#include<openssl/opensslv.h>\n"
+				"int main()\n"
+				"{\n"
+				"  unsigned long x = OPENSSL_VERSION_NUMBER;\n"
+				"  if(x >= 0x00907000) return 0; else return 1;\n"
+				"}\n";
+			QString ext;
+			QStringList incs;
+			incs += ossl_inc;
+			ext += QString("-L") + ossl_lib + " " + libname;
+			int ret;
+			if(conf->doCompileAndLink(str, incs, ext, QString(), &ret))
+			{
+				success = true;
+				libname_success = libname;
+				if(ret == 0)
+					conf->addDefine("OSSL_097");
+				break;
+			}
+		}
+
+		if(!success)
+			return false;
+
+		conf->addIncludePath(ossl_inc);
+		conf->addLib(QString("-L") + ossl_lib);
+		conf->addLib(libname_success);
+
+		conf->addDefine("HAVE_OPENSSL");
+
+		return true;
+#else
 		QString inc, lib;
 		QString s;
 		bool kb = false;
@@ -86,9 +137,10 @@ public:
 		if(!lib.isEmpty())
 			conf->addLib(QString("-L") + s);
 		conf->addLib("-lssl -lcrypto");
-		
+
 		conf->addDefine("HAVE_OPENSSL");
 
 		return true;
+#endif
 	}
 };

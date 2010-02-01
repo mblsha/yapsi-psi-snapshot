@@ -43,11 +43,15 @@ public:
 	Mode mode() const;
 	void setMode(Mode mode);
 
+signals:
+	void alternateClicked();
+
 protected:
 	// reimplemented
 	void paintEvent(QPaintEvent*);
 	void enterEvent(QEvent* event);
 	void leaveEvent(QEvent* event);
+	void contextMenuEvent(QContextMenuEvent* event);
 
 private slots:
 	void animate();
@@ -77,6 +81,7 @@ public:
 	QRect extraGeometry() const;
 
 signals:
+	void alternateClicked();
 	void clicked();
 
 protected:

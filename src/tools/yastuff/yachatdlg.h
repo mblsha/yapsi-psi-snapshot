@@ -63,6 +63,7 @@ private slots:
 	void addContact();
 	void authContact();
 	void showContactProfile();
+	void showAlternateContactProfile();
 
 protected:
 	// reimplemented
@@ -109,6 +110,7 @@ private:
 	YaChatViewModel* model_;
 	XMPP::Status lastStatus_;
 	bool showAuthButton_;
+	QString alternateContactProfile_;
 };
 
 #endif

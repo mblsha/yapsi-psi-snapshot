@@ -38,7 +38,7 @@ private:
 	YaPopupNotification(int id, PsiEvent* event);
 
 public:
-	static void notify(int id, PsiEvent* event);
+	static bool notify(int id, PsiEvent* event, int soundType);
 	static void openNotify(int id, PsiAccount* account, const XMPP::Jid& jid, ActivationType activationType);
 
 protected:

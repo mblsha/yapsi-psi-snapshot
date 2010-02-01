@@ -871,6 +871,7 @@ QModelIndex ContactListModel::groupToIndex(ContactListGroup* group) const
 
 void ContactListModel::contactListItemProxyCreated(ContactListItemProxy* proxy)
 {
+	Q_UNUSED(proxy);
 #if 0
 	contactListItemProxyHash_[proxy] = proxy;
 #endif

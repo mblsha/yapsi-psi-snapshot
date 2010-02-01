@@ -160,7 +160,9 @@ namespace XMPP {
 		void setWasEncrypted(bool);
 
 		Stanza toStanza(Stream *stream) const;
+		bool fromStanza(const Stanza &s);
 		bool fromStanza(const Stanza &s, int tzoffset);
+		bool fromStanza(const Stanza &s, bool useTimeZoneOffset, int timeZoneOffset);
 
 #ifdef YAPSI
 		const YaLastMail& lastMailNotify() const;

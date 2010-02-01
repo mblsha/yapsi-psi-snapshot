@@ -21,7 +21,6 @@
 #ifndef PSICON_H
 #define PSICON_H
 
-#include <Q3PtrList>
 #include <QList>
 
 #include "profiles.h"
@@ -50,9 +49,9 @@ class PsiToolBar;
 class TabDlg;
 class AccountsComboBox;
 class ChatDlg;
+class AlertManager;
 class TuneController;
 class PsiContactList;
-class Q3DockWindow;
 class TabManager;
 class ContactUpdatesManager;
 
@@ -71,6 +70,7 @@ class YaToasterCentral;
 class YaHistoryCacheManager;
 class YaUnreadMessagesManager;
 class YaContactListModel;
+class YaNarodDiskManager;
 #endif
 
 class PsiCon : public QObject
@@ -94,6 +94,8 @@ public:
 	FileTransDlg *ftdlg() const;
 	TabManager *tabManager() const;
 
+	AlertManager *alertManager() const;
+
 	QWidget *dialogFind(const char *className);
 	void dialogRegister(QWidget *w);
 	void dialogUnregister(QWidget *w);
@@ -111,6 +113,7 @@ public:
 	YaHistoryCacheManager* yaHistoryCacheManager() const;
 	YaUnreadMessagesManager* yaUnreadMessagesManager() const;
 	YaContactListModel* contactListModel() const;
+	YaNarodDiskManager* yaNarodDiskManager() const;
 
 	PsiAccount* createAccount();
 #endif
@@ -181,9 +184,12 @@ public slots:
 	void queueChanged();
 	void recvNextEvent();
 	void setStatusFromDialog(const XMPP::Status &, bool withPriority, bool isManualStatus);
+	void setStatusFromCommandline(const QString &status, const QString &message);
 	void proxy_settingsChanged();
 	void updateMainwinStatus();
-	void doOpenUri(const QUrl &uri);
+	void openUri(const QString &uri);
+	void openUri(const QUrl &uri);
+	void openAtStyleUri(const QUrl &uri);
 	void raiseMainwin();
 
 private slots:
@@ -205,6 +211,7 @@ private:
 	YaToasterCentral* yaToasterCentral_;
 	YaHistoryCacheManager* yaHistoryCacheManager_;
 	YaUnreadMessagesManager* yaUnreadMessagesManager_;
+	YaNarodDiskManager* yaNarodDiskManager_;
 #endif
 	ContactUpdatesManager* contactUpdatesManager_;
 

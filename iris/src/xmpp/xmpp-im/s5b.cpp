@@ -1034,16 +1034,14 @@ void S5BManager::queryProxy(Entry *e)
 void S5BManager::query_finished()
 {
 	JT_S5B *query = (JT_S5B *)sender();
-	bool found = false;
-	Entry* e;
+	Entry* e = 0;
 	foreach(Entry* i, d->activeList) {
 		if(i->query == query) {
 			e = i;
-			found = true;
 			break;
 		}
 	}
-	if(!found)
+	if(!e)
 		return;
 	e->query = 0;
 
@@ -1161,7 +1159,7 @@ void S5BManager::Item::startInitiator(const QString &_sid, const Jid &_self, con
 	udp = _udp;
 
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item initiating request %s [%s]\n", qPrintable(peer.full()), qPrintable(sid));
+	printf("S5BManager::Item initiating request %s [%s] (inhash=%s)\n", qPrintable(peer.full()), qPrintable(sid), qPrintable(key));
 #endif
 	state = Initiator;
 	doOutgoing();
@@ -1180,7 +1178,7 @@ void S5BManager::Item::startTarget(const QString &_sid, const Jid &_self, const 
 	udp = _udp;
 
 #ifdef S5B_DEBUG
-	printf("S5BManager::Item incoming request %s [%s]\n", qPrintable(peer.full()), qPrintable(sid));
+	printf("S5BManager::Item incoming request %s [%s] (inhash=%s)\n", qPrintable(peer.full()), qPrintable(sid), qPrintable(key));
 #endif
 	state = Target;
 	if(fast)
@@ -2139,6 +2137,10 @@ void S5BServer::item_result(bool b)
 			return;
 		}
 	}
+
+#ifdef S5B_DEBUG
+	printf("S5BServer item result: unknown hash [%s]\n", qPrintable(key));
+#endif
 
 	// throw it away
 	delete c;

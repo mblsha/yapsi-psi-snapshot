@@ -386,12 +386,17 @@
 	</icon>
 
 	<icon>
+		<x xmlns='name'>psi/save</x>
+		<object mime='image/png'>filemanager.png</object>
+	</icon>
+
+	<icon>
 		<x xmlns='name'>psi/whiteboard</x>
 		<object mime='image/png'>whiteboarding/whiteboard.png</object>
 	</icon>
 
 	<icon>
-		<x xmlns='name'>psi/save</x>
+		<x xmlns='name'>psi/saveBoard</x>
 		<object mime='image/png'>whiteboarding/save.png</object>
 	</icon>
 

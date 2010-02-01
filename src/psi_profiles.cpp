@@ -310,6 +310,12 @@ void UserAccount::fromOptions(OptionsTree *o, QString base)
 		// and use default
 		if (tmpPort != 0) stunPort = tmpPort;
 	}
+	if (allSetOptions.contains(base + ".stun-username")) {
+		stunUser = o->getOption(base + ".stun-username").toString();
+	}
+	if (allSetOptions.contains(base + ".stun-password")) {
+		stunPass = o->getOption(base + ".stun-password").toString();
+	}
 
 	if (allSetOptions.contains(base + ".tls")) {
 		tlsOverrideCert = o->getOption(base + ".tls.override-certificate").toByteArray();
@@ -465,6 +471,8 @@ void UserAccount::toOptions(OptionsTree *o, QString base)
 
 	o->setOption(base + ".stun-host", stunHost);
 	o->setOption(base + ".stun-port", QString::number(stunPort));
+	o->setOption(base + ".stun-username", stunUser);
+	o->setOption(base + ".stun-password", stunPass);
 
 	o->setOption(base + ".tls.override-certificate", tlsOverrideCert);
 	o->setOption(base + ".tls.override-domain", tlsOverrideDomain);
@@ -645,22 +653,22 @@ static ToolbarPrefs loadToolbarData( const QDomElement &e )
 	if (found3)
 	{
 		QString dockStr;
-		Qt::Dock dock = Qt::DockTop;
+		Qt3Dock dock = Qt3Dock_Top;
 		readEntry(tb_position, "dock", &dockStr);
 		if (dockStr == "DockTop")
-			dock = Qt::DockTop;
+			dock = Qt3Dock_Top;
 		else if (dockStr == "DockBottom")
-			dock = Qt::DockBottom;
+			dock = Qt3Dock_Bottom;
 		else if (dockStr == "DockLeft")
-			dock = Qt::DockLeft;
+			dock = Qt3Dock_Left;
 		else if (dockStr == "DockRight")
-			dock = Qt::DockRight;
+			dock = Qt3Dock_Right;
 		else if (dockStr == "DockMinimized")
-			dock = Qt::DockMinimized;
+			dock = Qt3Dock_Minimized;
 		else if (dockStr == "DockTornOff")
-			dock = Qt::DockTornOff;
+			dock = Qt3Dock_TornOff;
 		else if (dockStr == "DockUnmanaged")
-			dock = Qt::DockUnmanaged;
+			dock = Qt3Dock_Unmanaged;
 
 		tb.dock = dock;
 
@@ -691,7 +699,7 @@ bool OptionsMigration::fromFile(const QString &fname)
 
 	readEntry(base, "progver", &progver);
 
-	migrateRectEntry(base, "geom", "options.ui.contactlist.saved-window-geometry");
+	// migrateRectEntry(base, "geom", "options.ui.contactlist.saved-window-geometry");
 	migrateStringList(base, "recentGCList", "options.muc.recent-joins.jids");
 	migrateStringList(base, "recentBrowseList", "options.ui.service-discovery.recent-jids");
 	migrateStringEntry(base, "lastStatusString", "options.status.last-message");
@@ -1153,7 +1161,7 @@ bool OptionsMigration::fromFile(const QString &fname)
 					tb.locked = true;
 					// tb.stretchable = true;
 					tb.keys << "event_notifier";
-					tb.dock  = Qt::DockBottom;
+					tb.dock  = Qt3Dock_Bottom;
 					// tb.index = 0;
 					lateMigrationData.toolbars["mainWin"].append(tb);
 				}
@@ -1402,11 +1410,11 @@ QStringList getProfilesList()
 
 bool profileExists(const QString &_name)
 {
-	QString name = _name.lower();
+	QString name = _name.toLower();
 
 	QStringList list = getProfilesList();
 	for(QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
-		if((*it).lower() == name)
+		if((*it).toLower() == name)
 			return true;
 	}
 	return false;

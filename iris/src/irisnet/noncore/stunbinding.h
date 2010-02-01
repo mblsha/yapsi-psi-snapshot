@@ -39,7 +39,8 @@ public:
 		ErrorGeneric,
 		ErrorTimeout,
 		ErrorRejected,
-		ErrorProtocol
+		ErrorProtocol,
+		ErrorConflict
 	};
 
 	StunBinding(StunTransactionPool *pool);
@@ -50,6 +51,11 @@ public:
 	void setUseCandidate(bool enabled);
 	void setIceControlling(quint64 i);
 	void setIceControlled(quint64 i);
+
+	void setShortTermUsername(const QString &username);
+	void setShortTermPassword(const QString &password);
+
+	void setFingerprintRequired(bool enabled);
 
 	void start();
 

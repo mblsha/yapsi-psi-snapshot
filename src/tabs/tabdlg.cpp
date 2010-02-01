@@ -25,19 +25,20 @@
 #include "psicon.h"
 #include <qmenubar.h>
 #include <qcursor.h>
-#include <q3dragobject.h>
 #include <QVBoxLayout>
 #include <QDragMoveEvent>
 #include <QResizeEvent>
 #include <QKeyEvent>
-#include <Q3PopupMenu>
 #include <QDropEvent>
 #include <QCloseEvent>
+#include <QSignalMapper>
 #include <QPainter>
 #ifdef YAPSI
 #include "yatabwidget.h"
 #include "yavisualutil.h"
 #else
+#include <QSignalMapper>
+
 #include "psitabwidget.h"
 #endif
 #include "psioptions.h"
@@ -165,6 +166,7 @@ TabDlg::TabDlg(TabManager* tabManager, QSize size, TabDlgDelegate *delegate)
 	tabWidget_->setCloseIcon(IconsetFactory::icon("psi/closetab").icon());
 #endif
 	connect(tabWidget_, SIGNAL(mouseDoubleClickTab(QWidget*)), SLOT(mouseDoubleClickTab(QWidget*)));
+	connect(tabWidget_, SIGNAL(mouseMiddleClickTab(QWidget*)), SLOT(mouseMiddleClickTab(QWidget*)));
 	connect(tabWidget_, SIGNAL(aboutToShowMenu(QMenu*)), SLOT(tab_aboutToShowMenu(QMenu*)));
 	connect(tabWidget_, SIGNAL(tabContextMenu(int, QPoint, QContextMenuEvent*)), SLOT(showTabMenu(int, QPoint, QContextMenuEvent*)));
 	connect(tabWidget_, SIGNAL(closeTab(int)), SLOT(closeTab(int)));
@@ -173,7 +175,8 @@ TabDlg::TabDlg(TabManager* tabManager, QSize size, TabDlgDelegate *delegate)
 	if(delegate_)
 		delegate_->tabWidgetCreated(this, tabWidget_);
 
-	QVBoxLayout *vert1 = new QVBoxLayout( this, 1);
+	QVBoxLayout *vert1 = new QVBoxLayout(this);
+	vert1->setMargin(1);
 #ifdef YAPSI
 	vert1->setMargin(0);
 #endif
@@ -201,17 +204,29 @@ TabDlg::TabDlg(TabManager* tabManager, QSize size, TabDlgDelegate *delegate)
 
 	act_close_ = new QAction(this);
 	addAction(act_close_);
-	connect(act_close_,SIGNAL(activated()), SLOT(closeCurrentTab()));
+	connect(act_close_,SIGNAL(triggered()), SLOT(closeCurrentTab()));
 	act_prev_ = new QAction(this);
 	addAction(act_prev_);
-	connect(act_prev_,SIGNAL(activated()), SLOT(previousTab()));
+	connect(act_prev_,SIGNAL(triggered()), SLOT(previousTab()));
 	act_next_ = new QAction(this);
 	addAction(act_next_);
-	connect(act_next_,SIGNAL(activated()), SLOT(nextTab()));
+	connect(act_next_,SIGNAL(triggered()), SLOT(nextTab()));
 
 	setShortcuts();
 
 #ifndef YAPSI
+	// FIXME: merge with YaTabWidget::YaTabWidget()
+	QSignalMapper* activateTabMapper_ = new QSignalMapper(this);
+	connect(activateTabMapper_, SIGNAL(mapped(int)), tabWidget_, SLOT(setCurrentPage(int)));
+	for (int i = 0; i < 10; ++i) {
+		QAction* action = new QAction(this);
+		connect(action, SIGNAL(triggered()), activateTabMapper_, SLOT(map()));
+		action->setShortcuts(QList<QKeySequence>() << QKeySequence(QString("Ctrl+%1").arg(i))
+		                                           << QKeySequence(QString("Alt+%1").arg(i)));
+		activateTabMapper_->setMapping(action, (i > 0 ? i : 10) - 1);
+		addAction(action);
+	}
+
 	if (size.isValid()) {
 		resize(size);
 	} else {
@@ -367,9 +382,9 @@ void TabDlg::setLooks()
 #ifndef Q_WS_MAC
 	setWindowIcon(IconsetFactory::icon("psi/start-chat").icon());
 #endif
-	tabWidget_->setTabPosition(QTabWidget::Top);
+	tabWidget_->setTabPosition(QTabWidget::North);
 	if (PsiOptions::instance()->getOption("options.ui.tabs.put-tabs-at-bottom").toBool())
-		tabWidget_->setTabPosition(QTabWidget::Bottom);
+		tabWidget_->setTabPosition(QTabWidget::South);
 
 	setWindowOpacity(double(qMax(MINIMUM_OPACITY,PsiOptions::instance()->getOption("options.ui.chat.opacity").toInt()))/100);
 #else
@@ -450,6 +465,10 @@ void TabDlg::mouseDoubleClickTab(QWidget* widget)
 		detachTab(static_cast<TabbableWidget*>(widget));
 }
 
+void TabDlg::mouseMiddleClickTab(QWidget* widget) {
+	closeTab(static_cast<TabbableWidget*>(widget));
+}
+
 void TabDlg::detachTab(TabbableWidget* tab)
 {
 	if (tabWidget_->count() == 1 || !tab)
@@ -493,7 +512,7 @@ void TabDlg::closeTab(TabbableWidget* chat, bool doclose)
 	chat->hide();
 	LOG_TRACE;
 	removeTabWithNoChecks(chat);
-	chat->reparent(0,QPoint());
+	chat->setParent(0);
 	if (tabWidget_->count() > 0) {
 		updateCaption();
 	}
@@ -693,7 +712,7 @@ void TabDlg::updateTab(TabbableWidget* chat)
 		tabWidget_->setTabTextColor(chat, Qt::red);
 	}
 	else {
-		tabWidget_->setTabTextColor(chat, colorGroup().foreground());
+		tabWidget_->setTabTextColor(chat, palette().windowText().color());
 	}
 #endif
 	updateCaption();

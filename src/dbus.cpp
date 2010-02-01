@@ -10,6 +10,7 @@
 
 #include "psicontactlist.h"
 #include "psiaccount.h"
+#include "activeprofiles.h"
 
 #define PSIDBUSIFACE "org.psi_im.Psi"
 
@@ -26,7 +27,10 @@ public:
 	~PsiConAdapter();
 public Q_SLOTS:
 	void openURI(QString uri);
+	void setStatus(QString status, QString message);
 	void raise();
+	void sleep();
+	void wake();
 /*Q_SIGNALS:
 	void psi_pong();
 */
@@ -46,18 +50,29 @@ PsiConAdapter::~PsiConAdapter()
 
 void PsiConAdapter::openURI(QString uri)
 {
-	QUrl real_uri;
-	real_uri.setEncodedUrl(uri.toLatin1());
-	psicon->doOpenUri(real_uri);
+	emit ActiveProfiles::instance()->openUriRequested(uri);
+}
+
+void PsiConAdapter::setStatus(QString status, QString message)
+{
+	emit ActiveProfiles::instance()->setStatusRequested(status, message);
 }
 
 // FIXME libguniqueapp uses activate
 void PsiConAdapter::raise()
 {
-	psicon->raiseMainwin();
+	emit ActiveProfiles::instance()->raiseRequested();
 }
 
+void PsiConAdapter::sleep()
+{
+	psicon->doSleep();
+}
 
+void PsiConAdapter::wake()
+{
+	psicon->doWakeup();
+}
 
 
 void addPsiConAdapter(PsiCon *psicon)

@@ -40,7 +40,7 @@ AccountModifyDlg::AccountModifyDlg(PsiCon *_psi, QWidget *parent)
 :QDialog(parent)
 {
 	acc.name = "";
-  	setupUi(this);
+	setupUi(this);
 	setModal(true);
 	pa = NULL;
 	psi = _psi;
@@ -65,7 +65,7 @@ void AccountModifyDlg::init()
 	if (pa)
 		pa->dialogRegister(this);
 
-	setWindowTitle(CAP(caption()));
+	setWindowTitle(CAP(windowTitle()));
 #ifndef Q_WS_MAC
 	setWindowIcon(IconsetFactory::icon("psi/account").icon());
 #endif
@@ -81,11 +81,10 @@ void AccountModifyDlg::init()
 	cb_security_level->hide();
 	lb_security_level->hide();
 
-	connect(pb_close, SIGNAL(clicked()), SLOT(reject()));
 	connect(ck_host, SIGNAL(toggled(bool)), SLOT(hostToggled(bool)));
 	connect(pb_key, SIGNAL(clicked()), SLOT(chooseKey()));
 	connect(pb_keyclear, SIGNAL(clicked()), SLOT(clearKey()));
-	connect(pb_save, SIGNAL(clicked()), SLOT(save()));
+	connect(buttonBox->button(QDialogButtonBox::Save), SIGNAL(clicked()), SLOT(save()));
 	connect(ck_automatic_resource, SIGNAL(toggled(bool)), le_resource, SLOT(setDisabled(bool)));
 	connect(ck_automatic_resource, SIGNAL(toggled(bool)), lb_resource, SLOT(setDisabled(bool)));
 
@@ -146,6 +145,8 @@ void AccountModifyDlg::init()
 	le_dtProxy->setText(acc.dtProxy.full());
 	le_stunHost->setText(acc.stunHost);
 	le_stunPort->setText(QString::number(acc.stunPort));
+	le_stunUser->setText(acc.stunUser);
+	le_stunPass->setText(acc.stunPass);
 
 	key = acc.pgpSecretKey;
 	updateUserID();
@@ -161,7 +162,7 @@ void AccountModifyDlg::init()
 	pc = psi->proxy()->createProxyChooser(tab_connection);
 	replaceWidget(lb_proxychooser, pc);
 	pc->setCurrentItem(acc.proxyID);
-	
+
 	// Security level
 	cb_security_level->addItem(tr("None"),QCA::SL_None);
 	cb_security_level->addItem(tr("Integrity"),QCA::SL_Integrity);
@@ -176,7 +177,7 @@ void AccountModifyDlg::init()
 	else if(le_jid->text().isEmpty())
 		le_jid->setFocus();
 	else
-		pb_save->setFocus();
+		buttonBox->button(QDialogButtonBox::Save)->setFocus();
 
 	// Privacy
 	privacyInitialized = false;
@@ -282,7 +283,7 @@ void AccountModifyDlg::init()
 	
 	if (!PsiOptions::instance()->getOption("options.ui.account.proxy.show").toBool()) {
 		lb_proxy->hide();
-		lb_proxychooser->hide();
+		pc->hide();
 	}
 
 	if (!PsiOptions::instance()->getOption("options.ui.account.manual-host").toBool()) {
@@ -532,19 +533,35 @@ void AccountModifyDlg::save()
 	acc.dtProxy = le_dtProxy->text();
 	acc.stunHost = le_stunHost->text();
 	acc.stunPort = le_stunPort->text().toInt();
+	acc.stunUser = le_stunUser->text();
+	acc.stunPass = le_stunPass->text();
 
 	acc.pgpSecretKey = key;
 
 	acc.proxyID = pc->currentItem();
 
-	if(pa && pa->isActive()) {
-		QMessageBox::information(this, tr("Warning"), tr("This account is currently active, so certain changes may not take effect until the next login."));
-	}
-
-	if (pa)
+	if (pa) {
 		pa->setUserAccount(acc);
-	else 
+
+		if (pa->isActive()) {
+			QMessageBox messageBox(QMessageBox::Information, tr("Warning"),
+			                       tr("This account is currently active, so certain changes may not take effect until the next login."),
+			                       QMessageBox::NoButton, this);
+			QPushButton* cancel = messageBox.addButton(tr("Reconnect &Later"), QMessageBox::RejectRole);
+			QPushButton* reconnect = messageBox.addButton(tr("Reconnect &Now"), QMessageBox::AcceptRole);
+			messageBox.setDefaultButton(reconnect);
+			messageBox.exec();
+			Q_UNUSED(cancel);
+			if (messageBox.clickedButton() == reconnect) {
+				XMPP::Status status = pa->status();
+				pa->setStatus(XMPP::Status::Offline);
+				pa->setStatus(status);
+			}
+		}
+	}
+	else {
 		psi->contactList()->createAccount(acc);
+	}
 
 	accept();
 }
